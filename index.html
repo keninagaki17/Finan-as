@@ -171,7 +171,7 @@
     };
 
     let session=null, householdId=null, credits=[], debits=[], adjustments=[];
-    let settings={ken_daily:70,vr_daily:41,maria_daily:30,cycle_start_date:null,cycle_started_at:null};
+    let settings={ken_daily:70,vr_daily:41,maria_daily:30,cycle_start_date:null,cycle_started_at:null,cycle_id:null};
     let currentView="home", currentDebitAccount=null, channel=null, busy=false;
 
     const $=s=>document.querySelector(s);
@@ -189,16 +189,10 @@
     function closeModal(id){$("#"+id).classList.remove("open")}
 
     function cycleStart(){return settings.cycle_start_date||null}
-    function cycleStartedMs(){return settings.cycle_started_at?new Date(settings.cycle_started_at).getTime():0}
-    function rowInCurrentCycle(row,dateField){
-      const start=cycleStart();
-      if(!start)return false;
-      const created=new Date(row.created_at).getTime();
-      return created>=cycleStartedMs() && row[dateField]>start;
-    }
-    function activeCredits(){return credits.filter(c=>rowInCurrentCycle(c,"credit_date"))}
-    function activeDebits(){return debits.filter(d=>rowInCurrentCycle(d,"debit_date"))}
-    function activeAdjustments(){return adjustments.filter(a=>rowInCurrentCycle(a,"adjustment_date"))}
+    function cycleId(){return settings.cycle_id||null}
+    function activeCredits(){return cycleId()?credits.filter(c=>c.cycle_id===cycleId()):[]}
+    function activeDebits(){return cycleId()?debits.filter(d=>d.cycle_id===cycleId()):[]}
+    function activeAdjustments(){return cycleId()?adjustments.filter(a=>a.cycle_id===cycleId()):[]}
 
     function balance(account){
       const creditTotal=activeCredits().reduce((s,c)=>s+creditAmount(c,account),0);
@@ -267,10 +261,10 @@
     async function loadData(first=false){
       if(!householdId)return;
       const [cRes,dRes,sRes,aRes]=await Promise.all([
-        sb.from("daily_credits").select("id,credit_date,ken_amount,vr_amount,maria_amount,created_at").eq("household_id",householdId).order("credit_date",{ascending:true}),
-        sb.from("debits").select("id,account,amount,description,debit_date,created_at").eq("household_id",householdId).order("debit_date",{ascending:false}),
-        sb.from("household_settings").select("ken_daily,vr_daily,maria_daily,cycle_start_date,cycle_started_at,updated_at").eq("household_id",householdId).maybeSingle(),
-        sb.from("balance_adjustments").select("id,account,amount,reason,adjustment_date,created_at").eq("household_id",householdId).order("adjustment_date",{ascending:false})
+        sb.from("daily_credits").select("id,cycle_id,credit_date,ken_amount,vr_amount,maria_amount,created_at").eq("household_id",householdId).order("credit_date",{ascending:true}),
+        sb.from("debits").select("id,cycle_id,account,amount,description,debit_date,created_at").eq("household_id",householdId).order("debit_date",{ascending:false}),
+        sb.from("household_settings").select("ken_daily,vr_daily,maria_daily,cycle_start_date,cycle_started_at,cycle_id,updated_at").eq("household_id",householdId).maybeSingle(),
+        sb.from("balance_adjustments").select("id,cycle_id,account,amount,reason,adjustment_date,created_at").eq("household_id",householdId).order("adjustment_date",{ascending:false})
       ]);
       const err=cRes.error||dRes.error||sRes.error||aRes.error;
       if(err){console.error(err);if(first)toast("Rode primeiro o SQL 03_novas_funcoes.sql.");return}
@@ -428,20 +422,20 @@
       busy=true;$("#cycleBtn").disabled=true;
       const {data,error}=await sb.from("household_settings").update({
         cycle_start_date:date,updated_by:session.user.id,updated_at:new Date().toISOString()
-      }).eq("household_id",householdId).select("ken_daily,vr_daily,maria_daily,cycle_start_date,cycle_started_at").single();
+      }).eq("household_id",householdId).select("ken_daily,vr_daily,maria_daily,cycle_start_date,cycle_started_at,cycle_id").single();
       busy=false;$("#cycleBtn").disabled=false;
       if(error){console.error(error);return toast("Não foi possível definir o Dia 0.");}
       settings={...settings,...data};closeModal("cycleModal");await loadData();toast(`Dia 0 definido: ${formatDate(date)}.`);
     }
 
     async function addDailyCredit(){
-      if(busy||!credits.length)return;const date=nextCreditDate();
+      if(busy||!cycleStart()||!cycleId())return;const date=nextCreditDate();
       busy=true;$("#creditBtn").disabled=true;
       const {error}=await sb.from("daily_credits").insert({
-        household_id:householdId,credit_date:date,ken_amount:daily("ken"),vr_amount:daily("vr"),maria_amount:daily("maria"),created_by:session.user.id
+        household_id:householdId,cycle_id:cycleId(),credit_date:date,ken_amount:daily("ken"),vr_amount:daily("vr"),maria_amount:daily("maria"),created_by:session.user.id
       });
       busy=false;$("#creditBtn").disabled=false;
-      if(error){if(error.code==="23505"){closeModal("creditModal");await loadData();toast("Esse dia já foi adicionado por vocês.");}else{console.error(error);toast("Não foi possível adicionar.");}return}
+      if(error){if(error.code==="23505"){closeModal("creditModal");await loadData();toast("Esse dia já foi adicionado neste ciclo.");}else{console.error(error);toast("Não foi possível adicionar.");}return}
       closeModal("creditModal");await loadData();toast(`Saldo de ${formatDate(date)} adicionado.`);
     }
 
@@ -450,7 +444,7 @@
       const amount=Number($("#debitValue").value),description=$("#debitDesc").value.trim()||"Débito",debit_date=$("#debitDate").value;
       if(!amount||amount<=0)return toast("Informe um valor válido.");if(!debit_date)return toast("Informe a data.");if(!cycleStart()||debit_date<=cycleStart())return toast("O débito precisa ser posterior ao Dia 0.");
       busy=true;$("#saveDebitBtn").disabled=true;
-      const {error}=await sb.from("debits").insert({household_id:householdId,account:currentDebitAccount,amount:Number(amount.toFixed(2)),description,debit_date,created_by:session.user.id});
+      const {error}=await sb.from("debits").insert({household_id:householdId,cycle_id:cycleId(),account:currentDebitAccount,amount:Number(amount.toFixed(2)),description,debit_date,created_by:session.user.id});
       busy=false;$("#saveDebitBtn").disabled=false;
       if(error){console.error(error);return toast("Não foi possível adicionar o débito.");}
       closeModal("debitModal");await loadData();toast("Débito adicionado.");
@@ -467,7 +461,7 @@
       if(Math.abs(current)<0.005)return toast("Esse saldo já está zerado.");
       if(!confirm(`Zerar ${ACCOUNTS[account].name}? O saldo atual de ${money(current)} irá para R$ 0,00, sem apagar o histórico.`))return;
       const {error}=await sb.from("balance_adjustments").insert({
-        household_id:householdId,account,amount:Number((-current).toFixed(2)),reason:"Saldo zerado",adjustment_date:todayISO(),created_by:session.user.id
+        household_id:householdId,cycle_id:cycleId(),account,amount:Number((-current).toFixed(2)),reason:"Saldo zerado",adjustment_date:todayISO(),created_by:session.user.id
       });
       if(error){console.error(error);return toast("Não foi possível zerar o saldo.");}
       closeModal("settingsModal");await loadData();toast(`${ACCOUNTS[account].name} zerado.`);
@@ -477,7 +471,7 @@
       const rows=Object.keys(ACCOUNTS).map(account=>({account,current:Number(balance(account).toFixed(2))})).filter(x=>Math.abs(x.current)>=0.005);
       if(!rows.length)return toast("Todos os saldos já estão zerados.");
       if(!confirm("Zerar os três saldos? O histórico será mantido."))return;
-      const payload=rows.map(x=>({household_id:householdId,account:x.account,amount:Number((-x.current).toFixed(2)),reason:"Saldo zerado",adjustment_date:todayISO(),created_by:session.user.id}));
+      const payload=rows.map(x=>({household_id:householdId,cycle_id:cycleId(),account:x.account,amount:Number((-x.current).toFixed(2)),reason:"Saldo zerado",adjustment_date:todayISO(),created_by:session.user.id}));
       const {error}=await sb.from("balance_adjustments").insert(payload);
       if(error){console.error(error);return toast("Não foi possível zerar os saldos.");}
       closeModal("settingsModal");await loadData();toast("Saldos zerados.");
