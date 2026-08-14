@@ -115,8 +115,15 @@
 
     <div class="divider"></div>
     <div class="danger-zone">
+      <h4>Dia inicial</h4>
+      <p>O dia que você definir será o Dia 0: os três saldos começam em R$ 0,00. O histórico anterior fica guardado, mas deixa de entrar no saldo atual.</p>
+      <button class="secondary" id="openCycleReset">Definir novo dia inicial</button>
+    </div>
+
+    <div class="divider"></div>
+    <div class="danger-zone">
       <h4>Zerar saldo</h4>
-      <p>Zerar não apaga seus lançamentos. O site cria um ajuste que leva o saldo escolhido a R$ 0,00 e mantém todo o histórico.</p>
+      <p>Zerar não apaga seus lançamentos. O site cria um ajuste que leva o saldo escolhido a R$ 0,00 e mantém o histórico do ciclo atual.</p>
       <div class="zero-grid">
         <button class="danger-btn" data-zero="ken">Zerar Débito Ken</button>
         <button class="danger-btn" data-zero="vr">Zerar VR Ken</button>
@@ -124,7 +131,21 @@
         <button class="danger-btn" data-zero="all">Zerar todos os saldos</button>
       </div>
     </div>
+
+    <div class="divider"></div>
+    <div class="danger-zone">
+      <h4>Apagar histórico</h4>
+      <p>Apaga definitivamente todos os dias, débitos e zeramentos. Os valores diários configurados e os logins são mantidos.</p>
+      <button class="danger-btn" id="clearHistoryBtn">Apagar todo o histórico</button>
+    </div>
     <button class="tertiary" data-close="settingsModal">Fechar</button>
+  </div></div>
+
+  <div class="modal-wrap" id="cycleModal"><div class="modal">
+    <h3>Definir dia inicial</h3>
+    <div class="help">O dia escolhido será o Dia 0. Nesse dia, Débito Ken, VR Ken e Débito Maria Clara ficam em R$ 0,00. O primeiro saldo diário entra no dia seguinte.</div>
+    <div class="field"><label>Dia inicial (Dia 0)</label><input id="cycleDate" type="date"></div>
+    <div class="modal-actions"><button class="cancel" data-close="cycleModal">Cancelar</button><button class="primary" id="cycleBtn">Definir Dia 0</button></div>
   </div></div>
 
   <div class="modal-wrap" id="daysModal"><div class="modal">
@@ -150,7 +171,7 @@
     };
 
     let session=null, householdId=null, credits=[], debits=[], adjustments=[];
-    let settings={ken_daily:70,vr_daily:41,maria_daily:30};
+    let settings={ken_daily:70,vr_daily:41,maria_daily:30,cycle_start_date:null,cycle_started_at:null};
     let currentView="home", currentDebitAccount=null, channel=null, busy=false;
 
     const $=s=>document.querySelector(s);
@@ -167,29 +188,43 @@
     function openModal(id){$("#"+id).classList.add("open")}
     function closeModal(id){$("#"+id).classList.remove("open")}
 
+    function cycleStart(){return settings.cycle_start_date||null}
+    function cycleStartedMs(){return settings.cycle_started_at?new Date(settings.cycle_started_at).getTime():0}
+    function rowInCurrentCycle(row,dateField){
+      const start=cycleStart();
+      if(!start)return false;
+      const created=new Date(row.created_at).getTime();
+      return created>=cycleStartedMs() && row[dateField]>start;
+    }
+    function activeCredits(){return credits.filter(c=>rowInCurrentCycle(c,"credit_date"))}
+    function activeDebits(){return debits.filter(d=>rowInCurrentCycle(d,"debit_date"))}
+    function activeAdjustments(){return adjustments.filter(a=>rowInCurrentCycle(a,"adjustment_date"))}
+
     function balance(account){
-      const creditTotal=credits.reduce((s,c)=>s+creditAmount(c,account),0);
-      const debitTotal=debits.filter(d=>d.account===account).reduce((s,d)=>s+Number(d.amount),0);
-      const adjustmentTotal=adjustments.filter(a=>a.account===account).reduce((s,a)=>s+Number(a.amount),0);
+      const creditTotal=activeCredits().reduce((s,c)=>s+creditAmount(c,account),0);
+      const debitTotal=activeDebits().filter(d=>d.account===account).reduce((s,d)=>s+Number(d.amount),0);
+      const adjustmentTotal=activeAdjustments().filter(a=>a.account===account).reduce((s,a)=>s+Number(a.amount),0);
       return creditTotal-debitTotal+adjustmentTotal;
     }
     function totalBalance(){return Object.keys(ACCOUNTS).reduce((s,k)=>s+balance(k),0)}
     function nextCreditDate(){
-      if(!credits.length)return null;
-      const dates=credits.map(c=>c.credit_date).sort();
-      return addDays(dates[dates.length-1],1);
+      const start=cycleStart();
+      if(!start)return null;
+      const current=activeCredits().map(c=>c.credit_date).sort();
+      return current.length?addDays(current[current.length-1],1):addDays(start,1);
     }
     function daysSummary(){
-      if(!credits.length)return "Nenhum dia";
-      const dates=credits.map(c=>c.credit_date).sort();
-      if(dates.length===1)return formatDate(dates[0]);
-      return `${formatDate(dates[0])} → ${formatDate(dates[dates.length-1])}`;
+      const start=cycleStart();
+      if(!start)return "Nenhum ciclo iniciado";
+      const current=activeCredits().map(c=>c.credit_date).sort();
+      if(!current.length)return `Dia 0: ${formatDate(start)}`;
+      return `Dia 0: ${formatDate(start)} · até ${formatDate(current[current.length-1])}`;
     }
     function latestActivity(limit=7){
       const items=[
-        ...credits.map(c=>({type:"credit",...c,date:c.credit_date})),
-        ...debits.map(d=>({type:"debit",...d,date:d.debit_date})),
-        ...adjustments.map(a=>({type:"adjustment",...a,date:a.adjustment_date}))
+        ...activeCredits().map(c=>({type:"credit",...c,date:c.credit_date})),
+        ...activeDebits().map(d=>({type:"debit",...d,date:d.debit_date})),
+        ...activeAdjustments().map(a=>({type:"adjustment",...a,date:a.adjustment_date}))
       ];
       return items.sort((a,b)=>b.date.localeCompare(a.date)||(b.created_at||"").localeCompare(a.created_at||"")).slice(0,limit);
     }
@@ -234,7 +269,7 @@
       const [cRes,dRes,sRes,aRes]=await Promise.all([
         sb.from("daily_credits").select("id,credit_date,ken_amount,vr_amount,maria_amount,created_at").eq("household_id",householdId).order("credit_date",{ascending:true}),
         sb.from("debits").select("id,account,amount,description,debit_date,created_at").eq("household_id",householdId).order("debit_date",{ascending:false}),
-        sb.from("household_settings").select("ken_daily,vr_daily,maria_daily,updated_at").eq("household_id",householdId).maybeSingle(),
+        sb.from("household_settings").select("ken_daily,vr_daily,maria_daily,cycle_start_date,cycle_started_at,updated_at").eq("household_id",householdId).maybeSingle(),
         sb.from("balance_adjustments").select("id,account,amount,reason,adjustment_date,created_at").eq("household_id",householdId).order("adjustment_date",{ascending:false})
       ]);
       const err=cRes.error||dRes.error||sRes.error||aRes.error;
@@ -281,7 +316,8 @@
 
     function renderHome(){
       const now=new Date(), dateLabel=now.toLocaleDateString("pt-BR",{weekday:"short",day:"2-digit",month:"short"}).replaceAll(".","");
-      const next=nextCreditDate();
+      const start=cycleStart(), next=nextCreditDate(), currentCredits=activeCredits();
+      const canAdd=!!next && next<=todayISO();
       $("#app").innerHTML=`
         <div class="topline">
           <div><div class="eyebrow">Controle pessoal</div><h1>Meu saldo diário</h1></div>
@@ -289,31 +325,31 @@
         </div>
         <div class="sync"><span class="dot ${navigator.onLine?"":"off"}"></span>${navigator.onLine?"Sincronizado online":"Sem conexão"}</div>
 
-        ${!credits.length?`<div class="notice"><strong>Defina o primeiro dia</strong><p>O primeiro lançamento usará os valores atuais: Ken ${money(daily("ken"))}, VR ${money(daily("vr"))} e Maria Clara ${money(daily("maria"))}.</p><button class="small-btn" id="openStart">Começar controle</button></div>`:""}
+        ${!start?`<div class="notice"><strong>Defina o dia inicial</strong><p>O dia escolhido será o Dia 0 e começará com R$ 0,00 nos três saldos. O primeiro valor diário entra no dia seguinte.</p><button class="small-btn" id="openStart">Definir Dia 0</button></div>`:""}
 
-        <section class="total-card"><div class="label">Saldo disponível total</div><div class="value">${money(totalBalance())}</div><div class="sub">${credits.length?`${credits.length} dia${credits.length===1?"":"s"} considerado${credits.length===1?"":"s"}`:"Ainda não iniciado"}</div></section>
+        <section class="total-card"><div class="label">Saldo disponível total</div><div class="value">${money(totalBalance())}</div><div class="sub">${start?`Dia 0: ${formatDate(start)} · ${currentCredits.length} dia${currentCredits.length===1?"":"s"} com saldo`:"Ainda não iniciado"}</div></section>
 
         <section class="cards">${accountCard("ken")}${accountCard("vr")}${accountCard("maria")}</section>
 
-        <button class="primary" id="openCredit" ${credits.length?"":"disabled"}>+ Adicionar saldo do dia</button>
-        <div class="next-day">${credits.length?`Próximo saldo: ${formatDate(next)}`:"Escolha primeiro a data inicial"}</div>
-        <button class="tertiary" id="openSettings">⚙ Ajustar valores diários / zerar saldo</button>
+        <button class="primary" id="openCredit" ${canAdd?"":"disabled"}>+ Adicionar saldo do dia</button>
+        <div class="next-day">${start?(canAdd?`Próximo saldo: ${formatDate(next)}`:`Próximo saldo: ${formatDate(next)}${next>todayISO()?" (ainda não chegou)":""}`):"Defina primeiro o Dia 0"}</div>
+        <button class="tertiary" id="openSettings">⚙ Ajustar valores / Dia 0 / zerar saldo</button>
 
-        ${credits.length?`<div class="section-title"><h2>Dias considerados</h2><span>${credits.length} dia${credits.length===1?"":"s"}</span></div>
-        <div class="days-card"><div class="days-card-top"><div><div class="big">${credits.length} dia${credits.length===1?"":"s"} no saldo</div><div class="range">${daysSummary()}</div></div><button class="link-btn" id="openDays">Ver dias</button></div></div>`:""}
+        ${start?`<div class="section-title"><h2>Dias considerados</h2><span>${currentCredits.length} dia${currentCredits.length===1?"":"s"} + Dia 0</span></div>
+        <div class="days-card"><div class="days-card-top"><div><div class="big">Dia 0: ${formatDate(start)}</div><div class="range">${daysSummary()}</div></div><button class="link-btn" id="openDays">Ver dias</button></div></div>`:""}
 
-        <div class="section-title"><h2>Movimentações recentes</h2><span>${latestActivity().length?"últimas":""}</span></div>${recentHTML()}`;
+        <div class="section-title"><h2>Movimentações recentes</h2><span>${latestActivity().length?"ciclo atual":""}</span></div>${recentHTML()}`;
 
       $("#logoutBtn").addEventListener("click",logout);
       $("#openSettings").addEventListener("click",openSettingsModal);
       $("#openDays")?.addEventListener("click",()=>openDaysModal(null));
       $("#openStart")?.addEventListener("click",()=>{
-        const d=new Date();d.setDate(1);$("#startDate").value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-01`;
-        $("#startHelp").textContent=`Nesse dia entram ${money(daily("ken"))} no Débito Ken, ${money(daily("vr"))} no VR Ken e ${money(daily("maria"))} no Débito Maria Clara.`;
-        openModal("startModal");
+        $("#cycleDate").value=todayISO();
+        closeModal("settingsModal");
+        openModal("cycleModal");
       });
       $("#openCredit").addEventListener("click",()=>{
-        if(!credits.length)return;
+        if(!canAdd)return;
         $("#creditHelp").textContent=`Será adicionado o saldo referente a ${formatDate(nextCreditDate())}.`;
         $("#creditKen").textContent=`+ ${money(daily("ken"))}`;$("#creditVr").textContent=`+ ${money(daily("vr"))}`;$("#creditMaria").textContent=`+ ${money(daily("maria"))}`;
         openModal("creditModal");
@@ -323,7 +359,7 @@
 
     function renderAccount(key){
       const a=ACCOUNTS[key];
-      const list=debits.filter(d=>d.account===key).sort((x,y)=>y.debit_date.localeCompare(x.debit_date)||(y.created_at||"").localeCompare(x.created_at||""));
+      const list=activeDebits().filter(d=>d.account===key).sort((x,y)=>y.debit_date.localeCompare(x.debit_date)||(y.created_at||"").localeCompare(x.created_at||""));
       const spentToday=list.filter(d=>d.debit_date===todayISO()).reduce((s,d)=>s+Number(d.amount),0);
       $("#app").innerHTML=`
         <div class="detail-header"><button class="back" id="backBtn">‹ Voltar</button><div class="eyebrow">Movimentações</div><h1>${a.name}</h1></div>
@@ -331,8 +367,8 @@
 
         <div class="action-grid"><button class="secondary" id="openDebit">− Adicionar débito</button><button class="danger-btn" id="zeroAccount">Zerar saldo</button></div>
 
-        ${credits.length?`<div class="section-title"><h2>Dias considerados</h2><span>${credits.length}</span></div>
-        <div class="days-card"><div class="days-card-top"><div><div class="big">${daysSummary()}</div><div class="range">Valores históricos desta categoria</div></div><button class="link-btn" id="openAccountDays">Ver dias</button></div></div>`:""}
+        ${cycleStart()?`<div class="section-title"><h2>Dias considerados</h2><span>${activeCredits().length} + Dia 0</span></div>
+        <div class="days-card"><div class="days-card-top"><div><div class="big">${daysSummary()}</div><div class="range">Dia inicial vale R$ 0,00</div></div><button class="link-btn" id="openAccountDays">Ver dias</button></div></div>`:""}
 
         <div class="section-title"><h2>Débitos</h2><span>${list.length?`${list.length} lançamento${list.length===1?"":"s"}`:""}</span></div>
         <div class="activity-card">${list.length?list.map(d=>`<div class="debit-row"><div><div class="title">${esc(d.description)}</div><div class="meta">${formatDate(d.debit_date)}</div></div><div class="money negative">− ${money(d.amount)}</div><button class="delete" data-delete="${d.id}" aria-label="Excluir">×</button></div>`).join(""):'<div class="empty">Nenhum débito lançado ainda.</div>'}</div>`;
@@ -341,7 +377,7 @@
       $("#zeroAccount").addEventListener("click",()=>zeroBalance(key));
       $("#openAccountDays")?.addEventListener("click",()=>openDaysModal(key));
       $("#openDebit").addEventListener("click",()=>{
-        currentDebitAccount=key;$("#debitHelp").textContent=a.name;$("#debitValue").value="";$("#debitDesc").value="";$("#debitDate").value=todayISO();openModal("debitModal");
+        currentDebitAccount=key;$("#debitHelp").textContent=`${a.name} · lançamentos precisam ser posteriores ao Dia 0 (${formatDate(cycleStart())}).`;$("#debitValue").value="";$("#debitDesc").value="";$("#debitDate").min=addDays(cycleStart(),1);$("#debitDate").value=todayISO()>cycleStart()?todayISO():addDays(cycleStart(),1);openModal("debitModal");
         setTimeout(()=>$("#debitValue").focus(),180);
       });
       document.querySelectorAll("[data-delete]").forEach(b=>b.addEventListener("click",()=>deleteDebit(b.dataset.delete)));
@@ -352,16 +388,20 @@
 
     function openSettingsModal(){
       $("#settingKen").value=daily("ken").toFixed(2);$("#settingVr").value=daily("vr").toFixed(2);$("#settingMaria").value=daily("maria").toFixed(2);openModal("settingsModal");
+      $("#openCycleReset").onclick=()=>{ $("#cycleDate").value=cycleStart()||todayISO(); closeModal("settingsModal"); openModal("cycleModal"); };
+      $("#clearHistoryBtn").onclick=clearAllHistory;
     }
 
     function openDaysModal(account=null){
-      const ordered=[...credits].sort((a,b)=>b.credit_date.localeCompare(a.credit_date));
+      const ordered=[...activeCredits()].sort((a,b)=>b.credit_date.localeCompare(a.credit_date));
       $("#daysTitle").textContent=account?`Dias — ${ACCOUNTS[account].name}`:"Dias considerados";
-      $("#daysHelp").textContent=account?`Cada valor abaixo é exatamente o saldo diário que entrou nesta categoria naquela data.`:`Estes são os dias que já entraram no cálculo dos saldos. Alterar o valor diário não modifica os dias antigos.`;
-      $("#daysList").innerHTML=ordered.length?`<div class="day-list">${ordered.map(c=>{
+      $("#daysHelp").textContent=account?`O Dia 0 vale R$ 0,00. Depois dele, cada linha mostra o valor diário que entrou nesta categoria.`:`O Dia 0 vale R$ 0,00 para todos. Abaixo estão somente os dias do ciclo atual que entram no saldo.`;
+      const zeroRow=cycleStart()?`<div class="day-row"><div class="day-date">${formatDate(cycleStart())} · Dia 0</div><div class="day-values">R$ 0,00${account?"":" em todos os saldos"}</div></div>`:"";
+      const rows=ordered.map(c=>{
         if(account)return `<div class="day-row"><div class="day-date">${formatDate(c.credit_date)}</div><div class="day-values">+ ${money(creditAmount(c,account))}</div></div>`;
         return `<div class="day-row"><div class="day-date">${formatDate(c.credit_date)}</div><div class="day-values">Ken +${money(c.ken_amount)} · VR +${money(c.vr_amount)} · Maria +${money(c.maria_amount)}</div></div>`;
-      }).join("")}</div>`:'<div class="empty">Nenhum dia adicionado.</div>';
+      }).join("");
+      $("#daysList").innerHTML=cycleStart()?`<div class="day-list">${zeroRow}${rows}</div>`:'<div class="empty">Nenhum ciclo iniciado.</div>';
       openModal("daysModal");
     }
 
@@ -379,15 +419,19 @@
       settings={...settings,...data};closeModal("settingsModal");await loadData();toast("Valores diários atualizados.");
     }
 
-    async function addFirstDay(){
-      if(busy)return;const date=$("#startDate").value;if(!date)return toast("Escolha uma data.");
-      busy=true;$("#startBtn").disabled=true;
-      const {error}=await sb.from("daily_credits").insert({
-        household_id:householdId,credit_date:date,ken_amount:daily("ken"),vr_amount:daily("vr"),maria_amount:daily("maria"),created_by:session.user.id
-      });
-      busy=false;$("#startBtn").disabled=false;
-      if(error){if(error.code==="23505")toast("Esse dia já foi adicionado.");else{console.error(error);toast("Não foi possível começar.");}return}
-      closeModal("startModal");await loadData();toast("Primeiro saldo adicionado.");
+    async function setCycleStart(){
+      if(busy)return;
+      const date=$("#cycleDate").value;
+      if(!date)return toast("Escolha uma data.");
+      const changing=!!cycleStart();
+      if(changing && !confirm(`Definir ${formatDate(date)} como novo Dia 0? Os saldos atuais irão para R$ 0,00. O histórico anterior continuará guardado, mas ficará fora do saldo atual.`))return;
+      busy=true;$("#cycleBtn").disabled=true;
+      const {data,error}=await sb.from("household_settings").update({
+        cycle_start_date:date,updated_by:session.user.id,updated_at:new Date().toISOString()
+      }).eq("household_id",householdId).select("ken_daily,vr_daily,maria_daily,cycle_start_date,cycle_started_at").single();
+      busy=false;$("#cycleBtn").disabled=false;
+      if(error){console.error(error);return toast("Não foi possível definir o Dia 0.");}
+      settings={...settings,...data};closeModal("cycleModal");await loadData();toast(`Dia 0 definido: ${formatDate(date)}.`);
     }
 
     async function addDailyCredit(){
@@ -404,7 +448,7 @@
     async function saveDebit(){
       if(busy||!currentDebitAccount)return;
       const amount=Number($("#debitValue").value),description=$("#debitDesc").value.trim()||"Débito",debit_date=$("#debitDate").value;
-      if(!amount||amount<=0)return toast("Informe um valor válido.");if(!debit_date)return toast("Informe a data.");
+      if(!amount||amount<=0)return toast("Informe um valor válido.");if(!debit_date)return toast("Informe a data.");if(!cycleStart()||debit_date<=cycleStart())return toast("O débito precisa ser posterior ao Dia 0.");
       busy=true;$("#saveDebitBtn").disabled=true;
       const {error}=await sb.from("debits").insert({household_id:householdId,account:currentDebitAccount,amount:Number(amount.toFixed(2)),description,debit_date,created_by:session.user.id});
       busy=false;$("#saveDebitBtn").disabled=false;
@@ -439,8 +483,17 @@
       closeModal("settingsModal");await loadData();toast("Saldos zerados.");
     }
 
+    async function clearAllHistory(){
+      closeModal("settingsModal");
+      const typed=prompt('Esta ação apaga definitivamente todos os dias, débitos e zeramentos. Digite APAGAR para confirmar:');
+      if(typed!=="APAGAR")return toast("Histórico mantido.");
+      const {error}=await sb.rpc("clear_finance_history",{p_household_id:householdId});
+      if(error){console.error(error);return toast("Não foi possível apagar o histórico.");}
+      await loadData();toast("Histórico apagado.");
+    }
+
     $("#bottomNav").addEventListener("click",e=>{const b=e.target.closest(".nav-btn");if(b)goTo(b.dataset.view)});
-    $("#startBtn").addEventListener("click",addFirstDay);$("#creditBtn").addEventListener("click",addDailyCredit);$("#saveDebitBtn").addEventListener("click",saveDebit);$("#saveSettingsBtn").addEventListener("click",saveSettings);
+    $("#cycleBtn").addEventListener("click",setCycleStart);$("#creditBtn").addEventListener("click",addDailyCredit);$("#saveDebitBtn").addEventListener("click",saveDebit);$("#saveSettingsBtn").addEventListener("click",saveSettings);
     document.querySelectorAll("[data-zero]").forEach(b=>b.addEventListener("click",()=>b.dataset.zero==="all"?zeroAllBalances():zeroBalance(b.dataset.zero)));
     document.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",()=>closeModal(b.dataset.close)));
     document.querySelectorAll(".modal-wrap").forEach(w=>w.addEventListener("click",e=>{if(e.target===w)w.classList.remove("open")}));
