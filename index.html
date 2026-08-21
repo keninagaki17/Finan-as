@@ -54,13 +54,13 @@
     .detail-balance{border-radius:24px;padding:22px;box-shadow:var(--shadow);margin-bottom:12px}.detail-balance .amount{font-size:35px;margin:5px 0 2px}
     .debit-row{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:14px 15px;border-bottom:1px solid var(--line)}.debit-row:last-child{border-bottom:0}
     .delete{border:0;background:transparent;color:#989d99;font-size:20px;padding:3px 3px 3px 8px}
-    .bottom-nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);z-index:20;width:min(100%,520px);display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:8px 12px calc(8px + env(safe-area-inset-bottom));background:rgba(246,244,239,.89);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid rgba(225,223,216,.75)}
+    .bottom-nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);z-index:20;width:min(100%,520px);display:grid;grid-template-columns:repeat(5,1fr);gap:5px;padding:8px 12px calc(8px + env(safe-area-inset-bottom));background:rgba(246,244,239,.89);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid rgba(225,223,216,.75)}
     .nav-btn{border:0;background:transparent;color:var(--muted);border-radius:14px;padding:8px 3px 7px;font-size:10px}.nav-btn .icon{font-size:18px;line-height:1;margin-bottom:4px}.nav-btn.active{color:var(--accent);background:rgba(40,72,60,.07);font-weight:730}
     .modal-wrap{position:fixed;inset:0;z-index:50;background:rgba(20,27,24,.34);display:none;align-items:flex-end;justify-content:center;padding:12px}.modal-wrap.open{display:flex}
     .modal{width:min(100%,500px);max-height:88vh;overflow-y:auto;background:#fff;border-radius:26px;padding:22px 18px calc(20px + env(safe-area-inset-bottom));box-shadow:0 24px 80px rgba(0,0,0,.18)}
     .modal h3{margin:0 0 5px;font-size:21px}.help{font-size:12px;line-height:1.45;color:var(--muted);margin-bottom:17px}
     .field{margin-bottom:13px}.field label{display:block;font-size:12px;color:var(--muted);font-weight:650;margin:0 0 6px 2px}
-    .field input{width:100%;border:1px solid var(--line);background:#faf9f6;border-radius:15px;padding:13px 14px;color:var(--text);outline:none}.field input:focus{border-color:#aab8b1;background:#fff}
+    .field input,.field select{width:100%;border:1px solid var(--line);background:#faf9f6;border-radius:15px;padding:13px 14px;color:var(--text);outline:none}.field input:focus,.field select:focus{border-color:#aab8b1;background:#fff}
     .settings-grid{display:grid;gap:4px}.divider{height:1px;background:var(--line);margin:20px 0}
     .danger-zone h4{margin:0 0 5px;font-size:15px}.danger-zone p{margin:0 0 12px;color:var(--muted);font-size:11px;line-height:1.45}.zero-grid{display:grid;gap:8px}
     .modal-actions{display:grid;grid-template-columns:1fr 1.35fr;gap:9px;margin-top:16px}.cancel{border:0;border-radius:15px;padding:14px;background:#f1f0ec;color:var(--text);font-weight:700}
@@ -75,8 +75,9 @@
   <nav class="bottom-nav hidden" id="bottomNav">
     <button class="nav-btn active" data-view="home"><div class="icon">⌂</div>Início</button>
     <button class="nav-btn" data-view="ken"><div class="icon">◒</div>Ken</button>
+    <button class="nav-btn" data-view="va"><div class="icon">◉</div>VA</button>
     <button class="nav-btn" data-view="vr"><div class="icon">◉</div>VR</button>
-    <button class="nav-btn" data-view="maria"><div class="icon">◐</div>Maria Clara</button>
+    <button class="nav-btn" data-view="maria"><div class="icon">◐</div>Maria</button>
   </nav>
 
   <div class="modal-wrap" id="debitModal"><div class="modal">
@@ -97,10 +98,29 @@
     <h3>Adicionar saldo do dia</h3><div class="help" id="creditHelp"></div>
     <div class="activity-card">
       <div class="activity-row"><div class="title">Débito Ken</div><div class="money positive" id="creditKen"></div></div>
+      <div class="activity-row"><div class="title">VA Ken</div><div class="money positive" id="creditVa"></div></div>
       <div class="activity-row"><div class="title">VR Ken</div><div class="money positive" id="creditVr"></div></div>
       <div class="activity-row"><div class="title">Débito Maria Clara</div><div class="money positive" id="creditMaria"></div></div>
     </div>
     <div class="modal-actions"><button class="cancel" data-close="creditModal">Cancelar</button><button class="primary" id="creditBtn">Adicionar</button></div>
+  </div></div>
+
+  <div class="modal-wrap" id="manualCreditModal"><div class="modal">
+    <h3>Adicionar crédito</h3>
+    <div class="help">Use para dinheiro extra ou qualquer entrada pontual. Isso aumenta somente o saldo escolhido e não altera o valor diário.</div>
+    <div class="field">
+      <label>Saldo</label>
+      <select id="manualCreditAccount">
+        <option value="ken">Débito Ken</option>
+        <option value="va">VA Ken</option>
+        <option value="vr">VR Ken</option>
+        <option value="maria">Débito Maria Clara</option>
+      </select>
+    </div>
+    <div class="field"><label>Valor</label><input id="manualCreditValue" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0,00"></div>
+    <div class="field"><label>Descrição</label><input id="manualCreditDesc" type="text" maxlength="60" placeholder="Ex.: Reembolso, Pix, dinheiro extra"></div>
+    <div class="field"><label>Data</label><input id="manualCreditDate" type="date"></div>
+    <div class="modal-actions"><button class="cancel" data-close="manualCreditModal">Cancelar</button><button class="primary" id="saveManualCreditBtn">Adicionar crédito</button></div>
   </div></div>
 
   <div class="modal-wrap" id="settingsModal"><div class="modal">
@@ -108,6 +128,7 @@
     <div class="help">A mudança vale apenas para os próximos dias adicionados. Os dias anteriores mantêm o valor que tinham quando foram lançados.</div>
     <div class="settings-grid">
       <div class="field"><label>Débito Ken — valor por dia</label><input id="settingKen" type="number" inputmode="decimal" min="0" step="0.01"></div>
+      <div class="field"><label>VA Ken — valor por dia</label><input id="settingVa" type="number" inputmode="decimal" min="0" step="0.01"></div>
       <div class="field"><label>VR Ken — valor por dia</label><input id="settingVr" type="number" inputmode="decimal" min="0" step="0.01"></div>
       <div class="field"><label>Débito Maria Clara — valor por dia</label><input id="settingMaria" type="number" inputmode="decimal" min="0" step="0.01"></div>
     </div>
@@ -116,7 +137,7 @@
     <div class="divider"></div>
     <div class="danger-zone">
       <h4>Dia inicial</h4>
-      <p>O dia que você definir será o Dia 0: os três saldos começam em R$ 0,00. O histórico anterior fica guardado, mas deixa de entrar no saldo atual.</p>
+      <p>O dia que você definir será o Dia 0: os quatro saldos começam em R$ 0,00. O histórico anterior fica guardado, mas deixa de entrar no saldo atual.</p>
       <button class="secondary" id="openCycleReset">Definir novo dia inicial</button>
     </div>
 
@@ -126,16 +147,17 @@
       <p>Zerar não apaga seus lançamentos. O site cria um ajuste que leva o saldo escolhido a R$ 0,00 e mantém o histórico do ciclo atual.</p>
       <div class="zero-grid">
         <button class="danger-btn" data-zero="ken">Zerar Débito Ken</button>
+        <button class="danger-btn" data-zero="va">Zerar VA Ken</button>
         <button class="danger-btn" data-zero="vr">Zerar VR Ken</button>
         <button class="danger-btn" data-zero="maria">Zerar Débito Maria Clara</button>
-        <button class="danger-btn" data-zero="all">Zerar todos os saldos</button>
+        <button class="danger-btn" data-zero="all">Zerar os quatro saldos</button>
       </div>
     </div>
 
     <div class="divider"></div>
     <div class="danger-zone">
       <h4>Apagar histórico</h4>
-      <p>Apaga definitivamente todos os dias, débitos e zeramentos. Os valores diários configurados e os logins são mantidos.</p>
+      <p>Apaga definitivamente todos os dias, débitos, créditos extras e zeramentos. Os valores diários configurados e os logins são mantidos.</p>
       <button class="danger-btn" id="clearHistoryBtn">Apagar todo o histórico</button>
     </div>
     <button class="tertiary" data-close="settingsModal">Fechar</button>
@@ -143,7 +165,7 @@
 
   <div class="modal-wrap" id="cycleModal"><div class="modal">
     <h3>Definir dia inicial</h3>
-    <div class="help">O dia escolhido será o Dia 0. Nesse dia, Débito Ken, VR Ken e Débito Maria Clara ficam em R$ 0,00. O primeiro saldo diário entra no dia seguinte.</div>
+    <div class="help">O dia escolhido será o Dia 0. Nesse dia, Débito Ken, VA Ken, VR Ken e Débito Maria Clara ficam em R$ 0,00. O primeiro saldo diário entra no dia seguinte.</div>
     <div class="field"><label>Dia inicial (Dia 0)</label><input id="cycleDate" type="date"></div>
     <div class="modal-actions"><button class="cancel" data-close="cycleModal">Cancelar</button><button class="primary" id="cycleBtn">Definir Dia 0</button></div>
   </div></div>
@@ -166,12 +188,13 @@
 
     const ACCOUNTS = {
       ken:{name:"Débito Ken",cls:"ken",setting:"ken_daily",credit:"ken_amount"},
+      va:{name:"VA Ken",cls:"vr",setting:"va_daily",credit:"va_amount"},
       vr:{name:"VR Ken",cls:"vr",setting:"vr_daily",credit:"vr_amount"},
       maria:{name:"Débito Maria Clara",cls:"maria",setting:"maria_daily",credit:"maria_amount"}
     };
 
-    let session=null, householdId=null, credits=[], debits=[], adjustments=[];
-    let settings={ken_daily:70,vr_daily:41,maria_daily:30,cycle_start_date:null,cycle_started_at:null,cycle_id:null};
+    let session=null, householdId=null, credits=[], debits=[], adjustments=[], manualCredits=[];
+    let settings={ken_daily:70,va_daily:41,vr_daily:0,maria_daily:30,cycle_start_date:null,cycle_started_at:null,cycle_id:null};
     let currentView="home", currentDebitAccount=null, channel=null, busy=false;
 
     const $=s=>document.querySelector(s);
@@ -193,12 +216,14 @@
     function activeCredits(){return cycleId()?credits.filter(c=>c.cycle_id===cycleId()):[]}
     function activeDebits(){return cycleId()?debits.filter(d=>d.cycle_id===cycleId()):[]}
     function activeAdjustments(){return cycleId()?adjustments.filter(a=>a.cycle_id===cycleId()):[]}
+    function activeManualCredits(){return cycleId()?manualCredits.filter(c=>c.cycle_id===cycleId()):[]}
 
     function balance(account){
       const creditTotal=activeCredits().reduce((s,c)=>s+creditAmount(c,account),0);
       const debitTotal=activeDebits().filter(d=>d.account===account).reduce((s,d)=>s+Number(d.amount),0);
       const adjustmentTotal=activeAdjustments().filter(a=>a.account===account).reduce((s,a)=>s+Number(a.amount),0);
-      return creditTotal-debitTotal+adjustmentTotal;
+      const manualCreditTotal=activeManualCredits().filter(c=>c.account===account).reduce((s,c)=>s+Number(c.amount),0);
+      return creditTotal-debitTotal+adjustmentTotal+manualCreditTotal;
     }
     function totalBalance(){return Object.keys(ACCOUNTS).reduce((s,k)=>s+balance(k),0)}
     function nextCreditDate(){
@@ -218,6 +243,7 @@
       const items=[
         ...activeCredits().map(c=>({type:"credit",...c,date:c.credit_date})),
         ...activeDebits().map(d=>({type:"debit",...d,date:d.debit_date})),
+        ...activeManualCredits().map(c=>({type:"manual_credit",...c,date:c.credit_date})),
         ...activeAdjustments().map(a=>({type:"adjustment",...a,date:a.adjustment_date}))
       ];
       return items.sort((a,b)=>b.date.localeCompare(a.date)||(b.created_at||"").localeCompare(a.created_at||"")).slice(0,limit);
@@ -248,7 +274,7 @@
     }
     async function logout(){
       if(channel)await sb.removeChannel(channel);
-      await sb.auth.signOut();session=null;householdId=null;credits=[];debits=[];adjustments=[];showLogin();
+      await sb.auth.signOut();session=null;householdId=null;credits=[];debits=[];adjustments=[];manualCredits=[];showLogin();
     }
     async function afterLogin(){
       $("#app").innerHTML='<div class="loading">Carregando saldos…</div>';
@@ -260,15 +286,16 @@
 
     async function loadData(first=false){
       if(!householdId)return;
-      const [cRes,dRes,sRes,aRes]=await Promise.all([
-        sb.from("daily_credits").select("id,cycle_id,credit_date,ken_amount,vr_amount,maria_amount,created_at").eq("household_id",householdId).order("credit_date",{ascending:true}),
+      const [cRes,dRes,sRes,aRes,mRes]=await Promise.all([
+        sb.from("daily_credits").select("id,cycle_id,credit_date,ken_amount,va_amount,vr_amount,maria_amount,created_at").eq("household_id",householdId).order("credit_date",{ascending:true}),
         sb.from("debits").select("id,cycle_id,account,amount,description,debit_date,created_at").eq("household_id",householdId).order("debit_date",{ascending:false}),
-        sb.from("household_settings").select("ken_daily,vr_daily,maria_daily,cycle_start_date,cycle_started_at,cycle_id,updated_at").eq("household_id",householdId).maybeSingle(),
-        sb.from("balance_adjustments").select("id,cycle_id,account,amount,reason,adjustment_date,created_at").eq("household_id",householdId).order("adjustment_date",{ascending:false})
+        sb.from("household_settings").select("ken_daily,va_daily,vr_daily,maria_daily,cycle_start_date,cycle_started_at,cycle_id,updated_at").eq("household_id",householdId).maybeSingle(),
+        sb.from("balance_adjustments").select("id,cycle_id,account,amount,reason,adjustment_date,created_at").eq("household_id",householdId).order("adjustment_date",{ascending:false}),
+        sb.from("extra_credits").select("id,cycle_id,account,amount,description,credit_date,created_at").eq("household_id",householdId).order("credit_date",{ascending:false})
       ]);
-      const err=cRes.error||dRes.error||sRes.error||aRes.error;
-      if(err){console.error(err);if(first)toast("Rode primeiro o SQL 03_novas_funcoes.sql.");return}
-      credits=cRes.data||[];debits=dRes.data||[];adjustments=aRes.data||[];
+      const err=cRes.error||dRes.error||sRes.error||aRes.error||mRes.error;
+      if(err){console.error(err);if(first)toast("Rode primeiro o SQL 06_creditos_va_vr.sql.");return}
+      credits=cRes.data||[];debits=dRes.data||[];adjustments=aRes.data||[];manualCredits=mRes.data||[];
       if(sRes.data)settings={...settings,...sRes.data};
       render();
     }
@@ -280,6 +307,7 @@
         .on("postgres_changes",{event:"*",schema:"public",table:"debits"},()=>loadData())
         .on("postgres_changes",{event:"*",schema:"public",table:"household_settings"},()=>loadData())
         .on("postgres_changes",{event:"*",schema:"public",table:"balance_adjustments"},()=>loadData())
+        .on("postgres_changes",{event:"*",schema:"public",table:"extra_credits"},()=>loadData())
         .subscribe();
     }
 
@@ -296,8 +324,11 @@
       if(!items.length)return '<div class="activity-card"><div class="empty">As movimentações vão aparecer aqui.</div></div>';
       return `<div class="activity-card">${items.map(x=>{
         if(x.type==="credit"){
-          const total=Number(x.ken_amount)+Number(x.vr_amount)+Number(x.maria_amount);
-          return `<div class="activity-row"><div><div class="title">Saldo do dia</div><div class="meta">${formatDate(x.date)} · Ken ${money(x.ken_amount)} · VR ${money(x.vr_amount)} · Maria ${money(x.maria_amount)}</div></div><div class="money positive">+ ${money(total)}</div></div>`;
+          const total=Number(x.ken_amount)+Number(x.va_amount)+Number(x.vr_amount)+Number(x.maria_amount);
+          return `<div class="activity-row"><div><div class="title">Saldo do dia</div><div class="meta">${formatDate(x.date)} · Ken ${money(x.ken_amount)} · VA ${money(x.va_amount)} · VR ${money(x.vr_amount)} · Maria ${money(x.maria_amount)}</div></div><div class="money positive">+ ${money(total)}</div></div>`;
+        }
+        if(x.type==="manual_credit"){
+          return `<div class="activity-row"><div><div class="title">${esc(x.description||"Crédito")}</div><div class="meta">${formatDate(x.date)} · ${ACCOUNTS[x.account].name} · crédito extra</div></div><div class="money positive">+ ${money(x.amount)}</div></div>`;
         }
         if(x.type==="adjustment"){
           const cls=Number(x.amount)>=0?"positive":"negative";
@@ -319,14 +350,15 @@
         </div>
         <div class="sync"><span class="dot ${navigator.onLine?"":"off"}"></span>${navigator.onLine?"Sincronizado online":"Sem conexão"}</div>
 
-        ${!start?`<div class="notice"><strong>Defina o dia inicial</strong><p>O dia escolhido será o Dia 0 e começará com R$ 0,00 nos três saldos. O primeiro valor diário entra no dia seguinte.</p><button class="small-btn" id="openStart">Definir Dia 0</button></div>`:""}
+        ${!start?`<div class="notice"><strong>Defina o dia inicial</strong><p>O dia escolhido será o Dia 0 e começará com R$ 0,00 nos quatro saldos. O primeiro valor diário entra no dia seguinte.</p><button class="small-btn" id="openStart">Definir Dia 0</button></div>`:""}
 
         <section class="total-card"><div class="label">Saldo disponível total</div><div class="value">${money(totalBalance())}</div><div class="sub">${start?`Dia 0: ${formatDate(start)} · ${currentCredits.length} dia${currentCredits.length===1?"":"s"} com saldo`:"Ainda não iniciado"}</div></section>
 
-        <section class="cards">${accountCard("ken")}${accountCard("vr")}${accountCard("maria")}</section>
+        <section class="cards">${accountCard("ken")}${accountCard("va")}${accountCard("vr")}${accountCard("maria")}</section>
 
         <button class="primary" id="openCredit" ${canAdd?"":"disabled"}>+ Adicionar saldo do dia</button>
         <div class="next-day">${start?(canAdd?`Próximo saldo: ${formatDate(next)}`:`Próximo saldo: ${formatDate(next)}${next>todayISO()?" (ainda não chegou)":""}`):"Defina primeiro o Dia 0"}</div>
+        <button class="secondary" id="openManualCredit" ${start?"":"disabled"} style="margin-top:10px">+ Adicionar crédito</button>
         <button class="tertiary" id="openSettings">⚙ Ajustar valores / Dia 0 / zerar saldo</button>
 
         ${start?`<div class="section-title"><h2>Dias considerados</h2><span>${currentCredits.length} dia${currentCredits.length===1?"":"s"} + Dia 0</span></div>
@@ -336,6 +368,7 @@
 
       $("#logoutBtn").addEventListener("click",logout);
       $("#openSettings").addEventListener("click",openSettingsModal);
+      $("#openManualCredit").addEventListener("click",()=>openManualCreditModal());
       $("#openDays")?.addEventListener("click",()=>openDaysModal(null));
       $("#openStart")?.addEventListener("click",()=>{
         $("#cycleDate").value=todayISO();
@@ -345,7 +378,7 @@
       $("#openCredit").addEventListener("click",()=>{
         if(!canAdd)return;
         $("#creditHelp").textContent=`Será adicionado o saldo referente a ${formatDate(nextCreditDate())}.`;
-        $("#creditKen").textContent=`+ ${money(daily("ken"))}`;$("#creditVr").textContent=`+ ${money(daily("vr"))}`;$("#creditMaria").textContent=`+ ${money(daily("maria"))}`;
+        $("#creditKen").textContent=`+ ${money(daily("ken"))}`;$("#creditVa").textContent=`+ ${money(daily("va"))}`;$("#creditVr").textContent=`+ ${money(daily("vr"))}`;$("#creditMaria").textContent=`+ ${money(daily("maria"))}`;
         openModal("creditModal");
       });
       document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>goTo(b.dataset.go)));
@@ -354,34 +387,41 @@
     function renderAccount(key){
       const a=ACCOUNTS[key];
       const list=activeDebits().filter(d=>d.account===key).sort((x,y)=>y.debit_date.localeCompare(x.debit_date)||(y.created_at||"").localeCompare(x.created_at||""));
+      const creditList=activeManualCredits().filter(c=>c.account===key).sort((x,y)=>y.credit_date.localeCompare(x.credit_date)||(y.created_at||"").localeCompare(x.created_at||""));
       const spentToday=list.filter(d=>d.debit_date===todayISO()).reduce((s,d)=>s+Number(d.amount),0);
       $("#app").innerHTML=`
         <div class="detail-header"><button class="back" id="backBtn">‹ Voltar</button><div class="eyebrow">Movimentações</div><h1>${a.name}</h1></div>
         <div class="detail-balance ${a.cls}"><div class="daily">Saldo disponível</div><div class="amount">${money(balance(key))}</div><div class="daily">+ ${money(daily(key))} por dia · gasto hoje: ${money(spentToday)}</div></div>
 
-        <div class="action-grid"><button class="secondary" id="openDebit">− Adicionar débito</button><button class="danger-btn" id="zeroAccount">Zerar saldo</button></div>
+        <div class="action-grid"><button class="secondary" id="openDebit">− Adicionar débito</button><button class="secondary" id="openAccountCredit">+ Adicionar crédito</button></div>
+        <button class="danger-btn" id="zeroAccount" style="margin-top:9px">Zerar saldo</button>
 
         ${cycleStart()?`<div class="section-title"><h2>Dias considerados</h2><span>${activeCredits().length} + Dia 0</span></div>
         <div class="days-card"><div class="days-card-top"><div><div class="big">${daysSummary()}</div><div class="range">Dia inicial vale R$ 0,00</div></div><button class="link-btn" id="openAccountDays">Ver dias</button></div></div>`:""}
+
+        <div class="section-title"><h2>Créditos extras</h2><span>${creditList.length?`${creditList.length} lançamento${creditList.length===1?"":"s"}`:""}</span></div>
+        <div class="activity-card">${creditList.length?creditList.map(c=>`<div class="debit-row"><div><div class="title">${esc(c.description)}</div><div class="meta">${formatDate(c.credit_date)}</div></div><div class="money positive">+ ${money(c.amount)}</div><button class="delete" data-delete-credit="${c.id}" aria-label="Excluir">×</button></div>`).join(""):'<div class="empty">Nenhum crédito extra lançado ainda.</div>'}</div>
 
         <div class="section-title"><h2>Débitos</h2><span>${list.length?`${list.length} lançamento${list.length===1?"":"s"}`:""}</span></div>
         <div class="activity-card">${list.length?list.map(d=>`<div class="debit-row"><div><div class="title">${esc(d.description)}</div><div class="meta">${formatDate(d.debit_date)}</div></div><div class="money negative">− ${money(d.amount)}</div><button class="delete" data-delete="${d.id}" aria-label="Excluir">×</button></div>`).join(""):'<div class="empty">Nenhum débito lançado ainda.</div>'}</div>`;
 
       $("#backBtn").addEventListener("click",()=>goTo("home"));
       $("#zeroAccount").addEventListener("click",()=>zeroBalance(key));
+      $("#openAccountCredit").addEventListener("click",()=>openManualCreditModal(key));
       $("#openAccountDays")?.addEventListener("click",()=>openDaysModal(key));
       $("#openDebit").addEventListener("click",()=>{
         currentDebitAccount=key;$("#debitHelp").textContent=`${a.name} · lançamentos precisam ser posteriores ao Dia 0 (${formatDate(cycleStart())}).`;$("#debitValue").value="";$("#debitDesc").value="";$("#debitDate").min=addDays(cycleStart(),1);$("#debitDate").value=todayISO()>cycleStart()?todayISO():addDays(cycleStart(),1);openModal("debitModal");
         setTimeout(()=>$("#debitValue").focus(),180);
       });
       document.querySelectorAll("[data-delete]").forEach(b=>b.addEventListener("click",()=>deleteDebit(b.dataset.delete)));
+      document.querySelectorAll("[data-delete-credit]").forEach(b=>b.addEventListener("click",()=>deleteManualCredit(b.dataset.deleteCredit)));
     }
 
     function render(){if(!session||!householdId)return;currentView==="home"?renderHome():renderAccount(currentView);document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.view===currentView))}
     function goTo(view){currentView=view;render();window.scrollTo({top:0,behavior:"smooth"})}
 
     function openSettingsModal(){
-      $("#settingKen").value=daily("ken").toFixed(2);$("#settingVr").value=daily("vr").toFixed(2);$("#settingMaria").value=daily("maria").toFixed(2);openModal("settingsModal");
+      $("#settingKen").value=daily("ken").toFixed(2);$("#settingVa").value=daily("va").toFixed(2);$("#settingVr").value=daily("vr").toFixed(2);$("#settingMaria").value=daily("maria").toFixed(2);openModal("settingsModal");
       $("#openCycleReset").onclick=()=>{ $("#cycleDate").value=cycleStart()||todayISO(); closeModal("settingsModal"); openModal("cycleModal"); };
       $("#clearHistoryBtn").onclick=clearAllHistory;
     }
@@ -393,7 +433,7 @@
       const zeroRow=cycleStart()?`<div class="day-row"><div class="day-date">${formatDate(cycleStart())} · Dia 0</div><div class="day-values">R$ 0,00${account?"":" em todos os saldos"}</div></div>`:"";
       const rows=ordered.map(c=>{
         if(account)return `<div class="day-row"><div class="day-date">${formatDate(c.credit_date)}</div><div class="day-values">+ ${money(creditAmount(c,account))}</div></div>`;
-        return `<div class="day-row"><div class="day-date">${formatDate(c.credit_date)}</div><div class="day-values">Ken +${money(c.ken_amount)} · VR +${money(c.vr_amount)} · Maria +${money(c.maria_amount)}</div></div>`;
+        return `<div class="day-row"><div class="day-date">${formatDate(c.credit_date)}</div><div class="day-values">Ken +${money(c.ken_amount)} · VA +${money(c.va_amount)} · VR +${money(c.vr_amount)} · Maria +${money(c.maria_amount)}</div></div>`;
       }).join("");
       $("#daysList").innerHTML=cycleStart()?`<div class="day-list">${zeroRow}${rows}</div>`:'<div class="empty">Nenhum ciclo iniciado.</div>';
       openModal("daysModal");
@@ -401,13 +441,13 @@
 
     async function saveSettings(){
       if(busy)return;
-      const ken=Number($("#settingKen").value),vr=Number($("#settingVr").value),maria=Number($("#settingMaria").value);
-      if([ken,vr,maria].some(v=>!Number.isFinite(v)||v<0))return toast("Informe valores válidos.");
+      const ken=Number($("#settingKen").value),va=Number($("#settingVa").value),vr=Number($("#settingVr").value),maria=Number($("#settingMaria").value);
+      if([ken,va,vr,maria].some(v=>!Number.isFinite(v)||v<0))return toast("Informe valores válidos.");
       busy=true;$("#saveSettingsBtn").disabled=true;
       const {data,error}=await sb.from("household_settings").update({
-        ken_daily:Number(ken.toFixed(2)),vr_daily:Number(vr.toFixed(2)),maria_daily:Number(maria.toFixed(2)),
+        ken_daily:Number(ken.toFixed(2)),va_daily:Number(va.toFixed(2)),vr_daily:Number(vr.toFixed(2)),maria_daily:Number(maria.toFixed(2)),
         updated_by:session.user.id,updated_at:new Date().toISOString()
-      }).eq("household_id",householdId).select("ken_daily,vr_daily,maria_daily").single();
+      }).eq("household_id",householdId).select("ken_daily,va_daily,vr_daily,maria_daily").single();
       busy=false;$("#saveSettingsBtn").disabled=false;
       if(error){console.error(error);return toast("Não foi possível salvar os valores.");}
       settings={...settings,...data};closeModal("settingsModal");await loadData();toast("Valores diários atualizados.");
@@ -432,11 +472,51 @@
       if(busy||!cycleStart()||!cycleId())return;const date=nextCreditDate();
       busy=true;$("#creditBtn").disabled=true;
       const {error}=await sb.from("daily_credits").insert({
-        household_id:householdId,cycle_id:cycleId(),credit_date:date,ken_amount:daily("ken"),vr_amount:daily("vr"),maria_amount:daily("maria"),created_by:session.user.id
+        household_id:householdId,cycle_id:cycleId(),credit_date:date,ken_amount:daily("ken"),va_amount:daily("va"),vr_amount:daily("vr"),maria_amount:daily("maria"),created_by:session.user.id
       });
       busy=false;$("#creditBtn").disabled=false;
       if(error){if(error.code==="23505"){closeModal("creditModal");await loadData();toast("Esse dia já foi adicionado neste ciclo.");}else{console.error(error);toast("Não foi possível adicionar.");}return}
       closeModal("creditModal");await loadData();toast(`Saldo de ${formatDate(date)} adicionado.`);
+    }
+
+    function openManualCreditModal(account=null){
+      if(!cycleStart()||!cycleId())return toast("Defina primeiro o Dia 0.");
+      $("#manualCreditAccount").value=account||"ken";
+      $("#manualCreditValue").value="";
+      $("#manualCreditDesc").value="";
+      $("#manualCreditDate").min=addDays(cycleStart(),1);
+      $("#manualCreditDate").value=todayISO()>cycleStart()?todayISO():addDays(cycleStart(),1);
+      openModal("manualCreditModal");
+      setTimeout(()=>$("#manualCreditValue").focus(),180);
+    }
+
+    async function saveManualCredit(){
+      if(busy)return;
+      const account=$("#manualCreditAccount").value;
+      const amount=Number($("#manualCreditValue").value);
+      const description=$("#manualCreditDesc").value.trim()||"Crédito";
+      const credit_date=$("#manualCreditDate").value;
+      if(!ACCOUNTS[account])return toast("Escolha um saldo.");
+      if(!amount||amount<=0)return toast("Informe um valor válido.");
+      if(!credit_date)return toast("Informe a data.");
+      if(!cycleStart()||credit_date<=cycleStart())return toast("O crédito precisa ser posterior ao Dia 0.");
+
+      busy=true;$("#saveManualCreditBtn").disabled=true;
+      const {error}=await sb.from("extra_credits").insert({
+        household_id:householdId,cycle_id:cycleId(),account,amount:Number(amount.toFixed(2)),
+        description,credit_date,created_by:session.user.id
+      });
+      busy=false;$("#saveManualCreditBtn").disabled=false;
+      if(error){console.error(error);return toast("Não foi possível adicionar o crédito.");}
+      closeModal("manualCreditModal");await loadData();toast("Crédito adicionado.");
+    }
+
+    async function deleteManualCredit(id){
+      const item=manualCredits.find(c=>c.id===id);
+      if(!item||!confirm(`Excluir o crédito "${item.description}" de ${money(item.amount)}?`))return;
+      const {error}=await sb.from("extra_credits").delete().eq("id",id).eq("household_id",householdId);
+      if(error){console.error(error);return toast("Não foi possível excluir o crédito.");}
+      await loadData();toast("Crédito excluído.");
     }
 
     async function saveDebit(){
@@ -470,7 +550,7 @@
     async function zeroAllBalances(){
       const rows=Object.keys(ACCOUNTS).map(account=>({account,current:Number(balance(account).toFixed(2))})).filter(x=>Math.abs(x.current)>=0.005);
       if(!rows.length)return toast("Todos os saldos já estão zerados.");
-      if(!confirm("Zerar os três saldos? O histórico será mantido."))return;
+      if(!confirm("Zerar os quatro saldos? O histórico será mantido."))return;
       const payload=rows.map(x=>({household_id:householdId,cycle_id:cycleId(),account:x.account,amount:Number((-x.current).toFixed(2)),reason:"Saldo zerado",adjustment_date:todayISO(),created_by:session.user.id}));
       const {error}=await sb.from("balance_adjustments").insert(payload);
       if(error){console.error(error);return toast("Não foi possível zerar os saldos.");}
@@ -479,7 +559,7 @@
 
     async function clearAllHistory(){
       closeModal("settingsModal");
-      const typed=prompt('Esta ação apaga definitivamente todos os dias, débitos e zeramentos. Digite APAGAR para confirmar:');
+      const typed=prompt('Esta ação apaga definitivamente todos os dias, débitos, créditos extras e zeramentos. Digite APAGAR para confirmar:');
       if(typed!=="APAGAR")return toast("Histórico mantido.");
       const {error}=await sb.rpc("clear_finance_history",{p_household_id:householdId});
       if(error){console.error(error);return toast("Não foi possível apagar o histórico.");}
@@ -487,7 +567,7 @@
     }
 
     $("#bottomNav").addEventListener("click",e=>{const b=e.target.closest(".nav-btn");if(b)goTo(b.dataset.view)});
-    $("#cycleBtn").addEventListener("click",setCycleStart);$("#creditBtn").addEventListener("click",addDailyCredit);$("#saveDebitBtn").addEventListener("click",saveDebit);$("#saveSettingsBtn").addEventListener("click",saveSettings);
+    $("#cycleBtn").addEventListener("click",setCycleStart);$("#creditBtn").addEventListener("click",addDailyCredit);$("#saveDebitBtn").addEventListener("click",saveDebit);$("#saveManualCreditBtn").addEventListener("click",saveManualCredit);$("#saveSettingsBtn").addEventListener("click",saveSettings);
     document.querySelectorAll("[data-zero]").forEach(b=>b.addEventListener("click",()=>b.dataset.zero==="all"?zeroAllBalances():zeroBalance(b.dataset.zero)));
     document.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",()=>closeModal(b.dataset.close)));
     document.querySelectorAll(".modal-wrap").forEach(w=>w.addEventListener("click",e=>{if(e.target===w)w.classList.remove("open")}));
