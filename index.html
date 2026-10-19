@@ -1,580 +1,315 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#f6f4ef" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Meu Saldo" />
-  <title>Meu Saldo Diário</title>
-  <style>
-    :root{
-      --bg:#f6f4ef;--card:#fff;--text:#202622;--muted:#747b77;--line:#e7e5de;
-      --accent:#28483c;--accentSoft:#e8efeb;--danger:#a84646;--dangerSoft:#f7eaea;
-      --ken:#e7eef8;--vr:#e8f2e6;--maria:#f4e8ee;--shadow:0 12px 30px rgba(31,38,35,.07)
-    }
-    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
-    body{padding-bottom:calc(83px + env(safe-area-inset-bottom))}
-    button,input{font:inherit}button{cursor:pointer}.hidden{display:none!important}
-    .app{width:min(100%,520px);margin:0 auto;padding:calc(20px + env(safe-area-inset-top)) 18px 24px}
-    .topline{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:22px}
-    .eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.13em;color:var(--muted);font-weight:750;margin-bottom:6px}
-    h1{margin:0;font-size:29px;line-height:1.05;letter-spacing:-.035em}h2{margin:0;font-size:17px}
-    .user-actions{display:flex;gap:7px;align-items:center}
-    .date-pill,.icon-btn{border:1px solid var(--line);background:rgba(255,255,255,.65);color:var(--muted);border-radius:999px}
-    .date-pill{padding:8px 10px;font-size:11px;white-space:nowrap}.icon-btn{padding:8px 11px;font-size:12px;font-weight:650}
-    .sync{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:11px;margin:0 2px 13px}
-    .dot{width:7px;height:7px;border-radius:50%;background:#4d8d72}.dot.off{background:#aaa}
-    .total-card{background:var(--accent);color:#fff;border-radius:24px;padding:22px;box-shadow:var(--shadow);margin-bottom:13px}
-    .total-card .label{font-size:13px;opacity:.7}.total-card .value{font-size:36px;font-weight:780;letter-spacing:-.045em;margin:6px 0 2px}.total-card .sub{font-size:12px;opacity:.66}
-    .cards{display:grid;gap:10px;margin-bottom:13px}
-    .balance-card{border:0;width:100%;text-align:left;border-radius:21px;padding:17px 18px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;color:var(--text);box-shadow:var(--shadow)}
-    .ken{background:var(--ken)}.vr{background:var(--vr)}.maria{background:var(--maria)}
-    .balance-card .name{font-size:14px;font-weight:730;margin-bottom:4px}.daily{font-size:12px;color:var(--muted)}
-    .amount{font-size:22px;font-weight:780;letter-spacing:-.03em}.arrow{font-size:20px;color:var(--muted);margin-left:5px}
-    .primary{width:100%;border:0;border-radius:18px;padding:16px 18px;background:var(--accent);color:#fff;font-size:15px;font-weight:740;box-shadow:var(--shadow)}
-    .primary:disabled{opacity:.45;cursor:default}
-    .secondary{width:100%;border:1px solid var(--line);border-radius:17px;padding:15px 18px;background:#fff;color:var(--accent);font-weight:730}
-    .tertiary{width:100%;border:0;border-radius:15px;padding:12px 15px;background:transparent;color:var(--muted);font-size:12px;font-weight:700}
-    .danger-btn{width:100%;border:1px solid #efd0d0;border-radius:15px;padding:13px;background:var(--dangerSoft);color:var(--danger);font-size:13px;font-weight:730}
-    .next-day{text-align:center;color:var(--muted);font-size:11px;margin-top:8px}
-    .action-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:9px}
-    .section-title{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:25px 2px 10px}.section-title span{font-size:11px;color:var(--muted)}
-    .activity-card,.notice,.days-card{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
-    .activity-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)}.activity-row:last-child{border-bottom:0}
-    .title{font-size:14px;font-weight:660}.meta{font-size:11px;color:var(--muted);margin-top:3px}.money{font-size:14px;font-weight:730}.positive{color:var(--accent)}.negative{color:var(--danger)}
-    .empty{padding:22px 18px;text-align:center;color:var(--muted);font-size:13px}
-    .notice{padding:17px;margin-bottom:13px}.notice strong{display:block;margin-bottom:4px}.notice p{font-size:12px;color:var(--muted);line-height:1.45;margin:0 0 11px}
-    .small-btn{border:0;border-radius:13px;background:var(--accentSoft);color:var(--accent);font-size:12px;font-weight:730;padding:10px 12px}
-    .days-card{padding:16px 17px}.days-card-top{display:flex;justify-content:space-between;gap:12px;align-items:center}.days-card .big{font-size:15px;font-weight:730}.days-card .range{font-size:12px;color:var(--muted);margin-top:3px}
-    .link-btn{border:0;background:var(--accentSoft);color:var(--accent);border-radius:12px;padding:9px 11px;font-size:11px;font-weight:730;white-space:nowrap}
-    .detail-header{margin-bottom:18px}.back{border:0;background:transparent;color:var(--muted);font-weight:680;padding:4px 0 13px}
-    .detail-balance{border-radius:24px;padding:22px;box-shadow:var(--shadow);margin-bottom:12px}.detail-balance .amount{font-size:35px;margin:5px 0 2px}
-    .debit-row{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:14px 15px;border-bottom:1px solid var(--line)}.debit-row:last-child{border-bottom:0}
-    .delete{border:0;background:transparent;color:#989d99;font-size:20px;padding:3px 3px 3px 8px}
-    .bottom-nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);z-index:20;width:min(100%,520px);display:grid;grid-template-columns:repeat(5,1fr);gap:5px;padding:8px 12px calc(8px + env(safe-area-inset-bottom));background:rgba(246,244,239,.89);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid rgba(225,223,216,.75)}
-    .nav-btn{border:0;background:transparent;color:var(--muted);border-radius:14px;padding:8px 3px 7px;font-size:10px}.nav-btn .icon{font-size:18px;line-height:1;margin-bottom:4px}.nav-btn.active{color:var(--accent);background:rgba(40,72,60,.07);font-weight:730}
-    .modal-wrap{position:fixed;inset:0;z-index:50;background:rgba(20,27,24,.34);display:none;align-items:flex-end;justify-content:center;padding:12px}.modal-wrap.open{display:flex}
-    .modal{width:min(100%,500px);max-height:88vh;overflow-y:auto;background:#fff;border-radius:26px;padding:22px 18px calc(20px + env(safe-area-inset-bottom));box-shadow:0 24px 80px rgba(0,0,0,.18)}
-    .modal h3{margin:0 0 5px;font-size:21px}.help{font-size:12px;line-height:1.45;color:var(--muted);margin-bottom:17px}
-    .field{margin-bottom:13px}.field label{display:block;font-size:12px;color:var(--muted);font-weight:650;margin:0 0 6px 2px}
-    .field input,.field select{width:100%;border:1px solid var(--line);background:#faf9f6;border-radius:15px;padding:13px 14px;color:var(--text);outline:none}.field input:focus,.field select:focus{border-color:#aab8b1;background:#fff}
-    .settings-grid{display:grid;gap:4px}.divider{height:1px;background:var(--line);margin:20px 0}
-    .danger-zone h4{margin:0 0 5px;font-size:15px}.danger-zone p{margin:0 0 12px;color:var(--muted);font-size:11px;line-height:1.45}.zero-grid{display:grid;gap:8px}
-    .modal-actions{display:grid;grid-template-columns:1fr 1.35fr;gap:9px;margin-top:16px}.cancel{border:0;border-radius:15px;padding:14px;background:#f1f0ec;color:var(--text);font-weight:700}
-    .day-list{border:1px solid var(--line);border-radius:17px;overflow:hidden}.day-row{padding:13px 14px;border-bottom:1px solid var(--line)}.day-row:last-child{border-bottom:0}.day-date{font-size:13px;font-weight:700}.day-values{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5}
-    .toast{position:fixed;left:50%;bottom:calc(82px + env(safe-area-inset-bottom));transform:translate(-50%,14px);z-index:80;background:#202723;color:#fff;padding:11px 15px;border-radius:999px;font-size:12px;opacity:0;pointer-events:none;transition:.2s;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis}.toast.show{opacity:1;transform:translate(-50%,0)}
-    .login-shell{min-height:calc(100vh - env(safe-area-inset-top));display:flex;align-items:center;justify-content:center}.login-box{width:100%;padding:12px 0 80px}.login-mark{width:48px;height:48px;border-radius:16px;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:780;margin-bottom:20px}.login-box h1{font-size:32px;margin-bottom:8px}.login-box>p{font-size:13px;color:var(--muted);line-height:1.5;margin:0 0 24px;max-width:340px}.login-btn{margin-top:5px}.login-note{text-align:center;color:var(--muted);font-size:11px;line-height:1.45;margin-top:13px}.error-box{background:#f8eaea;color:#873b3b;border-radius:14px;padding:11px 13px;font-size:12px;margin-bottom:13px;display:none}.loading{min-height:72vh;display:grid;place-items:center;color:var(--muted);font-size:13px}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f6f4ef">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Meu Saldo">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<title>Meu Saldo</title>
+<style>
+:root{--bg:#f6f4ef;--card:#fff;--text:#202622;--muted:#747b77;--line:#e6e3dc;--accent:#28483c;--accent2:#3c6958;--soft:#e8efeb;--danger:#a84646;--dangerSoft:#f7eaea;--blue:#e7eef8;--green:#e8f2e6;--rose:#f4e8ee;--sand:#f2eee3;--shadow:0 12px 30px rgba(31,38,35,.07)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}body{padding-bottom:calc(80px + env(safe-area-inset-bottom))}button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+.app{width:min(100%,540px);margin:auto;padding:calc(20px + env(safe-area-inset-top)) 18px 28px}.top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:18px}.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--muted);margin-bottom:5px}h1{margin:0;font-size:29px;letter-spacing:-.04em;line-height:1.05}h2{margin:0;font-size:17px}.pill{border:1px solid var(--line);background:rgba(255,255,255,.7);color:var(--muted);border-radius:999px;padding:8px 10px;font-size:11px}
+.sync{display:flex;gap:6px;align-items:center;color:var(--muted);font-size:10px;margin:0 2px 11px}.dot{width:7px;height:7px;border-radius:50%;background:#4d8d72}.dot.off{background:#aaa}
+.hero{background:var(--accent);color:#fff;border-radius:25px;padding:22px;box-shadow:var(--shadow)}.hero .label{font-size:12px;opacity:.72}.hero .value{font-size:38px;font-weight:800;letter-spacing:-.05em;margin:6px 0 3px}.hero .sub{font-size:11px;opacity:.68;line-height:1.45}
+.cards{display:grid;gap:9px;margin-top:11px}.account-card{width:100%;border:0;text-align:left;background:var(--card);border-radius:20px;padding:15px 16px;display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;box-shadow:var(--shadow)}.account-card.money{background:var(--blue)}.account-card.va,.account-card.vr{background:var(--green)}.account-card.other{background:var(--sand)}.account-card .name{font-size:14px;font-weight:760}.account-card .meta{font-size:10px;color:var(--muted);margin-top:3px}.account-card .amt{font-size:20px;font-weight:800;letter-spacing:-.03em}.arrow{color:var(--muted);font-size:18px;margin-left:4px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}.primary,.secondary,.danger,.ghost{border-radius:16px;padding:14px 13px;font-weight:760;border:0}.primary{background:var(--accent);color:#fff}.primary:disabled{opacity:.45}.secondary{background:#fff;color:var(--accent);border:1px solid var(--line)}.danger{background:var(--dangerSoft);color:var(--danger);border:1px solid #efd0d0}.ghost{background:transparent;color:var(--muted)}.full{width:100%}
+.next{text-align:center;color:var(--muted);font-size:10px;margin-top:7px}.section{display:flex;justify-content:space-between;gap:10px;align-items:baseline;margin:24px 2px 9px}.section span{font-size:10px;color:var(--muted)}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:var(--shadow)}.row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:14px 15px;border-bottom:1px solid var(--line)}.row:last-child{border-bottom:0}.row .title{font-size:13px;font-weight:720}.row .meta{font-size:10px;color:var(--muted);margin-top:3px}.money{font-size:13px;font-weight:780}.pos{color:var(--accent2)}.neg{color:var(--danger)}.empty{padding:20px 15px;text-align:center;color:var(--muted);font-size:11px}
+.notice{background:#fff;border:1px solid var(--line);border-radius:19px;padding:15px;margin-bottom:11px;box-shadow:var(--shadow)}.notice strong{font-size:13px;display:block;margin-bottom:4px}.notice p{font-size:11px;color:var(--muted);line-height:1.5;margin:0 0 10px}
+.bottom{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,540px);display:grid;grid-template-columns:repeat(4,1fr);padding:8px 11px calc(8px + env(safe-area-inset-bottom));background:rgba(246,244,239,.9);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid rgba(225,223,216,.8);z-index:20}.nav{border:0;background:transparent;color:var(--muted);border-radius:13px;padding:7px 2px;font-size:9px}.nav .i{font-size:18px;margin-bottom:3px}.nav.active{background:rgba(40,72,60,.07);color:var(--accent);font-weight:760}
+.settings{display:grid;gap:9px}.settings-block{background:#fff;border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:var(--shadow)}.settings-block h3{font-size:15px;margin:0 0 4px}.settings-block p{font-size:10px;color:var(--muted);line-height:1.5;margin:0 0 11px}.settings-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-top:1px solid var(--line)}.settings-row:first-of-type{border-top:0}.settings-row .name{font-size:12px;font-weight:730}.settings-row .sub{font-size:9px;color:var(--muted);margin-top:3px}.mini{border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 9px;font-size:9px;color:var(--text)}
+.invest-hero{background:linear-gradient(145deg,#28483c,#3b6253);color:#fff;border-radius:25px;padding:21px;box-shadow:var(--shadow)}.invest-hero .k{font-size:10px;opacity:.7}.invest-hero .big{font-size:34px;font-weight:820;letter-spacing:-.045em;margin:5px 0 13px}.invest-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.invest-grid div{background:rgba(255,255,255,.09);border-radius:13px;padding:11px}.invest-grid span{display:block;font-size:9px;opacity:.68}.invest-grid b{font-size:14px}.project{margin-top:11px;background:var(--soft);border:1px solid #d6e3db;border-radius:19px;padding:15px}.project .big{font-size:26px;font-weight:820;letter-spacing:-.04em;margin:5px 0}.project p{font-size:10px;color:#53655c;line-height:1.5;margin:0}
+.detail-head{margin-bottom:15px}.back{border:0;background:transparent;color:var(--muted);padding:2px 0 12px;font-weight:700}.detail-box{border-radius:24px;background:#fff;padding:20px;box-shadow:var(--shadow);margin-bottom:10px}.detail-box .amt{font-size:34px;font-weight:820;letter-spacing:-.045em;margin:6px 0 2px}.detail-box .meta{font-size:11px;color:var(--muted)}
+.modalwrap{position:fixed;inset:0;z-index:50;background:rgba(20,27,24,.36);display:none;align-items:flex-end;justify-content:center;padding:11px}.modalwrap.open{display:flex}.modal{width:min(100%,510px);max-height:90vh;overflow:auto;background:#fff;border-radius:27px;padding:21px 18px calc(20px + env(safe-area-inset-bottom));box-shadow:0 25px 85px rgba(0,0,0,.2)}.modal h3{font-size:20px;margin:0 0 5px}.help{font-size:11px;line-height:1.5;color:var(--muted);margin-bottom:15px}.field{margin-bottom:12px}.field label{display:block;font-size:10px;font-weight:720;color:var(--muted);margin:0 0 6px 2px}.field input,.field select{width:100%;border:1px solid var(--line);background:#faf9f6;border-radius:14px;padding:13px 14px;outline:0;color:var(--text)}.check{display:flex;align-items:center;gap:9px;font-size:11px;margin:12px 0}.check input{width:18px;height:18px}.modal-actions{display:grid;grid-template-columns:1fr 1.4fr;gap:8px;margin-top:15px}.cancel{border:0;border-radius:14px;background:#efeee9;padding:13px;font-weight:720}
+.pending{background:#fff6e8;border:1px solid #ecd9b5;border-radius:19px;padding:15px;margin-bottom:10px}.pending strong{font-size:13px}.pending p{font-size:10px;color:#6d6254;line-height:1.5;margin:5px 0 10px}
+.login{min-height:calc(100vh - 70px);display:flex;align-items:center}.loginbox{width:100%;padding-bottom:50px}.mark{width:49px;height:49px;border-radius:16px;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:820;margin-bottom:18px}.loginbox p{font-size:12px;line-height:1.5;color:var(--muted);max-width:350px}.error{display:none;background:var(--dangerSoft);color:var(--danger);border-radius:12px;padding:10px 12px;font-size:11px;margin-bottom:10px}
+.token{display:block;background:#f0eee9;border-radius:9px;padding:8px;font-size:9px;word-break:break-all;margin-top:5px}.toast{position:fixed;left:50%;bottom:calc(82px + env(safe-area-inset-bottom));transform:translate(-50%,12px);z-index:90;background:#202622;color:#fff;border-radius:999px;padding:10px 14px;font-size:11px;max-width:90%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:0;transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:380px){.invest-grid{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
-  <main class="app" id="app"><div class="loading">Conectando…</div></main>
+<main class="app" id="app"><div class="empty">Conectando…</div></main>
+<nav class="bottom hidden" id="nav">
+<button class="nav active" data-view="home"><div class="i">⌂</div>Início</button>
+<button class="nav" data-view="accounts"><div class="i">▤</div>Contas</button>
+<button class="nav" data-view="investments"><div class="i">◇</div>Investimentos</button>
+<button class="nav" data-view="settings"><div class="i">⚙</div>Ajustes</button>
+</nav>
 
-  <nav class="bottom-nav hidden" id="bottomNav">
-    <button class="nav-btn active" data-view="home"><div class="icon">⌂</div>Início</button>
-    <button class="nav-btn" data-view="ken"><div class="icon">◒</div>Ken</button>
-    <button class="nav-btn" data-view="va"><div class="icon">◉</div>VA</button>
-    <button class="nav-btn" data-view="vr"><div class="icon">◉</div>VR</button>
-    <button class="nav-btn" data-view="maria"><div class="icon">◐</div>Maria</button>
-  </nav>
+<div class="modalwrap" id="moveModal"><div class="modal">
+<h3 id="moveTitle">Adicionar débito</h3><div class="help" id="moveHelp"></div>
+<div class="field"><label>Conta</label><select id="moveAccount"></select></div>
+<div class="field"><label>Valor</label><input id="moveAmount" type="number" inputmode="decimal" min="0" step="0.01"></div>
+<div class="field"><label>Descrição</label><input id="moveDesc" maxlength="70" placeholder="Ex.: Uber, mercado, reembolso"></div>
+<div class="field"><label>Data</label><input id="moveDate" type="date"></div>
+<div class="modal-actions"><button class="cancel" data-close="moveModal">Cancelar</button><button class="primary" id="saveMove">Salvar</button></div>
+</div></div>
 
-  <div class="modal-wrap" id="debitModal"><div class="modal">
-    <h3>Adicionar débito</h3><div class="help" id="debitHelp"></div>
-    <div class="field"><label>Valor</label><input id="debitValue" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0,00"></div>
-    <div class="field"><label>Descrição</label><input id="debitDesc" type="text" maxlength="60" placeholder="Ex.: Uber, mercado, almoço"></div>
-    <div class="field"><label>Data</label><input id="debitDate" type="date"></div>
-    <div class="modal-actions"><button class="cancel" data-close="debitModal">Cancelar</button><button class="primary" id="saveDebitBtn">Adicionar</button></div>
-  </div></div>
+<div class="modalwrap" id="dailyModal"><div class="modal">
+<h3>Adicionar saldo do dia</h3><div class="help" id="dailyHelp"></div><div class="card" id="dailyPreview"></div>
+<div class="modal-actions"><button class="cancel" data-close="dailyModal">Cancelar</button><button class="primary" id="saveDaily">Adicionar</button></div>
+</div></div>
 
-  <div class="modal-wrap" id="startModal"><div class="modal">
-    <h3>Começar controle</h3><div class="help" id="startHelp"></div>
-    <div class="field"><label>Primeiro dia</label><input id="startDate" type="date"></div>
-    <div class="modal-actions"><button class="cancel" data-close="startModal">Cancelar</button><button class="primary" id="startBtn">Começar</button></div>
-  </div></div>
+<div class="modalwrap" id="accountModal"><div class="modal">
+<h3 id="accountModalTitle">Nova conta</h3><div class="help">A conta vira um novo saldo no site. Você pode criar quantas precisar.</div>
+<input id="accountId" type="hidden">
+<div class="field"><label>Nome</label><input id="accountName" maxlength="40" placeholder="Ex.: Nubank Ken"></div>
+<div class="field"><label>Proprietário</label><input id="accountOwner" maxlength="40" placeholder="Ex.: Ken"></div>
+<div class="field"><label>Valor diário</label><input id="accountDaily" type="number" min="0" step="0.01" inputmode="decimal"></div>
+<div class="field"><label>Tipo</label><select id="accountType"><option value="money">Dinheiro / cartão</option><option value="va">VA</option><option value="vr">VR</option><option value="other">Outro</option></select></div>
+<label class="check"><input id="accountInvestable" type="checkbox"> Considerar esta conta na projeção de investimentos</label>
+<div class="modal-actions"><button class="cancel" data-close="accountModal">Cancelar</button><button class="primary" id="saveAccount">Salvar</button></div>
+</div></div>
 
-  <div class="modal-wrap" id="creditModal"><div class="modal">
-    <h3>Adicionar saldo do dia</h3><div class="help" id="creditHelp"></div>
-    <div class="activity-card">
-      <div class="activity-row"><div class="title">Débito Ken</div><div class="money positive" id="creditKen"></div></div>
-      <div class="activity-row"><div class="title">VA Ken</div><div class="money positive" id="creditVa"></div></div>
-      <div class="activity-row"><div class="title">VR Ken</div><div class="money positive" id="creditVr"></div></div>
-      <div class="activity-row"><div class="title">Débito Maria Clara</div><div class="money positive" id="creditMaria"></div></div>
-    </div>
-    <div class="modal-actions"><button class="cancel" data-close="creditModal">Cancelar</button><button class="primary" id="creditBtn">Adicionar</button></div>
-  </div></div>
+<div class="modalwrap" id="investmentModal"><div class="modal">
+<h3 id="investmentTitle">Novo investimento</h3><div class="help">Cadastre apenas o valor que já está realmente guardado/investido.</div>
+<input id="investmentId" type="hidden">
+<div class="field"><label>Nome</label><input id="investmentName" maxlength="50" placeholder="Ex.: Reserva de emergência"></div>
+<div class="field"><label>Saldo atual</label><input id="investmentBalance" type="number" min="0" step="0.01" inputmode="decimal"></div>
+<div class="modal-actions"><button class="cancel" data-close="investmentModal">Cancelar</button><button class="primary" id="saveInvestment">Salvar</button></div>
+</div></div>
 
-  <div class="modal-wrap" id="manualCreditModal"><div class="modal">
-    <h3>Adicionar crédito</h3>
-    <div class="help">Use para dinheiro extra ou qualquer entrada pontual. Isso aumenta somente o saldo escolhido e não altera o valor diário.</div>
-    <div class="field">
-      <label>Saldo</label>
-      <select id="manualCreditAccount">
-        <option value="ken">Débito Ken</option>
-        <option value="va">VA Ken</option>
-        <option value="vr">VR Ken</option>
-        <option value="maria">Débito Maria Clara</option>
-      </select>
-    </div>
-    <div class="field"><label>Valor</label><input id="manualCreditValue" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0,00"></div>
-    <div class="field"><label>Descrição</label><input id="manualCreditDesc" type="text" maxlength="60" placeholder="Ex.: Reembolso, Pix, dinheiro extra"></div>
-    <div class="field"><label>Data</label><input id="manualCreditDate" type="date"></div>
-    <div class="modal-actions"><button class="cancel" data-close="manualCreditModal">Cancelar</button><button class="primary" id="saveManualCreditBtn">Adicionar crédito</button></div>
-  </div></div>
+<div class="modalwrap" id="sourceModal"><div class="modal">
+<h3 id="sourceTitle">Novo cartão / automação</h3><div class="help">O iPhone identifica a origem; o site decide em qual conta a compra deve cair.</div>
+<input id="sourceId" type="hidden">
+<div class="field"><label>Nome da origem</label><input id="sourceName" maxlength="50" placeholder="Ex.: Itaú Black Ken"></div>
+<div class="field"><label>Enviar compras para</label><select id="sourceAccount"></select></div>
+<button class="danger full hidden" id="disableSource" style="margin-bottom:8px">Desativar esta automação</button><div class="modal-actions"><button class="cancel" data-close="sourceModal">Cancelar</button><button class="primary" id="saveSource">Salvar</button></div>
+</div></div>
 
-  <div class="modal-wrap" id="settingsModal"><div class="modal">
-    <h3>Ajustar valores diários</h3>
-    <div class="help">A mudança vale apenas para os próximos dias adicionados. Os dias anteriores mantêm o valor que tinham quando foram lançados.</div>
-    <div class="settings-grid">
-      <div class="field"><label>Débito Ken — valor por dia</label><input id="settingKen" type="number" inputmode="decimal" min="0" step="0.01"></div>
-      <div class="field"><label>VA Ken — valor por dia</label><input id="settingVa" type="number" inputmode="decimal" min="0" step="0.01"></div>
-      <div class="field"><label>VR Ken — valor por dia</label><input id="settingVr" type="number" inputmode="decimal" min="0" step="0.01"></div>
-      <div class="field"><label>Débito Maria Clara — valor por dia</label><input id="settingMaria" type="number" inputmode="decimal" min="0" step="0.01"></div>
-    </div>
-    <button class="primary" id="saveSettingsBtn">Salvar novos valores</button>
+<div class="modalwrap" id="cycleModal"><div class="modal">
+<h3>Definir Dia 0</h3><div class="help">Todos os saldos começam em R$ 0,00 nesse dia. O primeiro valor diário entra no dia seguinte.</div>
+<div class="field"><label>Dia 0</label><input id="cycleDate" type="date"></div>
+<div class="modal-actions"><button class="cancel" data-close="cycleModal">Cancelar</button><button class="primary" id="saveCycle">Definir</button></div>
+</div></div>
 
-    <div class="divider"></div>
-    <div class="danger-zone">
-      <h4>Dia inicial</h4>
-      <p>O dia que você definir será o Dia 0: os quatro saldos começam em R$ 0,00. O histórico anterior fica guardado, mas deixa de entrar no saldo atual.</p>
-      <button class="secondary" id="openCycleReset">Definir novo dia inicial</button>
-    </div>
+<div class="modalwrap" id="pendingModal"><div class="modal">
+<h3>Confirmar compra</h3><div class="help" id="pendingText"></div>
+<button class="primary full" id="confirmPending">Confirmar</button>
+<button class="ghost full" data-close="pendingModal" style="margin-top:6px">Agora não</button>
+</div></div>
 
-    <div class="divider"></div>
-    <div class="danger-zone">
-      <h4>Zerar saldo</h4>
-      <p>Zerar não apaga seus lançamentos. O site cria um ajuste que leva o saldo escolhido a R$ 0,00 e mantém o histórico do ciclo atual.</p>
-      <div class="zero-grid">
-        <button class="danger-btn" data-zero="ken">Zerar Débito Ken</button>
-        <button class="danger-btn" data-zero="va">Zerar VA Ken</button>
-        <button class="danger-btn" data-zero="vr">Zerar VR Ken</button>
-        <button class="danger-btn" data-zero="maria">Zerar Débito Maria Clara</button>
-        <button class="danger-btn" data-zero="all">Zerar os quatro saldos</button>
-      </div>
-    </div>
+<div class="toast" id="toast"></div>
 
-    <div class="divider"></div>
-    <div class="danger-zone">
-      <h4>Apagar histórico</h4>
-      <p>Apaga definitivamente todos os dias, débitos, créditos extras e zeramentos. Os valores diários configurados e os logins são mantidos.</p>
-      <button class="danger-btn" id="clearHistoryBtn">Apagar todo o histórico</button>
-    </div>
-    <button class="tertiary" data-close="settingsModal">Fechar</button>
-  </div></div>
+<script type="module">
+import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/+esm";
+const SUPABASE_URL="https://owjuihjcypqonvlpsgqu.supabase.co",SUPABASE_KEY="sb_publishable_kbAOka2sxT40KPWgaXEA0g_adwNHUtv",VAPID_PUBLIC_KEY="BG2QzMbmf6NjdY1WOcuep7ohMo-WXc3ci5clXKBgRXwi_GHJb-8T6Oxi4HP1u4WV2tLcKAmu9mkjjFomUa07Boc";
+const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
+const $=s=>document.querySelector(s),app=$("#app");
+let session=null,householdId=null,settings=null,accounts=[],dailyCredits=[],transactions=[],investments=[],sources=[],pending=[],currentView="home",selectedAccountId=null,moveKind="debit",selectedPending=null,channel=null;
 
-  <div class="modal-wrap" id="cycleModal"><div class="modal">
-    <h3>Definir dia inicial</h3>
-    <div class="help">O dia escolhido será o Dia 0. Nesse dia, Débito Ken, VA Ken, VR Ken e Débito Maria Clara ficam em R$ 0,00. O primeiro saldo diário entra no dia seguinte.</div>
-    <div class="field"><label>Dia inicial (Dia 0)</label><input id="cycleDate" type="date"></div>
-    <div class="modal-actions"><button class="cancel" data-close="cycleModal">Cancelar</button><button class="primary" id="cycleBtn">Definir Dia 0</button></div>
-  </div></div>
+const money=n=>Number(n||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`};
+const parse=s=>{const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)};
+const fmt=s=>parse(s).toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"});
+const addDays=(s,n)=>{const d=parse(s);d.setDate(d.getDate()+n);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`};
+const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+function toast(m){const e=$("#toast");e.textContent=m;e.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>e.classList.remove("show"),2200)}
+function openModal(id){$("#"+id).classList.add("open")}function closeModal(id){$("#"+id).classList.remove("open")}
+function cycleId(){return settings?.cycle_id||null}function cycleStart(){return settings?.cycle_start_date||null}
+function activeAccounts(){return accounts.filter(a=>a.active).sort((a,b)=>a.sort_order-b.sort_order||a.created_at.localeCompare(b.created_at))}
+function account(id){return accounts.find(a=>a.id===id)}
+function activeDaily(){return cycleId()?dailyCredits.filter(x=>x.cycle_id===cycleId()):[]}
+function activeTx(){return cycleId()?transactions.filter(x=>x.cycle_id===cycleId()):[]}
+function balance(id){
+ const daily=activeDaily().filter(x=>x.account_id===id).reduce((s,x)=>s+Number(x.amount),0);
+ const tx=activeTx().filter(x=>x.account_id===id).reduce((s,x)=>s+(x.kind==="debit"?-Number(x.amount):Number(x.amount)),0);
+ return daily+tx;
+}
+function totalBalance(){return activeAccounts().reduce((s,a)=>s+balance(a.id),0)}
+function investmentTotal(){return investments.filter(x=>x.active).reduce((s,x)=>s+Number(x.balance),0)}
+function investableNet(){return activeAccounts().filter(a=>a.counts_as_investable).reduce((s,a)=>s+balance(a.id),0)}
+function projectedInvestments(){return investmentTotal()+investableNet()}
+function nextDailyDate(){
+ if(!cycleStart())return null;
+ const dates=[...new Set(activeDaily().map(x=>x.credit_date))].sort();
+ return dates.length?addDays(dates[dates.length-1],1):addDays(cycleStart(),1);
+}
+function accountOptions(el,selected=null){el.innerHTML=activeAccounts().map(a=>`<option value="${a.id}" ${a.id===selected?"selected":""}>${esc(a.name)}</option>`).join("")}
 
-  <div class="modal-wrap" id="daysModal"><div class="modal">
-    <h3 id="daysTitle">Dias considerados</h3>
-    <div class="help" id="daysHelp"></div>
-    <div id="daysList"></div>
-    <button class="tertiary" data-close="daysModal">Fechar</button>
-  </div></div>
+async function loadData(first=false){
+ if(!householdId)return;
+ const [s,a,d,t,i,src,p]=await Promise.all([
+  sb.from("household_settings").select("cycle_start_date,cycle_started_at,cycle_id,updated_at").eq("household_id",householdId).maybeSingle(),
+  sb.from("finance_accounts").select("*").eq("household_id",householdId).order("sort_order"),
+  sb.from("finance_daily_credits").select("*").eq("household_id",householdId).order("credit_date"),
+  sb.from("finance_transactions").select("*").eq("household_id",householdId).order("created_at",{ascending:false}),
+  sb.from("finance_investments").select("*").eq("household_id",householdId).order("sort_order"),
+  sb.from("finance_sources").select("*").eq("household_id",householdId).order("created_at"),
+  sb.from("finance_pending_transactions").select("*").eq("household_id",householdId).eq("status","pending").order("created_at",{ascending:false})
+ ]);
+ const err=s.error||a.error||d.error||t.error||i.error||src.error||p.error;
+ if(err){console.error(err);if(first)toast("Rode primeiro o SQL 07_contas_dinamicas_investimentos.sql.");return}
+ settings=s.data;accounts=a.data||[];dailyCredits=d.data||[];transactions=t.data||[];investments=i.data||[];sources=src.data||[];pending=p.data||[];
+ render();
+ const param=new URLSearchParams(location.search).get("pending");
+ if(param){const item=pending.find(x=>x.id===param);if(item)openPending(item);history.replaceState({},"",location.pathname)}
+}
 
-  <div class="toast" id="toast"></div>
+function subscribe(){
+ if(channel)sb.removeChannel(channel);
+ channel=sb.channel("meu-saldo-flex")
+ .on("postgres_changes",{event:"*",schema:"public",table:"finance_accounts"},()=>loadData())
+ .on("postgres_changes",{event:"*",schema:"public",table:"finance_daily_credits"},()=>loadData())
+ .on("postgres_changes",{event:"*",schema:"public",table:"finance_transactions"},()=>loadData())
+ .on("postgres_changes",{event:"*",schema:"public",table:"finance_investments"},()=>loadData())
+ .on("postgres_changes",{event:"*",schema:"public",table:"finance_sources"},()=>loadData())
+ .on("postgres_changes",{event:"*",schema:"public",table:"finance_pending_transactions"},()=>loadData())
+ .on("postgres_changes",{event:"*",schema:"public",table:"household_settings"},()=>loadData())
+ .subscribe();
+}
 
-  <script type="module">
-    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.111.0/+esm";
+function showLogin(msg=""){
+ $("#nav").classList.add("hidden");
+ app.innerHTML=`<div class="login"><div class="loginbox"><div class="mark">R$</div><div class="eyebrow">Controle compartilhado</div><h1>Meu saldo</h1><p>Ken e Maria Clara usam os mesmos saldos, contas e investimentos.</p>
+ <div class="error" style="${msg?"display:block":""}">${esc(msg)}</div>
+ <form id="loginForm"><div class="field"><label>E-mail</label><input id="email" type="email" required></div><div class="field"><label>Senha</label><input id="password" type="password" required></div><button class="primary full">Entrar</button></form></div></div>`;
+ $("#loginForm").onsubmit=async e=>{e.preventDefault();const r=await sb.auth.signInWithPassword({email:$("#email").value.trim(),password:$("#password").value});if(r.error)return showLogin("E-mail ou senha incorretos.");session=r.data.session;await afterLogin()};
+}
+async function afterLogin(){
+ const user=session?.user;if(!user)return showLogin();
+ const r=await sb.from("household_members").select("household_id").eq("user_id",user.id).maybeSingle();
+ if(r.error||!r.data){await sb.auth.signOut();return showLogin("Usuário não vinculado ao controle.")}
+ householdId=r.data.household_id;$("#nav").classList.remove("hidden");await loadData(true);subscribe();
+}
+async function logout(){if(channel)await sb.removeChannel(channel);await sb.auth.signOut();session=null;householdId=null;showLogin()}
 
-    const SUPABASE_URL = "https://owjuihjcypqonvlpsgqu.supabase.co";
-    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_kbAOka2sxT40KPWgaXEA0g_adwNHUtv";
-    const sb = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+function render(){if(selectedAccountId&&account(selectedAccountId)?.active===false)selectedAccountId=null;if(selectedAccountId)return renderAccountDetail(selectedAccountId);currentView==="home"?renderHome():currentView==="accounts"?renderAccounts():currentView==="investments"?renderInvestments():renderSettings();document.querySelectorAll(".nav").forEach(b=>b.classList.toggle("active",b.dataset.view===currentView))}
+function pendingHtml(){
+ if(!pending.length)return "";
+ const p=pending[0],a=account(p.account_id);
+ return `<div class="pending"><strong>Compra para confirmar</strong><p>${money(p.amount)} · ${esc(p.merchant)}<br>${a?esc(a.name):"Conta"} · ${fmt(p.transaction_date)}</p><button class="primary full" id="reviewPending">Confirmar</button>${pending.length>1?`<div class="next">+${pending.length-1} pendente(s)</div>`:""}</div>`;
+}
+function accountCard(a){return `<button class="account-card ${a.account_type}" data-account="${a.id}"><div><div class="name">${esc(a.name)}</div><div class="meta">+ ${money(a.daily_amount)}/dia${a.owner_label?` · ${esc(a.owner_label)}`:""}</div></div><div style="display:flex;align-items:center"><div class="amt">${money(balance(a.id))}</div><span class="arrow">›</span></div></button>`}
+function recentHtml(limit=7){
+ const tx=activeTx().slice(0,limit);
+ if(!tx.length)return `<div class="card"><div class="empty">As movimentações vão aparecer aqui.</div></div>`;
+ return `<div class="card">${tx.map(x=>{const a=account(x.account_id),sign=x.kind==="debit"?"−":"+",cls=x.kind==="debit"?"neg":"pos";return `<div class="row"><div><div class="title">${esc(x.description)}</div><div class="meta">${fmt(x.txn_date)} · ${esc(a?.name||"Conta")}</div></div><div class="money ${cls}">${sign} ${money(Math.abs(Number(x.amount)))}</div></div>`}).join("")}</div>`;
+}
+function renderHome(){
+ const date=new Date().toLocaleDateString("pt-BR",{weekday:"short",day:"2-digit",month:"short"}).replaceAll(".",""),next=nextDailyDate(),canAdd=!!next&&next<=today();
+ app.innerHTML=`<div class="top"><div><div class="eyebrow">Controle pessoal</div><h1>Meu saldo</h1></div><div><span class="pill">${date}</span> <button class="pill" id="logout">Sair</button></div></div>
+ <div class="sync"><span class="dot ${navigator.onLine?"":"off"}"></span>${navigator.onLine?"Sincronizado online":"Sem conexão"}</div>
+ ${pendingHtml()}
+ ${!cycleStart()?`<div class="notice"><strong>Defina o Dia 0</strong><p>O primeiro valor diário entra no dia seguinte.</p><button class="secondary" id="defineCycle">Definir Dia 0</button></div>`:""}
+ <div class="hero"><div class="label">Saldo disponível total</div><div class="value">${money(totalBalance())}</div><div class="sub">${cycleStart()?`Dia 0: ${fmt(cycleStart())} · ${activeAccounts().length} conta(s) ativa(s)`:"Ainda não iniciado"}</div></div>
+ <div class="cards">${activeAccounts().map(accountCard).join("")}</div>
+ <button class="primary full" id="addDaily" ${canAdd?"":"disabled"} style="margin-top:11px">+ Adicionar saldo do dia</button><div class="next">${cycleStart()?(canAdd?`Próximo saldo: ${fmt(next)}`:`Próximo saldo: ${fmt(next)}${next>today()?" · ainda não chegou":""}`):"Defina primeiro o Dia 0"}</div>
+ <div class="actions"><button class="secondary" id="addDebit">− Débito</button><button class="secondary" id="addCredit">+ Crédito</button></div>
+ <div class="section"><h2>Movimentações recentes</h2><span>${activeTx().length}</span></div>${recentHtml()}`;
+ $("#logout").onclick=logout;$("#defineCycle")?.addEventListener("click",openCycle);$("#addDaily").onclick=openDaily;$("#addDebit").onclick=()=>openMove("debit");$("#addCredit").onclick=()=>openMove("credit");$("#reviewPending")?.addEventListener("click",()=>openPending(pending[0]));
+ document.querySelectorAll("[data-account]").forEach(b=>b.onclick=()=>{selectedAccountId=b.dataset.account;render()});
+}
 
-    const ACCOUNTS = {
-      ken:{name:"Débito Ken",cls:"ken",setting:"ken_daily",credit:"ken_amount"},
-      va:{name:"VA Ken",cls:"vr",setting:"va_daily",credit:"va_amount"},
-      vr:{name:"VR Ken",cls:"vr",setting:"vr_daily",credit:"vr_amount"},
-      maria:{name:"Débito Maria Clara",cls:"maria",setting:"maria_daily",credit:"maria_amount"}
-    };
+function renderAccounts(){
+ app.innerHTML=`<div class="top"><div><div class="eyebrow">Saldos</div><h1>Contas</h1></div><button class="pill" id="newAccount">+ Nova</button></div><div class="cards">${activeAccounts().map(accountCard).join("")}</div>
+ <div class="section"><h2>Como funciona</h2></div><div class="notice"><strong>Conta ≠ cartão</strong><p>Uma conta é um saldo. Você pode vincular vários cartões à mesma conta em Ajustes.</p></div>`;
+ $("#newAccount").onclick=()=>openAccount();document.querySelectorAll("[data-account]").forEach(b=>b.onclick=()=>{selectedAccountId=b.dataset.account;render()});
+}
 
-    let session=null, householdId=null, credits=[], debits=[], adjustments=[], manualCredits=[];
-    let settings={ken_daily:70,va_daily:41,vr_daily:0,maria_daily:30,cycle_start_date:null,cycle_started_at:null,cycle_id:null};
-    let currentView="home", currentDebitAccount=null, channel=null, busy=false;
+function renderAccountDetail(id){
+ const a=account(id);if(!a)return selectedAccountId=null,render();const tx=activeTx().filter(x=>x.account_id===id);
+ app.innerHTML=`<div class="detail-head"><button class="back" id="back">‹ Voltar</button><div class="eyebrow">${a.owner_label?esc(a.owner_label):"Conta"}</div><h1>${esc(a.name)}</h1></div>
+ <div class="detail-box"><div class="eyebrow">Saldo atual</div><div class="amt">${money(balance(id))}</div><div class="meta">+ ${money(a.daily_amount)} por dia · ${a.counts_as_investable?"entra":"não entra"} na projeção de investimentos</div></div>
+ <div class="actions"><button class="secondary" id="debitA">− Débito</button><button class="secondary" id="creditA">+ Crédito</button></div><button class="secondary full" id="editA" style="margin-top:8px">Editar conta</button><button class="danger full" id="zeroA" style="margin-top:8px">Zerar saldo</button>
+ <div class="section"><h2>Histórico da conta</h2><span>${tx.length}</span></div>${tx.length?`<div class="card">${tx.map(x=>`<div class="row"><div><div class="title">${esc(x.description)}</div><div class="meta">${fmt(x.txn_date)}</div></div><div class="money ${x.kind==="debit"?"neg":"pos"}">${x.kind==="debit"?"−":"+"} ${money(Math.abs(Number(x.amount)))}</div></div>`).join("")}</div>`:`<div class="card"><div class="empty">Nenhuma movimentação.</div></div>`}
+ <button class="ghost full" id="archiveA" style="margin-top:12px">Arquivar esta conta</button>`;
+ $("#back").onclick=()=>{selectedAccountId=null;render()};$("#debitA").onclick=()=>openMove("debit",id);$("#creditA").onclick=()=>openMove("credit",id);$("#editA").onclick=()=>openAccount(id);$("#zeroA").onclick=()=>zeroAccount(id);$("#archiveA").onclick=()=>archiveAccount(id);
+}
 
-    const $=s=>document.querySelector(s);
-    const money=n=>Number(n||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
-    const todayISO=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`};
-    const parseISO=iso=>{const[y,m,d]=iso.split("-").map(Number);return new Date(y,m-1,d)};
-    const formatDate=iso=>parseISO(iso).toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit",year:"numeric"});
-    const addDays=(iso,n)=>{const d=parseISO(iso);d.setDate(d.getDate()+n);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`};
-    const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
-    const daily=k=>Number(settings[ACCOUNTS[k].setting]||0);
-    const creditAmount=(c,k)=>Number(c[ACCOUNTS[k].credit]||0);
+function renderInvestments(){
+ const total=investmentTotal(),net=investableNet(),proj=projectedInvestments();
+ app.innerHTML=`<div class="top"><div><div class="eyebrow">Patrimônio</div><h1>Investimentos</h1></div><button class="pill" id="newInvestment">+ Novo</button></div>
+ <div class="invest-hero"><div class="k">Investido hoje</div><div class="big">${money(total)}</div><div class="invest-grid"><div><span>Saldo líquido investível</span><b>${net>=0?"+ ":"− "}${money(Math.abs(net))}</b></div><div><span>Investimentos cadastrados</span><b>${investments.filter(x=>x.active).length}</b></div></div></div>
+ <div class="project"><div class="eyebrow">${net>=0?"Se eu guardasse tudo agora":"Após cobrir o saldo negativo"}</div><div class="big">${money(proj)}</div><p>${net>=0?`Seu saldo investível atual acrescentaria ${money(net)} ao que já está guardado.`:`Seu saldo investível está negativo em ${money(Math.abs(net))}, então a projeção desconta esse valor dos investimentos.`}</p></div>
+ <div class="section"><h2>Onde está guardado</h2><span>${money(total)}</span></div>
+ <div class="card">${investments.filter(x=>x.active).length?investments.filter(x=>x.active).map(x=>`<div class="row"><div><div class="title">${esc(x.name)}</div><div class="meta">valor informado manualmente</div></div><div><div class="money">${money(x.balance)}</div><div style="display:flex;gap:4px;margin-top:5px"><button class="mini" data-invest="${x.id}">Editar</button><button class="mini" data-delete-invest="${x.id}">Excluir</button></div></div></div>`).join(""):`<div class="empty">Cadastre sua reserva, CDB, Tesouro, ações ou qualquer dinheiro já guardado.</div>`}</div>
+ <div class="section"><h2>Contas consideradas</h2></div><div class="card">${activeAccounts().filter(a=>a.counts_as_investable).length?activeAccounts().filter(a=>a.counts_as_investable).map(a=>`<div class="row"><div><div class="title">${esc(a.name)}</div><div class="meta">saldo atual</div></div><div class="money ${balance(a.id)>=0?"pos":"neg"}">${money(balance(a.id))}</div></div>`).join(""):`<div class="empty">Nenhuma conta está marcada como investível.</div>`}</div>`;
+ $("#newInvestment").onclick=()=>openInvestment();document.querySelectorAll("[data-invest]").forEach(b=>b.onclick=()=>openInvestment(b.dataset.invest));document.querySelectorAll("[data-delete-invest]").forEach(b=>b.onclick=()=>deleteInvestment(b.dataset.deleteInvest));
+}
 
-    function toast(msg){const el=$("#toast");el.textContent=msg;el.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove("show"),2200)}
-    function openModal(id){$("#"+id).classList.add("open")}
-    function closeModal(id){$("#"+id).classList.remove("open")}
+function renderSettings(){
+ const endpoint=`${SUPABASE_URL}/functions/v1/wallet-capture`;
+ app.innerHTML=`<div class="top"><div><div class="eyebrow">Configuração</div><h1>Ajustes</h1></div></div><div class="settings">
+ <div class="settings-block"><h3>Contas</h3><p>Crie ou edite saldos. VA e VR ficam fora da projeção de investimentos por padrão.</p>${activeAccounts().map(a=>`<div class="settings-row"><div><div class="name">${esc(a.name)}</div><div class="sub">${money(a.daily_amount)}/dia · ${a.counts_as_investable?"investível":"não investível"}</div></div><button class="mini" data-edit-account="${a.id}">Editar</button></div>`).join("")}<button class="secondary full" id="newAccountS" style="margin-top:8px">+ Nova conta</button></div>
+ <div class="settings-block"><h3>Cartões e automações</h3><p>O Atalho envia apenas a origem. Você pode mudar o destino aqui sem refazer o Atalho.</p>${sources.filter(s=>s.active).length?sources.filter(s=>s.active).map(s=>`<div class="settings-row"><div><div class="name">${esc(s.name)} → ${esc(account(s.account_id)?.name||"Conta")}</div><div class="sub">token da automação</div><code class="token">${s.token}</code></div><button class="mini" data-source="${s.id}">Editar</button></div>`).join(""):`<div class="empty">Nenhum cartão configurado.</div>`}<button class="secondary full" id="newSource" style="margin-top:8px">+ Novo cartão / automação</button></div>
+ <div class="settings-block"><h3>Notificações no iPhone</h3><p>Instale o site na Tela de Início e ative Web Push. Quando uma compra chegar pelo Atalho, toque na notificação e confirme.</p><button class="primary full" id="enablePush">Ativar notificações neste iPhone</button></div>
+ <div class="settings-block"><h3>Dia 0</h3><p>${cycleStart()?`Atual: ${fmt(cycleStart())}.`:"Ainda não definido."} Trocar o Dia 0 inicia um novo ciclo sem apagar o histórico anterior.</p><button class="secondary full" id="changeCycle">Definir / trocar Dia 0</button></div>
+ <div class="settings-block"><h3>Integração do Atalho</h3><p>Endpoint usado por todos os cartões. Cada cartão usa o próprio token mostrado acima.</p><code class="token">${endpoint}</code><button class="secondary full" id="copyEndpoint" style="margin-top:8px">Copiar endpoint</button></div>
+ <div class="settings-block"><h3>Histórico</h3><p>Apaga dias, débitos, créditos e confirmações. Contas, cartões e investimentos continuam cadastrados.</p><button class="danger full" id="clearHistory">Apagar histórico financeiro</button></div>
+ </div>`;
+ $("#newAccountS").onclick=()=>openAccount();document.querySelectorAll("[data-edit-account]").forEach(b=>b.onclick=()=>openAccount(b.dataset.editAccount));$("#newSource").onclick=()=>openSource();document.querySelectorAll("[data-source]").forEach(b=>b.onclick=()=>openSource(b.dataset.source));$("#enablePush").onclick=enablePush;$("#changeCycle").onclick=openCycle;$("#copyEndpoint").onclick=async()=>{await navigator.clipboard.writeText(endpoint);toast("Endpoint copiado.")};$("#clearHistory").onclick=clearHistory;
+}
 
-    function cycleStart(){return settings.cycle_start_date||null}
-    function cycleId(){return settings.cycle_id||null}
-    function activeCredits(){return cycleId()?credits.filter(c=>c.cycle_id===cycleId()):[]}
-    function activeDebits(){return cycleId()?debits.filter(d=>d.cycle_id===cycleId()):[]}
-    function activeAdjustments(){return cycleId()?adjustments.filter(a=>a.cycle_id===cycleId()):[]}
-    function activeManualCredits(){return cycleId()?manualCredits.filter(c=>c.cycle_id===cycleId()):[]}
+function openMove(kind,accountId=null){if(!cycleStart()||!cycleId())return toast("Defina primeiro o Dia 0.");moveKind=kind;$("#moveTitle").textContent=kind==="debit"?"Adicionar débito":"Adicionar crédito";$("#moveHelp").textContent=kind==="debit"?"Reduz o saldo da conta escolhida.":"Use para reembolso, Pix ou dinheiro inesperado.";accountOptions($("#moveAccount"),accountId||activeAccounts()[0]?.id);$("#moveAmount").value="";$("#moveDesc").value="";$("#moveDate").min=addDays(cycleStart(),1);$("#moveDate").max=today();$("#moveDate").value=today()>cycleStart()?today():addDays(cycleStart(),1);openModal("moveModal")}
+async function saveMove(){
+ const account_id=$("#moveAccount").value,amount=Number($("#moveAmount").value),description=$("#moveDesc").value.trim()||(moveKind==="debit"?"Débito":"Crédito"),txn_date=$("#moveDate").value;if(!account_id||!amount||amount<=0||!txn_date)return toast("Revise os campos.");
+ const r=await sb.from("finance_transactions").insert({household_id:householdId,cycle_id:cycleId(),account_id,kind:moveKind,amount:Number(amount.toFixed(2)),description,txn_date,created_by:session.user.id});if(r.error){console.error(r.error);return toast("Não consegui salvar.")}closeModal("moveModal");await loadData();toast(moveKind==="debit"?"Débito adicionado.":"Crédito adicionado.");
+}
 
-    function balance(account){
-      const creditTotal=activeCredits().reduce((s,c)=>s+creditAmount(c,account),0);
-      const debitTotal=activeDebits().filter(d=>d.account===account).reduce((s,d)=>s+Number(d.amount),0);
-      const adjustmentTotal=activeAdjustments().filter(a=>a.account===account).reduce((s,a)=>s+Number(a.amount),0);
-      const manualCreditTotal=activeManualCredits().filter(c=>c.account===account).reduce((s,c)=>s+Number(c.amount),0);
-      return creditTotal-debitTotal+adjustmentTotal+manualCreditTotal;
-    }
-    function totalBalance(){return Object.keys(ACCOUNTS).reduce((s,k)=>s+balance(k),0)}
-    function nextCreditDate(){
-      const start=cycleStart();
-      if(!start)return null;
-      const current=activeCredits().map(c=>c.credit_date).sort();
-      return current.length?addDays(current[current.length-1],1):addDays(start,1);
-    }
-    function daysSummary(){
-      const start=cycleStart();
-      if(!start)return "Nenhum ciclo iniciado";
-      const current=activeCredits().map(c=>c.credit_date).sort();
-      if(!current.length)return `Dia 0: ${formatDate(start)}`;
-      return `Dia 0: ${formatDate(start)} · até ${formatDate(current[current.length-1])}`;
-    }
-    function latestActivity(limit=7){
-      const items=[
-        ...activeCredits().map(c=>({type:"credit",...c,date:c.credit_date})),
-        ...activeDebits().map(d=>({type:"debit",...d,date:d.debit_date})),
-        ...activeManualCredits().map(c=>({type:"manual_credit",...c,date:c.credit_date})),
-        ...activeAdjustments().map(a=>({type:"adjustment",...a,date:a.adjustment_date}))
-      ];
-      return items.sort((a,b)=>b.date.localeCompare(a.date)||(b.created_at||"").localeCompare(a.created_at||"")).slice(0,limit);
-    }
+function openDaily(){
+ const date=nextDailyDate();if(!date)return;$("#dailyHelp").textContent=`Adicionar ${fmt(date)} para todas as contas ativas.`;$("#dailyPreview").innerHTML=activeAccounts().map(a=>`<div class="row"><div><div class="title">${esc(a.name)}</div><div class="meta">valor diário atual</div></div><div class="money pos">+ ${money(a.daily_amount)}</div></div>`).join("");openModal("dailyModal");
+}
+async function saveDaily(){
+ const date=nextDailyDate();if(!date||date>today())return toast("Esse dia ainda não chegou.");const payload=activeAccounts().map(a=>({household_id:householdId,cycle_id:cycleId(),account_id:a.id,credit_date:date,amount:Number(a.daily_amount),created_by:session.user.id}));const r=await sb.from("finance_daily_credits").insert(payload);if(r.error){console.error(r.error);return toast(r.error.code==="23505"?"Esse dia já foi adicionado.":"Não consegui adicionar.")}closeModal("dailyModal");await loadData();toast(`Saldo de ${fmt(date)} adicionado.`);
+}
 
-    function showLogin(error=""){
-      $("#bottomNav").classList.add("hidden");
-      $("#app").innerHTML=`<div class="login-shell"><div class="login-box">
-        <div class="login-mark">R$</div><div class="eyebrow">Controle compartilhado</div><h1>Meu saldo diário</h1>
-        <p>Entre para visualizar e atualizar os mesmos saldos nos dois celulares.</p>
-        <div class="error-box" id="loginError" style="${error?"display:block":""}">${esc(error)}</div>
-        <form id="loginForm">
-          <div class="field"><label>E-mail</label><input id="loginEmail" type="email" autocomplete="email" required placeholder="seu@email.com"></div>
-          <div class="field"><label>Senha</label><input id="loginPassword" type="password" autocomplete="current-password" required placeholder="••••••••"></div>
-          <button class="primary login-btn" type="submit">Entrar</button>
-        </form>
-        <div class="login-note">Use um dos usuários autorizados no Supabase.</div>
-      </div></div>`;
-      $("#loginForm").addEventListener("submit",login);
-    }
+function openAccount(id=null){const a=id?account(id):null;$("#accountId").value=id||"";$("#accountModalTitle").textContent=a?"Editar conta":"Nova conta";$("#accountName").value=a?.name||"";$("#accountOwner").value=a?.owner_label||"";$("#accountDaily").value=a?.daily_amount??0;$("#accountType").value=a?.account_type||"money";$("#accountInvestable").checked=a?a.counts_as_investable:true;openModal("accountModal")}
+async function saveAccount(){
+ const id=$("#accountId").value,name=$("#accountName").value.trim(),owner_label=$("#accountOwner").value.trim()||null,daily_amount=Number($("#accountDaily").value),account_type=$("#accountType").value,counts_as_investable=$("#accountInvestable").checked;if(!name||!Number.isFinite(daily_amount)||daily_amount<0)return toast("Revise nome e valor diário.");
+ let r;if(id)r=await sb.from("finance_accounts").update({name,owner_label,daily_amount:Number(daily_amount.toFixed(2)),account_type,counts_as_investable,updated_at:new Date().toISOString()}).eq("id",id);else r=await sb.from("finance_accounts").insert({household_id:householdId,name,owner_label,daily_amount:Number(daily_amount.toFixed(2)),account_type,counts_as_investable,active:true,sort_order:(Math.max(0,...accounts.map(a=>a.sort_order))+1),created_by:session.user.id});
+ if(r.error){console.error(r.error);return toast("Não consegui salvar a conta.")}closeModal("accountModal");await loadData();toast("Conta salva.");
+}
+async function zeroAccount(id){const current=Number(balance(id).toFixed(2));if(Math.abs(current)<.005)return toast("Esse saldo já está zerado.");if(!confirm(`Zerar ${account(id).name}? O histórico será mantido.`))return;const r=await sb.from("finance_transactions").insert({household_id:householdId,cycle_id:cycleId(),account_id:id,kind:"adjustment",amount:Number((-current).toFixed(2)),description:"Saldo zerado",txn_date:today(),created_by:session.user.id});if(r.error)return toast("Não consegui zerar.");await loadData();toast("Saldo zerado.")}
+async function archiveAccount(id){const a=account(id),b=balance(id);if(Math.abs(b)>.005)return toast("Zere o saldo antes de arquivar esta conta.");if(!confirm(`Arquivar ${a.name}? Ela sai das telas, mas o histórico é preservado.`))return;const r=await sb.rpc("finance_archive_account",{p_account_id:id});if(r.error){console.error(r.error);return toast("Não consegui arquivar.")}selectedAccountId=null;await loadData();toast("Conta arquivada.")}
 
-    async function login(e){
-      e.preventDefault();
-      const btn=e.submitter;btn.disabled=true;btn.textContent="Entrando…";
-      const {data,error}=await sb.auth.signInWithPassword({email:$("#loginEmail").value.trim(),password:$("#loginPassword").value});
-      if(error){btn.disabled=false;btn.textContent="Entrar";$("#loginError").style.display="block";$("#loginError").textContent="E-mail ou senha incorretos.";return}
-      session=data.session;await afterLogin();
-    }
-    async function logout(){
-      if(channel)await sb.removeChannel(channel);
-      await sb.auth.signOut();session=null;householdId=null;credits=[];debits=[];adjustments=[];manualCredits=[];showLogin();
-    }
-    async function afterLogin(){
-      $("#app").innerHTML='<div class="loading">Carregando saldos…</div>';
-      const user=session?.user;if(!user)return showLogin();
-      const {data,error}=await sb.from("household_members").select("household_id").eq("user_id",user.id).maybeSingle();
-      if(error||!data){await sb.auth.signOut();session=null;return showLogin("Este usuário ainda não foi vinculado ao controle.")}
-      householdId=data.household_id;$("#bottomNav").classList.remove("hidden");await loadData(true);subscribeRealtime();
-    }
+function openInvestment(id=null){const x=id?investments.find(v=>v.id===id):null;$("#investmentId").value=id||"";$("#investmentTitle").textContent=x?"Editar investimento":"Novo investimento";$("#investmentName").value=x?.name||"";$("#investmentBalance").value=x?.balance??"";openModal("investmentModal")}
+async function saveInvestment(){
+ const id=$("#investmentId").value,name=$("#investmentName").value.trim(),balanceV=Number($("#investmentBalance").value);if(!name||!Number.isFinite(balanceV)||balanceV<0)return toast("Revise nome e saldo.");let r;if(id)r=await sb.from("finance_investments").update({name,balance:Number(balanceV.toFixed(2)),updated_at:new Date().toISOString()}).eq("id",id);else r=await sb.from("finance_investments").insert({household_id:householdId,name,balance:Number(balanceV.toFixed(2)),active:true,sort_order:(Math.max(0,...investments.map(x=>x.sort_order))+1),created_by:session.user.id});if(r.error){console.error(r.error);return toast("Não consegui salvar.")}closeModal("investmentModal");await loadData();toast("Investimento salvo.");
+}
 
-    async function loadData(first=false){
-      if(!householdId)return;
-      const [cRes,dRes,sRes,aRes,mRes]=await Promise.all([
-        sb.from("daily_credits").select("id,cycle_id,credit_date,ken_amount,va_amount,vr_amount,maria_amount,created_at").eq("household_id",householdId).order("credit_date",{ascending:true}),
-        sb.from("debits").select("id,cycle_id,account,amount,description,debit_date,created_at").eq("household_id",householdId).order("debit_date",{ascending:false}),
-        sb.from("household_settings").select("ken_daily,va_daily,vr_daily,maria_daily,cycle_start_date,cycle_started_at,cycle_id,updated_at").eq("household_id",householdId).maybeSingle(),
-        sb.from("balance_adjustments").select("id,cycle_id,account,amount,reason,adjustment_date,created_at").eq("household_id",householdId).order("adjustment_date",{ascending:false}),
-        sb.from("extra_credits").select("id,cycle_id,account,amount,description,credit_date,created_at").eq("household_id",householdId).order("credit_date",{ascending:false})
-      ]);
-      const err=cRes.error||dRes.error||sRes.error||aRes.error||mRes.error;
-      if(err){console.error(err);if(first)toast("Rode primeiro o SQL 06_creditos_va_vr.sql.");return}
-      credits=cRes.data||[];debits=dRes.data||[];adjustments=aRes.data||[];manualCredits=mRes.data||[];
-      if(sRes.data)settings={...settings,...sRes.data};
-      render();
-    }
+async function deleteInvestment(id){
+ const x=investments.find(v=>v.id===id);if(!x||!confirm(`Excluir ${x.name} dos investimentos? Isso não altera nenhuma conta.`))return;const r=await sb.from("finance_investments").delete().eq("id",id);if(r.error){console.error(r.error);return toast("Não consegui excluir.")}await loadData();toast("Investimento excluído.");
+}
 
-    function subscribeRealtime(){
-      if(channel)sb.removeChannel(channel);
-      channel=sb.channel("financas-compartilhadas-v2")
-        .on("postgres_changes",{event:"*",schema:"public",table:"daily_credits"},()=>loadData())
-        .on("postgres_changes",{event:"*",schema:"public",table:"debits"},()=>loadData())
-        .on("postgres_changes",{event:"*",schema:"public",table:"household_settings"},()=>loadData())
-        .on("postgres_changes",{event:"*",schema:"public",table:"balance_adjustments"},()=>loadData())
-        .on("postgres_changes",{event:"*",schema:"public",table:"extra_credits"},()=>loadData())
-        .subscribe();
-    }
+function openSource(id=null){const s=id?sources.find(x=>x.id===id):null;$("#sourceId").value=id||"";$("#sourceTitle").textContent=s?"Editar cartão / automação":"Novo cartão / automação";$("#sourceName").value=s?.name||"";accountOptions($("#sourceAccount"),s?.account_id||activeAccounts()[0]?.id);$("#disableSource").classList.toggle("hidden",!s);openModal("sourceModal")}
+async function saveSource(){
+ const id=$("#sourceId").value,name=$("#sourceName").value.trim(),account_id=$("#sourceAccount").value;if(!name||!account_id)return toast("Informe nome e conta.");let r;if(id)r=await sb.from("finance_sources").update({name,account_id,updated_at:new Date().toISOString()}).eq("id",id);else r=await sb.from("finance_sources").insert({household_id:householdId,name,account_id,notify_user_id:session.user.id,active:true,created_by:session.user.id});if(r.error){console.error(r.error);return toast("Não consegui salvar.")}closeModal("sourceModal");await loadData();toast(id?"Destino atualizado. O Atalho continua igual.":"Cartão criado. Copie o token em Ajustes.");
+}
 
-    function accountCard(key){
-      const a=ACCOUNTS[key];
-      return `<button class="balance-card ${a.cls}" data-go="${key}">
-        <div><div class="name">${a.name}</div><div class="daily">+ ${money(daily(key))} por dia</div></div>
-        <div style="display:flex;align-items:center"><div class="amount">${money(balance(key))}</div><div class="arrow">›</div></div>
-      </button>`;
-    }
+async function disableSource(){
+ const id=$("#sourceId").value;if(!id)return;if(!confirm("Desativar esta automação? O Atalho deixará de aceitar novas compras até você criar/ativar outra origem."))return;const r=await sb.from("finance_sources").update({active:false,updated_at:new Date().toISOString()}).eq("id",id);if(r.error){console.error(r.error);return toast("Não consegui desativar.")}closeModal("sourceModal");await loadData();toast("Automação desativada.");
+}
 
-    function recentHTML(){
-      const items=latestActivity();
-      if(!items.length)return '<div class="activity-card"><div class="empty">As movimentações vão aparecer aqui.</div></div>';
-      return `<div class="activity-card">${items.map(x=>{
-        if(x.type==="credit"){
-          const total=Number(x.ken_amount)+Number(x.va_amount)+Number(x.vr_amount)+Number(x.maria_amount);
-          return `<div class="activity-row"><div><div class="title">Saldo do dia</div><div class="meta">${formatDate(x.date)} · Ken ${money(x.ken_amount)} · VA ${money(x.va_amount)} · VR ${money(x.vr_amount)} · Maria ${money(x.maria_amount)}</div></div><div class="money positive">+ ${money(total)}</div></div>`;
-        }
-        if(x.type==="manual_credit"){
-          return `<div class="activity-row"><div><div class="title">${esc(x.description||"Crédito")}</div><div class="meta">${formatDate(x.date)} · ${ACCOUNTS[x.account].name} · crédito extra</div></div><div class="money positive">+ ${money(x.amount)}</div></div>`;
-        }
-        if(x.type==="adjustment"){
-          const cls=Number(x.amount)>=0?"positive":"negative";
-          const sign=Number(x.amount)>=0?"+":"−";
-          return `<div class="activity-row"><div><div class="title">${esc(x.reason||"Ajuste de saldo")}</div><div class="meta">${formatDate(x.date)} · ${ACCOUNTS[x.account].name}</div></div><div class="money ${cls}">${sign} ${money(Math.abs(Number(x.amount)))}</div></div>`;
-        }
-        return `<div class="activity-row"><div><div class="title">${esc(x.description)}</div><div class="meta">${formatDate(x.date)} · ${ACCOUNTS[x.account].name}</div></div><div class="money negative">− ${money(x.amount)}</div></div>`;
-      }).join("")}</div>`;
-    }
+function openCycle(){$("#cycleDate").value=cycleStart()||today();openModal("cycleModal")}
+async function saveCycle(){
+ const date=$("#cycleDate").value;if(!date)return toast("Escolha a data.");if(cycleStart()&&!confirm(`Usar ${fmt(date)} como novo Dia 0? O histórico anterior fica guardado, fora do saldo atual.`))return;const r=await sb.from("household_settings").update({cycle_start_date:date,updated_by:session.user.id,updated_at:new Date().toISOString()}).eq("household_id",householdId);if(r.error){console.error(r.error);return toast("Não consegui definir o Dia 0.")}closeModal("cycleModal");await loadData();toast("Novo ciclo iniciado.");
+}
 
-    function renderHome(){
-      const now=new Date(), dateLabel=now.toLocaleDateString("pt-BR",{weekday:"short",day:"2-digit",month:"short"}).replaceAll(".","");
-      const start=cycleStart(), next=nextCreditDate(), currentCredits=activeCredits();
-      const canAdd=!!next && next<=todayISO();
-      $("#app").innerHTML=`
-        <div class="topline">
-          <div><div class="eyebrow">Controle pessoal</div><h1>Meu saldo diário</h1></div>
-          <div class="user-actions"><div class="date-pill">${dateLabel}</div><button class="icon-btn" id="logoutBtn">Sair</button></div>
-        </div>
-        <div class="sync"><span class="dot ${navigator.onLine?"":"off"}"></span>${navigator.onLine?"Sincronizado online":"Sem conexão"}</div>
+function openPending(p){selectedPending=p;const a=account(p.account_id);$("#pendingText").innerHTML=`<b>${money(p.amount)}</b> · ${esc(p.merchant)}<br>${fmt(p.transaction_date)} → <b>${esc(a?.name||"Conta")}</b>`;openModal("pendingModal")}
+async function confirmPending(){
+ if(!selectedPending)return;const r=await sb.rpc("finance_confirm_pending",{p_pending_id:selectedPending.id});if(r.error){console.error(r.error);return toast("Não consegui confirmar.")}selectedPending=null;closeModal("pendingModal");await loadData();toast("Compra confirmada.");
+}
 
-        ${!start?`<div class="notice"><strong>Defina o dia inicial</strong><p>O dia escolhido será o Dia 0 e começará com R$ 0,00 nos quatro saldos. O primeiro valor diário entra no dia seguinte.</p><button class="small-btn" id="openStart">Definir Dia 0</button></div>`:""}
+function b64ToBytes(s){const pad="=".repeat((4-s.length%4)%4),b=(s+pad).replace(/-/g,"+").replace(/_/g,"/"),raw=atob(b);return Uint8Array.from([...raw].map(c=>c.charCodeAt(0)))}
+async function enablePush(){
+ if(!("serviceWorker" in navigator)||!("PushManager" in window))return toast("Este navegador não suporta Web Push.");if(!window.matchMedia("(display-mode: standalone)").matches&&/iPhone|iPad|iPod/.test(navigator.userAgent))return toast("No iPhone, adicione primeiro o site à Tela de Início.");const perm=await Notification.requestPermission();if(perm!=="granted")return toast("Permissão não concedida.");const reg=await navigator.serviceWorker.ready;let sub=await reg.pushManager.getSubscription();if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64ToBytes(VAPID_PUBLIC_KEY)});const j=sub.toJSON();const r=await sb.from("finance_push_subscriptions").upsert({endpoint:j.endpoint,user_id:session.user.id,household_id:householdId,p256dh:j.keys.p256dh,auth:j.keys.auth,user_agent:navigator.userAgent});if(r.error){console.error(r.error);return toast("Não consegui ativar.")}toast("Notificações ativadas neste iPhone.");
+}
 
-        <section class="total-card"><div class="label">Saldo disponível total</div><div class="value">${money(totalBalance())}</div><div class="sub">${start?`Dia 0: ${formatDate(start)} · ${currentCredits.length} dia${currentCredits.length===1?"":"s"} com saldo`:"Ainda não iniciado"}</div></section>
+async function clearHistory(){const typed=prompt("Digite APAGAR para apagar todos os lançamentos e dias. Contas e investimentos serão mantidos.");if(typed!=="APAGAR")return;const r=await sb.rpc("clear_finance_history",{p_household_id:householdId});if(r.error){console.error(r.error);return toast("Não consegui apagar.")}await loadData();toast("Histórico apagado.")}
 
-        <section class="cards">${accountCard("ken")}${accountCard("va")}${accountCard("vr")}${accountCard("maria")}</section>
-
-        <button class="primary" id="openCredit" ${canAdd?"":"disabled"}>+ Adicionar saldo do dia</button>
-        <div class="next-day">${start?(canAdd?`Próximo saldo: ${formatDate(next)}`:`Próximo saldo: ${formatDate(next)}${next>todayISO()?" (ainda não chegou)":""}`):"Defina primeiro o Dia 0"}</div>
-        <button class="secondary" id="openManualCredit" ${start?"":"disabled"} style="margin-top:10px">+ Adicionar crédito</button>
-        <button class="tertiary" id="openSettings">⚙ Ajustar valores / Dia 0 / zerar saldo</button>
-
-        ${start?`<div class="section-title"><h2>Dias considerados</h2><span>${currentCredits.length} dia${currentCredits.length===1?"":"s"} + Dia 0</span></div>
-        <div class="days-card"><div class="days-card-top"><div><div class="big">Dia 0: ${formatDate(start)}</div><div class="range">${daysSummary()}</div></div><button class="link-btn" id="openDays">Ver dias</button></div></div>`:""}
-
-        <div class="section-title"><h2>Movimentações recentes</h2><span>${latestActivity().length?"ciclo atual":""}</span></div>${recentHTML()}`;
-
-      $("#logoutBtn").addEventListener("click",logout);
-      $("#openSettings").addEventListener("click",openSettingsModal);
-      $("#openManualCredit").addEventListener("click",()=>openManualCreditModal());
-      $("#openDays")?.addEventListener("click",()=>openDaysModal(null));
-      $("#openStart")?.addEventListener("click",()=>{
-        $("#cycleDate").value=todayISO();
-        closeModal("settingsModal");
-        openModal("cycleModal");
-      });
-      $("#openCredit").addEventListener("click",()=>{
-        if(!canAdd)return;
-        $("#creditHelp").textContent=`Será adicionado o saldo referente a ${formatDate(nextCreditDate())}.`;
-        $("#creditKen").textContent=`+ ${money(daily("ken"))}`;$("#creditVa").textContent=`+ ${money(daily("va"))}`;$("#creditVr").textContent=`+ ${money(daily("vr"))}`;$("#creditMaria").textContent=`+ ${money(daily("maria"))}`;
-        openModal("creditModal");
-      });
-      document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>goTo(b.dataset.go)));
-    }
-
-    function renderAccount(key){
-      const a=ACCOUNTS[key];
-      const list=activeDebits().filter(d=>d.account===key).sort((x,y)=>y.debit_date.localeCompare(x.debit_date)||(y.created_at||"").localeCompare(x.created_at||""));
-      const creditList=activeManualCredits().filter(c=>c.account===key).sort((x,y)=>y.credit_date.localeCompare(x.credit_date)||(y.created_at||"").localeCompare(x.created_at||""));
-      const spentToday=list.filter(d=>d.debit_date===todayISO()).reduce((s,d)=>s+Number(d.amount),0);
-      $("#app").innerHTML=`
-        <div class="detail-header"><button class="back" id="backBtn">‹ Voltar</button><div class="eyebrow">Movimentações</div><h1>${a.name}</h1></div>
-        <div class="detail-balance ${a.cls}"><div class="daily">Saldo disponível</div><div class="amount">${money(balance(key))}</div><div class="daily">+ ${money(daily(key))} por dia · gasto hoje: ${money(spentToday)}</div></div>
-
-        <div class="action-grid"><button class="secondary" id="openDebit">− Adicionar débito</button><button class="secondary" id="openAccountCredit">+ Adicionar crédito</button></div>
-        <button class="danger-btn" id="zeroAccount" style="margin-top:9px">Zerar saldo</button>
-
-        ${cycleStart()?`<div class="section-title"><h2>Dias considerados</h2><span>${activeCredits().length} + Dia 0</span></div>
-        <div class="days-card"><div class="days-card-top"><div><div class="big">${daysSummary()}</div><div class="range">Dia inicial vale R$ 0,00</div></div><button class="link-btn" id="openAccountDays">Ver dias</button></div></div>`:""}
-
-        <div class="section-title"><h2>Créditos extras</h2><span>${creditList.length?`${creditList.length} lançamento${creditList.length===1?"":"s"}`:""}</span></div>
-        <div class="activity-card">${creditList.length?creditList.map(c=>`<div class="debit-row"><div><div class="title">${esc(c.description)}</div><div class="meta">${formatDate(c.credit_date)}</div></div><div class="money positive">+ ${money(c.amount)}</div><button class="delete" data-delete-credit="${c.id}" aria-label="Excluir">×</button></div>`).join(""):'<div class="empty">Nenhum crédito extra lançado ainda.</div>'}</div>
-
-        <div class="section-title"><h2>Débitos</h2><span>${list.length?`${list.length} lançamento${list.length===1?"":"s"}`:""}</span></div>
-        <div class="activity-card">${list.length?list.map(d=>`<div class="debit-row"><div><div class="title">${esc(d.description)}</div><div class="meta">${formatDate(d.debit_date)}</div></div><div class="money negative">− ${money(d.amount)}</div><button class="delete" data-delete="${d.id}" aria-label="Excluir">×</button></div>`).join(""):'<div class="empty">Nenhum débito lançado ainda.</div>'}</div>`;
-
-      $("#backBtn").addEventListener("click",()=>goTo("home"));
-      $("#zeroAccount").addEventListener("click",()=>zeroBalance(key));
-      $("#openAccountCredit").addEventListener("click",()=>openManualCreditModal(key));
-      $("#openAccountDays")?.addEventListener("click",()=>openDaysModal(key));
-      $("#openDebit").addEventListener("click",()=>{
-        currentDebitAccount=key;$("#debitHelp").textContent=`${a.name} · lançamentos precisam ser posteriores ao Dia 0 (${formatDate(cycleStart())}).`;$("#debitValue").value="";$("#debitDesc").value="";$("#debitDate").min=addDays(cycleStart(),1);$("#debitDate").value=todayISO()>cycleStart()?todayISO():addDays(cycleStart(),1);openModal("debitModal");
-        setTimeout(()=>$("#debitValue").focus(),180);
-      });
-      document.querySelectorAll("[data-delete]").forEach(b=>b.addEventListener("click",()=>deleteDebit(b.dataset.delete)));
-      document.querySelectorAll("[data-delete-credit]").forEach(b=>b.addEventListener("click",()=>deleteManualCredit(b.dataset.deleteCredit)));
-    }
-
-    function render(){if(!session||!householdId)return;currentView==="home"?renderHome():renderAccount(currentView);document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.view===currentView))}
-    function goTo(view){currentView=view;render();window.scrollTo({top:0,behavior:"smooth"})}
-
-    function openSettingsModal(){
-      $("#settingKen").value=daily("ken").toFixed(2);$("#settingVa").value=daily("va").toFixed(2);$("#settingVr").value=daily("vr").toFixed(2);$("#settingMaria").value=daily("maria").toFixed(2);openModal("settingsModal");
-      $("#openCycleReset").onclick=()=>{ $("#cycleDate").value=cycleStart()||todayISO(); closeModal("settingsModal"); openModal("cycleModal"); };
-      $("#clearHistoryBtn").onclick=clearAllHistory;
-    }
-
-    function openDaysModal(account=null){
-      const ordered=[...activeCredits()].sort((a,b)=>b.credit_date.localeCompare(a.credit_date));
-      $("#daysTitle").textContent=account?`Dias — ${ACCOUNTS[account].name}`:"Dias considerados";
-      $("#daysHelp").textContent=account?`O Dia 0 vale R$ 0,00. Depois dele, cada linha mostra o valor diário que entrou nesta categoria.`:`O Dia 0 vale R$ 0,00 para todos. Abaixo estão somente os dias do ciclo atual que entram no saldo.`;
-      const zeroRow=cycleStart()?`<div class="day-row"><div class="day-date">${formatDate(cycleStart())} · Dia 0</div><div class="day-values">R$ 0,00${account?"":" em todos os saldos"}</div></div>`:"";
-      const rows=ordered.map(c=>{
-        if(account)return `<div class="day-row"><div class="day-date">${formatDate(c.credit_date)}</div><div class="day-values">+ ${money(creditAmount(c,account))}</div></div>`;
-        return `<div class="day-row"><div class="day-date">${formatDate(c.credit_date)}</div><div class="day-values">Ken +${money(c.ken_amount)} · VA +${money(c.va_amount)} · VR +${money(c.vr_amount)} · Maria +${money(c.maria_amount)}</div></div>`;
-      }).join("");
-      $("#daysList").innerHTML=cycleStart()?`<div class="day-list">${zeroRow}${rows}</div>`:'<div class="empty">Nenhum ciclo iniciado.</div>';
-      openModal("daysModal");
-    }
-
-    async function saveSettings(){
-      if(busy)return;
-      const ken=Number($("#settingKen").value),va=Number($("#settingVa").value),vr=Number($("#settingVr").value),maria=Number($("#settingMaria").value);
-      if([ken,va,vr,maria].some(v=>!Number.isFinite(v)||v<0))return toast("Informe valores válidos.");
-      busy=true;$("#saveSettingsBtn").disabled=true;
-      const {data,error}=await sb.from("household_settings").update({
-        ken_daily:Number(ken.toFixed(2)),va_daily:Number(va.toFixed(2)),vr_daily:Number(vr.toFixed(2)),maria_daily:Number(maria.toFixed(2)),
-        updated_by:session.user.id,updated_at:new Date().toISOString()
-      }).eq("household_id",householdId).select("ken_daily,va_daily,vr_daily,maria_daily").single();
-      busy=false;$("#saveSettingsBtn").disabled=false;
-      if(error){console.error(error);return toast("Não foi possível salvar os valores.");}
-      settings={...settings,...data};closeModal("settingsModal");await loadData();toast("Valores diários atualizados.");
-    }
-
-    async function setCycleStart(){
-      if(busy)return;
-      const date=$("#cycleDate").value;
-      if(!date)return toast("Escolha uma data.");
-      const changing=!!cycleStart();
-      if(changing && !confirm(`Definir ${formatDate(date)} como novo Dia 0? Os saldos atuais irão para R$ 0,00. O histórico anterior continuará guardado, mas ficará fora do saldo atual.`))return;
-      busy=true;$("#cycleBtn").disabled=true;
-      const {data,error}=await sb.from("household_settings").update({
-        cycle_start_date:date,updated_by:session.user.id,updated_at:new Date().toISOString()
-      }).eq("household_id",householdId).select("ken_daily,vr_daily,maria_daily,cycle_start_date,cycle_started_at,cycle_id").single();
-      busy=false;$("#cycleBtn").disabled=false;
-      if(error){console.error(error);return toast("Não foi possível definir o Dia 0.");}
-      settings={...settings,...data};closeModal("cycleModal");await loadData();toast(`Dia 0 definido: ${formatDate(date)}.`);
-    }
-
-    async function addDailyCredit(){
-      if(busy||!cycleStart()||!cycleId())return;const date=nextCreditDate();
-      busy=true;$("#creditBtn").disabled=true;
-      const {error}=await sb.from("daily_credits").insert({
-        household_id:householdId,cycle_id:cycleId(),credit_date:date,ken_amount:daily("ken"),va_amount:daily("va"),vr_amount:daily("vr"),maria_amount:daily("maria"),created_by:session.user.id
-      });
-      busy=false;$("#creditBtn").disabled=false;
-      if(error){if(error.code==="23505"){closeModal("creditModal");await loadData();toast("Esse dia já foi adicionado neste ciclo.");}else{console.error(error);toast("Não foi possível adicionar.");}return}
-      closeModal("creditModal");await loadData();toast(`Saldo de ${formatDate(date)} adicionado.`);
-    }
-
-    function openManualCreditModal(account=null){
-      if(!cycleStart()||!cycleId())return toast("Defina primeiro o Dia 0.");
-      $("#manualCreditAccount").value=account||"ken";
-      $("#manualCreditValue").value="";
-      $("#manualCreditDesc").value="";
-      $("#manualCreditDate").min=addDays(cycleStart(),1);
-      $("#manualCreditDate").value=todayISO()>cycleStart()?todayISO():addDays(cycleStart(),1);
-      openModal("manualCreditModal");
-      setTimeout(()=>$("#manualCreditValue").focus(),180);
-    }
-
-    async function saveManualCredit(){
-      if(busy)return;
-      const account=$("#manualCreditAccount").value;
-      const amount=Number($("#manualCreditValue").value);
-      const description=$("#manualCreditDesc").value.trim()||"Crédito";
-      const credit_date=$("#manualCreditDate").value;
-      if(!ACCOUNTS[account])return toast("Escolha um saldo.");
-      if(!amount||amount<=0)return toast("Informe um valor válido.");
-      if(!credit_date)return toast("Informe a data.");
-      if(!cycleStart()||credit_date<=cycleStart())return toast("O crédito precisa ser posterior ao Dia 0.");
-
-      busy=true;$("#saveManualCreditBtn").disabled=true;
-      const {error}=await sb.from("extra_credits").insert({
-        household_id:householdId,cycle_id:cycleId(),account,amount:Number(amount.toFixed(2)),
-        description,credit_date,created_by:session.user.id
-      });
-      busy=false;$("#saveManualCreditBtn").disabled=false;
-      if(error){console.error(error);return toast("Não foi possível adicionar o crédito.");}
-      closeModal("manualCreditModal");await loadData();toast("Crédito adicionado.");
-    }
-
-    async function deleteManualCredit(id){
-      const item=manualCredits.find(c=>c.id===id);
-      if(!item||!confirm(`Excluir o crédito "${item.description}" de ${money(item.amount)}?`))return;
-      const {error}=await sb.from("extra_credits").delete().eq("id",id).eq("household_id",householdId);
-      if(error){console.error(error);return toast("Não foi possível excluir o crédito.");}
-      await loadData();toast("Crédito excluído.");
-    }
-
-    async function saveDebit(){
-      if(busy||!currentDebitAccount)return;
-      const amount=Number($("#debitValue").value),description=$("#debitDesc").value.trim()||"Débito",debit_date=$("#debitDate").value;
-      if(!amount||amount<=0)return toast("Informe um valor válido.");if(!debit_date)return toast("Informe a data.");if(!cycleStart()||debit_date<=cycleStart())return toast("O débito precisa ser posterior ao Dia 0.");
-      busy=true;$("#saveDebitBtn").disabled=true;
-      const {error}=await sb.from("debits").insert({household_id:householdId,cycle_id:cycleId(),account:currentDebitAccount,amount:Number(amount.toFixed(2)),description,debit_date,created_by:session.user.id});
-      busy=false;$("#saveDebitBtn").disabled=false;
-      if(error){console.error(error);return toast("Não foi possível adicionar o débito.");}
-      closeModal("debitModal");await loadData();toast("Débito adicionado.");
-    }
-
-    async function deleteDebit(id){
-      const item=debits.find(d=>d.id===id);if(!item||!confirm(`Excluir "${item.description}" de ${money(item.amount)}?`))return;
-      const {error}=await sb.from("debits").delete().eq("id",id).eq("household_id",householdId);
-      if(error){console.error(error);return toast("Não foi possível excluir.");}await loadData();toast("Débito excluído.");
-    }
-
-    async function zeroBalance(account){
-      const current=Number(balance(account).toFixed(2));
-      if(Math.abs(current)<0.005)return toast("Esse saldo já está zerado.");
-      if(!confirm(`Zerar ${ACCOUNTS[account].name}? O saldo atual de ${money(current)} irá para R$ 0,00, sem apagar o histórico.`))return;
-      const {error}=await sb.from("balance_adjustments").insert({
-        household_id:householdId,cycle_id:cycleId(),account,amount:Number((-current).toFixed(2)),reason:"Saldo zerado",adjustment_date:todayISO(),created_by:session.user.id
-      });
-      if(error){console.error(error);return toast("Não foi possível zerar o saldo.");}
-      closeModal("settingsModal");await loadData();toast(`${ACCOUNTS[account].name} zerado.`);
-    }
-
-    async function zeroAllBalances(){
-      const rows=Object.keys(ACCOUNTS).map(account=>({account,current:Number(balance(account).toFixed(2))})).filter(x=>Math.abs(x.current)>=0.005);
-      if(!rows.length)return toast("Todos os saldos já estão zerados.");
-      if(!confirm("Zerar os quatro saldos? O histórico será mantido."))return;
-      const payload=rows.map(x=>({household_id:householdId,cycle_id:cycleId(),account:x.account,amount:Number((-x.current).toFixed(2)),reason:"Saldo zerado",adjustment_date:todayISO(),created_by:session.user.id}));
-      const {error}=await sb.from("balance_adjustments").insert(payload);
-      if(error){console.error(error);return toast("Não foi possível zerar os saldos.");}
-      closeModal("settingsModal");await loadData();toast("Saldos zerados.");
-    }
-
-    async function clearAllHistory(){
-      closeModal("settingsModal");
-      const typed=prompt('Esta ação apaga definitivamente todos os dias, débitos, créditos extras e zeramentos. Digite APAGAR para confirmar:');
-      if(typed!=="APAGAR")return toast("Histórico mantido.");
-      const {error}=await sb.rpc("clear_finance_history",{p_household_id:householdId});
-      if(error){console.error(error);return toast("Não foi possível apagar o histórico.");}
-      await loadData();toast("Histórico apagado.");
-    }
-
-    $("#bottomNav").addEventListener("click",e=>{const b=e.target.closest(".nav-btn");if(b)goTo(b.dataset.view)});
-    $("#cycleBtn").addEventListener("click",setCycleStart);$("#creditBtn").addEventListener("click",addDailyCredit);$("#saveDebitBtn").addEventListener("click",saveDebit);$("#saveManualCreditBtn").addEventListener("click",saveManualCredit);$("#saveSettingsBtn").addEventListener("click",saveSettings);
-    document.querySelectorAll("[data-zero]").forEach(b=>b.addEventListener("click",()=>b.dataset.zero==="all"?zeroAllBalances():zeroBalance(b.dataset.zero)));
-    document.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",()=>closeModal(b.dataset.close)));
-    document.querySelectorAll(".modal-wrap").forEach(w=>w.addEventListener("click",e=>{if(e.target===w)w.classList.remove("open")}));
-    window.addEventListener("online",render);window.addEventListener("offline",render);document.addEventListener("visibilitychange",()=>{if(!document.hidden&&session&&householdId)loadData()});
-
-    const {data:{session:initialSession}}=await sb.auth.getSession();session=initialSession;if(session)await afterLogin();else showLogin();
-    sb.auth.onAuthStateChange((event,newSession)=>{if(event==="SIGNED_OUT"&&!newSession)showLogin()});
-  </script>
+document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>closeModal(b.dataset.close));document.querySelectorAll(".modalwrap").forEach(m=>m.onclick=e=>{if(e.target===m)m.classList.remove("open")});
+$("#saveMove").onclick=saveMove;$("#saveDaily").onclick=saveDaily;$("#saveAccount").onclick=saveAccount;$("#saveInvestment").onclick=saveInvestment;$("#saveSource").onclick=saveSource;$("#disableSource").onclick=disableSource;$("#saveCycle").onclick=saveCycle;$("#confirmPending").onclick=confirmPending;
+$("#nav").onclick=e=>{const b=e.target.closest(".nav");if(!b)return;selectedAccountId=null;currentView=b.dataset.view;render();window.scrollTo({top:0,behavior:"smooth"})};
+if("serviceWorker" in navigator)navigator.serviceWorker.register("./sw.js").catch(console.error);
+window.addEventListener("online",render);window.addEventListener("offline",render);
+const {data:{session:initial}}=await sb.auth.getSession();session=initial;if(session)await afterLogin();else showLogin();
+sb.auth.onAuthStateChange((event,s)=>{if(event==="SIGNED_OUT")showLogin()});
+</script>
 </body>
 </html>
