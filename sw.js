@@ -1,5 +1,12 @@
-const CACHE="meu-saldo-saldo-vivo-v6-1-planos";
-const ASSETS=["./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png"];
+const CACHE="meu-saldo-v6-2-simples-calendario";
+
+const ASSETS=[
+  "./",
+  "./index.html",
+  "./manifest.webmanifest",
+  "./icon-192.png",
+  "./icon-512.png"
+];
 
 self.addEventListener("install",e=>{
   e.waitUntil(
@@ -33,7 +40,7 @@ self.addEventListener("fetch",e=>{
       .catch(()=>
         caches
           .match(e.request)
-          .then(r=>r||caches.match("./index.html"))
+          .then(r=>r || caches.match("./index.html"))
       )
   );
 });
