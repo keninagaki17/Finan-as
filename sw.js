@@ -1,4 +1,4 @@
-const CACHE="meu-saldo-v6-2-simples-calendario";
+const CACHE="meu-saldo-v6-3-calculo-real";
 
 const ASSETS=[
   "./",
