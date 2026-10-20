@@ -1,94 +1,83 @@
-const CACHE = "meu-saldo-flex-v5";
+const CACHE="meu-saldo-saldo-vivo-v6-1-planos";
+const ASSETS=["./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png"];
 
-const ASSETS = [
-  "./",
-  "./index.html",
-  "./manifest.webmanifest",
-  "./icon-192.png",
-  "./icon-512.png"
-];
-
-self.addEventListener("install", event => {
-  event.waitUntil(
+self.addEventListener("install",e=>{
+  e.waitUntil(
     caches
       .open(CACHE)
-      .then(cache => cache.addAll(ASSETS))
-      .then(() => self.skipWaiting())
+      .then(c=>c.addAll(ASSETS))
+      .then(()=>self.skipWaiting())
   );
 });
 
-self.addEventListener("activate", event => {
-  event.waitUntil(
+self.addEventListener("activate",e=>{
+  e.waitUntil(
     caches
       .keys()
-      .then(keys =>
+      .then(keys=>
         Promise.all(
           keys
-            .filter(key => key !== CACHE)
-            .map(key => caches.delete(key))
+            .filter(k=>k!==CACHE)
+            .map(k=>caches.delete(k))
         )
       )
-      .then(() => self.clients.claim())
+      .then(()=>self.clients.claim())
   );
 });
 
-self.addEventListener("fetch", event => {
-  if (event.request.method !== "GET") {
-    return;
-  }
+self.addEventListener("fetch",e=>{
+  if(e.request.method!=="GET") return;
 
-  event.respondWith(
-    fetch(event.request).catch(() =>
-      caches
-        .match(event.request)
-        .then(response => response || caches.match("./index.html"))
-    )
+  e.respondWith(
+    fetch(e.request)
+      .catch(()=>
+        caches
+          .match(e.request)
+          .then(r=>r||caches.match("./index.html"))
+      )
   );
 });
 
-self.addEventListener("push", event => {
-  let data = {};
+self.addEventListener("push",e=>{
+  let data={};
 
-  try {
-    data = event.data ? event.data.json() : {};
-  } catch {
-    data = {};
-  }
+  try{
+    data=e.data ? e.data.json() : {};
+  }catch{}
 
-  event.waitUntil(
+  e.waitUntil(
     self.registration.showNotification(
       data.title || "Meu Saldo",
       {
-        body: data.body || "Compra para confirmar.",
-        icon: "./icon-192.png",
-        badge: "./icon-192.png",
-        tag: data.tag || "meu-saldo",
-        renotify: true,
-        data: {
-          url: data.url || "./"
+        body:data.body || "Compra para confirmar.",
+        icon:"./icon-192.png",
+        badge:"./icon-192.png",
+        tag:data.tag || "meu-saldo",
+        renotify:true,
+        data:{
+          url:data.url || "./"
         }
       }
     )
   );
 });
 
-self.addEventListener("notificationclick", event => {
-  event.notification.close();
+self.addEventListener("notificationclick",e=>{
+  e.notification.close();
 
-  const target =
-    event.notification.data?.url || "./";
+  const target=e.notification.data?.url || "./";
 
-  event.waitUntil(
+  e.waitUntil(
     clients
       .matchAll({
-        type: "window",
-        includeUncontrolled: true
+        type:"window",
+        includeUncontrolled:true
       })
-      .then(list => {
-        for (const client of list) {
-          if ("focus" in client) {
-            client.navigate(target);
-            return client.focus();
+      .then(list=>{
+        for(const c of list){
+          if("focus" in c){
+            c.navigate(target);
+            return c.focus();
           }
         }
 
