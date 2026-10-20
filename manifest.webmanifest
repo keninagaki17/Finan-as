@@ -4,19 +4,11 @@
   "id": "./",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#f6f4ef",
-  "theme_color": "#28483c",
-  "description": "Controle financeiro pessoal compartilhado.",
+  "background_color": "#F7F5F0",
+  "theme_color": "#183F36",
+  "description": "Saldo disponível, ciclos independentes e gastos planejados.",
   "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
+    {"src":"icon-192.png","sizes":"192x192","type":"image/png"},
+    {"src":"icon-512.png","sizes":"512x512","type":"image/png"}
   ]
 }
