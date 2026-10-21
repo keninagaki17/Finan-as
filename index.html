@@ -22,7 +22,23 @@
 .card{background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:var(--shadow)}.row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:14px 15px;border-bottom:1px solid var(--line)}.row:last-child{border-bottom:0}.row .title{font-size:13px;font-weight:720}.row .meta{font-size:10px;color:var(--muted);margin-top:3px}.money{font-size:13px;font-weight:780}.pos{color:var(--accent2)}.neg{color:var(--danger)}.empty{padding:20px 15px;text-align:center;color:var(--muted);font-size:11px}
 .notice{background:#fff;border:1px solid var(--line);border-radius:19px;padding:15px;margin-bottom:11px;box-shadow:var(--shadow)}.notice strong{font-size:13px;display:block;margin-bottom:4px}.notice p{font-size:11px;color:var(--muted);line-height:1.5;margin:0 0 10px}
 .bottom{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,540px);display:grid;grid-template-columns:repeat(4,1fr);padding:8px 11px calc(8px + env(safe-area-inset-bottom));background:rgba(247,245,240,.94);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid rgba(222,218,209,.88);z-index:20}.nav{border:0;background:transparent;color:var(--muted);border-radius:13px;padding:7px 2px;font-size:9px}.nav .i{font-size:18px;margin-bottom:3px}.nav.active{background:rgba(23,62,53,.055);color:var(--accent);font-weight:760}
-.settings{display:grid;gap:9px}.settings-block{background:#fff;border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:var(--shadow)}.settings-block h3{font-size:15px;margin:0 0 4px}.settings-block p{font-size:10px;color:var(--muted);line-height:1.5;margin:0 0 11px}.settings-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-top:1px solid var(--line)}.settings-row:first-of-type{border-top:0}.settings-row .name{font-size:12px;font-weight:730}.settings-row .sub{font-size:9px;color:var(--muted);margin-top:3px}.mini{border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 9px;font-size:9px;color:var(--text)}
+.settings{display:grid;gap:9px}.settings-block{background:#fff;border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:var(--shadow)}.settings-block h3{font-size:15px;margin:0 0 4px}.settings-block p{font-size:10px;color:var(--muted);line-height:1.5;margin:0 0 11px}.settings-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-top:1px solid var(--line)}.settings-row:first-of-type{border-top:0}.settings-row .name{font-size:12px;font-weight:730}.settings-row .sub{font-size:9px;color:var(--muted);margin-top:3px}.mini{border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 9px;font-size:9px;color:var(--text)}.mini.danger-mini{color:var(--danger);border-color:#efd0d0;background:var(--dangerSoft)}
+.plan-due{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px 15px;margin-top:11px;box-shadow:var(--shadow)}
+.plan-due .topline{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.plan-due .name{font-size:14px;font-weight:800;color:var(--accent)}
+.plan-due .meta{font-size:10px;color:var(--muted);margin-top:3px}
+.plan-due .amount{font-size:17px;font-weight:800;color:var(--text);white-space:nowrap}
+.choice-stack{display:grid;gap:8px;margin:10px 0}
+.choice{display:flex;align-items:flex-start;gap:9px;border:1px solid var(--line);border-radius:14px;padding:11px 12px;background:#fff}
+.choice input{margin-top:2px;accent-color:var(--accent)}
+.choice strong{display:block;font-size:11px}
+.choice span{display:block;font-size:9px;color:var(--muted);margin-top:2px;line-height:1.35}
+.diff-box{background:var(--soft);border-radius:14px;padding:11px 12px;margin-top:10px}
+.diff-box .diff-title{font-size:11px;font-weight:800;color:var(--accent)}
+.diff-box .diff-sub{font-size:9px;color:var(--muted);margin-top:3px;line-height:1.4}
+.link-plan{margin-top:10px;padding:10px 11px;border:1px solid var(--line);border-radius:14px;background:var(--soft)}
+.link-plan strong{font-size:11px;color:var(--accent)}
+.link-plan p{font-size:9px;color:var(--muted);margin:3px 0 8px}
 .invest-hero{background:linear-gradient(145deg,#173E35,#294F43);color:#fff;border-radius:25px;padding:21px;box-shadow:var(--shadow)}.invest-hero .k{font-size:10px;opacity:.7}.invest-hero .big{font-size:34px;font-weight:820;letter-spacing:-.045em;margin:5px 0 13px}.invest-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.invest-grid div{background:rgba(255,255,255,.09);border-radius:13px;padding:11px}.invest-grid span{display:block;font-size:9px;opacity:.68}.invest-grid b{font-size:14px}.project{margin-top:11px;background:var(--soft);border:1px solid #D1DDD6;border-radius:19px;padding:15px}.project .big{font-size:26px;font-weight:820;letter-spacing:-.04em;margin:5px 0}.project p{font-size:10px;color:#58665F;line-height:1.5;margin:0}
 .detail-head{margin-bottom:15px}.back{border:0;background:transparent;color:var(--muted);padding:2px 0 12px;font-weight:700}.detail-box{border-radius:24px;background:#fff;padding:20px;box-shadow:var(--shadow);margin-bottom:10px}.detail-box .amt{font-size:34px;font-weight:820;letter-spacing:-.045em;margin:6px 0 2px}.detail-box .meta{font-size:11px;color:var(--muted)}
 .modalwrap{position:fixed;inset:0;z-index:50;background:rgba(20,27,24,.36);display:none;align-items:flex-end;justify-content:center;padding:11px}.modalwrap.open{display:flex}.modal{width:min(100%,510px);max-height:90vh;overflow:auto;background:#fff;border-radius:27px;padding:21px 18px calc(20px + env(safe-area-inset-bottom));box-shadow:0 25px 85px rgba(0,0,0,.2)}.modal h3{font-size:20px;margin:0 0 5px}.help{font-size:11px;line-height:1.5;color:var(--muted);margin-bottom:15px}.field{margin-bottom:12px}.field label{display:block;font-size:10px;font-weight:720;color:var(--muted);margin:0 0 6px 2px}.field input,.field select{width:100%;border:1px solid var(--line);background:#faf9f6;border-radius:14px;padding:13px 14px;outline:0;color:var(--text)}.check{display:flex;align-items:center;gap:9px;font-size:11px;margin:12px 0}.check input{width:18px;height:18px}.modal-actions{display:grid;grid-template-columns:1fr 1.4fr;gap:8px;margin-top:15px}.cancel{border:0;border-radius:14px;background:#efeee9;padding:13px;font-weight:720}.plan-preview{background:var(--soft);border:1px solid #d8e1da;border-radius:16px;padding:13px 14px;margin:2px 0 12px}.plan-preview .big{font-size:23px;font-weight:820;letter-spacing:-.035em;color:var(--accent)}.plan-preview .small{font-size:10px;color:var(--muted);margin-top:4px;line-height:1.45}details.advanced{border-top:1px solid var(--line);padding-top:11px;margin-top:11px}details.advanced summary{font-size:10px;font-weight:760;color:var(--muted);cursor:pointer;margin-bottom:12px}.inline2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.soft-label{font-size:9px;color:var(--muted);line-height:1.45;margin:-5px 2px 11px}
@@ -95,19 +111,45 @@
 
 <div class="modalwrap" id="pendingModal"><div class="modal">
 <h3>Confirmar compra</h3><div class="help" id="pendingText"></div>
+<div class="link-plan hidden" id="pendingPlanBox">
+  <strong id="pendingPlanTitle"></strong>
+  <p id="pendingPlanText"></p>
+  <div class="choice-stack hidden" id="pendingPlanChoices">
+    <label class="choice"><input type="radio" name="pendingEffect" value="current" checked><div><strong>No meu saldo atual</strong><span id="pendingCurrentHint"></span></div></label>
+    <label class="choice" id="pendingFutureChoice"><input type="radio" name="pendingEffect" value="future"><div><strong>Nos próximos dias</strong><span id="pendingFutureHint"></span></div></label>
+  </div>
+  <button class="mini" id="pendingNoPlan">Esta compra não é desse planejamento</button>
+</div>
 <button class="primary full" id="confirmPending">Confirmar</button>
 <button class="ghost full" data-close="pendingModal" style="margin-top:6px">Agora não</button>
 </div></div>
 
 <div class="modalwrap" id="planModal"><div class="modal">
-<h3 id="planModalTitle">Planejar gasto</h3><div class="help">Diga apenas o que pretende gastar. O Meu Saldo protege uma parte por dia até a data escolhida.</div>
+<h3 id="planModalTitle">Planejar gasto</h3><div class="help">Diga o que pretende gastar. O saldo de hoje não muda; o app adapta apenas os próximos saldos diários.</div>
 <input id="planId" type="hidden">
 <div class="field"><label>O quê?</label><input id="planName" maxlength="60" placeholder="Ex.: Jantar, presente, viagem"></div>
 <div class="inline2"><div class="field"><label>Valor</label><input id="planAmount" type="number" min="0" step="0.01" inputmode="decimal" placeholder="300"></div><div class="field"><label>Quando?</label><input id="planDate" type="date"></div></div>
 <div class="field"><label>De qual saldo?</label><select id="planAccount"></select></div>
-<div class="plan-preview"><div class="eyebrow">Impacto no orçamento</div><div class="big" id="planReservePreview">R$ 0,00</div><div class="small" id="planReserveText">Informe valor e data para ver quanto será protegido por dia.</div></div>
+<div class="plan-preview"><div class="eyebrow">Novo saldo diário</div><div class="big" id="planReservePreview">R$ 0,00</div><div class="small" id="planReserveText">Informe valor e data para ver como os próximos dias serão ajustados.</div></div>
 <button class="danger full hidden" id="cancelPlan" style="margin-bottom:8px">Excluir este plano</button>
 <div class="modal-actions"><button class="cancel" data-close="planModal">Cancelar</button><button class="primary" id="savePlan">Salvar plano</button></div>
+</div></div>
+
+<div class="modalwrap" id="settlePlanModal"><div class="modal">
+<h3>Como foi?</h3>
+<div class="help" id="settlePlanText"></div>
+<input id="settlePlanId" type="hidden">
+<div class="field"><label>Quanto você gastou?</label><input id="settleActual" type="number" min="0.01" step="0.01" inputmode="decimal"></div>
+<div class="diff-box hidden" id="settleDiffBox">
+  <div class="diff-title" id="settleDiffTitle"></div>
+  <div class="diff-sub">Onde você quer que essa diferença apareça?</div>
+  <div class="choice-stack">
+    <label class="choice"><input type="radio" name="settleEffect" value="current" checked><div><strong>No meu saldo atual</strong><span id="settleCurrentHint"></span></div></label>
+    <label class="choice" id="settleFutureChoice"><input type="radio" name="settleEffect" value="future"><div><strong>Nos próximos dias</strong><span id="settleFutureHint"></span></div></label>
+  </div>
+</div>
+<button class="primary full" id="settleEqual" style="margin-bottom:8px">Foi exatamente o previsto</button>
+<div class="modal-actions"><button class="cancel" data-close="settlePlanModal">Agora não</button><button class="primary" id="settlePlanSave">Confirmar valor real</button></div>
 </div></div>
 
 <div class="modalwrap" id="calendarModal"><div class="modal">
@@ -120,13 +162,13 @@
 
 <div class="toast" id="toast"></div>
 
-<!-- V6.3 Saldo mensal + Planejamento -->
+<!-- V6.6 Saldo mensal + Planejamento -->
 <script type="module">
 import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/+esm";
 const SUPABASE_URL="https://owjuihjcypqonvlpsgqu.supabase.co",SUPABASE_KEY="sb_publishable_kbAOka2sxT40KPWgaXEA0g_adwNHUtv",VAPID_PUBLIC_KEY="BG2QzMbmf6NjdY1WOcuep7ohMo-WXc3ci5clXKBgRXwi_GHJb-8T6Oxi4HP1u4WV2tLcKAmu9mkjjFomUa07Boc";
 const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
 const $=s=>document.querySelector(s),app=$("#app");
-let session=null,householdId=null,settings=null,accounts=[],dailyCredits=[],transactions=[],investments=[],sources=[],pending=[],plans=[],plansReady=false,currentView="home",selectedAccountId=null,moveKind="debit",selectedPending=null,channel=null,calendarCursor=new Date(),calendarSelected=null;
+let session=null,householdId=null,settings=null,accounts=[],dailyCredits=[],transactions=[],investments=[],sources=[],pending=[],plans=[],plansReady=false,planSettlementReady=true,currentView="home",selectedAccountId=null,moveKind="debit",selectedPending=null,selectedPendingPlan=null,channel=null,calendarCursor=new Date(),calendarSelected=null;
 
 const money=n=>Number(n||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`};
@@ -143,6 +185,7 @@ function toast(m){const e=$("#toast");e.textContent=m;e.classList.add("show");cl
 function openModal(id){$("#"+id).classList.add("open")}function closeModal(id){$("#"+id).classList.remove("open")}
 function cycleId(){return settings?.cycle_id||null}function cycleStart(){return settings?.cycle_start_date||null}
 function activeAccounts(){return accounts.filter(a=>a.active).sort((a,b)=>a.sort_order-b.sort_order||a.created_at.localeCompare(b.created_at))}
+function archivedAccounts(){return accounts.filter(a=>!a.active).sort((a,b)=>a.sort_order-b.sort_order||a.created_at.localeCompare(b.created_at))}
 function account(id){return accounts.find(a=>a.id===id)}
 function planningSchemaReady(){return !accounts.length||Object.prototype.hasOwnProperty.call(accounts[0],"planning_enabled")}
 function cycleBudget(a){return Math.max(0,Number(a?.cycle_income||0))}
@@ -168,54 +211,55 @@ function cycleNetSpent(a){
   .reduce((s,x)=>s+(x.kind==="debit"?Number(x.amount):x.kind==="credit"?-Number(x.amount):0),0);
 }
 function plannedPlans(){return plans.filter(p=>p.status==="planned")}
-function planBelongsCurrentCycle(p,a,ref=today()){
- if(p.account_id!==a.id||p.status!=="planned"||p.plan_date<=ref)return false;
- const d=effectiveCycleDates(a,new Set(),ref);return a.planning_enabled&&d.next? p.plan_date<d.next : true;
-}
-function cyclePlanReserved(a,ref=today()){return plannedPlans().filter(p=>planBelongsCurrentCycle(p,a,ref)).reduce((s,p)=>s+Number(p.amount||0),0)}
-function planAccrued(p,ref=today()){
- if(p.status!=="planned"||p.plan_date<=ref)return 0;
- const a=account(p.account_id);if(a?.planning_enabled&&!planBelongsCurrentCycle(p,a,ref))return 0;
- const start=p.reserve_from||iso(new Date(p.created_at));if(!start||ref<start)return 0;
- const total=Math.max(1,daysBetween(start,p.plan_date)),elapsed=Math.min(total,Math.max(1,daysBetween(start,ref)+1));
- return Number(p.amount||0)*(elapsed/total);
-}
-function accountReserveNow(id,ref=today()){return plannedPlans().filter(p=>p.account_id===id).reduce((s,p)=>s+planAccrued(p,ref),0)}
-function totalReserveNow(){return activeAccounts().reduce((s,a)=>s+accountReserveNow(a.id),0)}
-function availableBalance(id){return balance(id)-accountReserveNow(id)}
-function totalAvailableNow(){return activeAccounts().reduce((s,a)=>s+availableBalance(a.id),0)}
 function firstUnaddedDate(){return nextDailyDate()||addDays(today(),1)}
+function futurePlansForAccount(a,excludePlanId=null){
+ const first=firstUnaddedDate(),{next}=effectiveCycleDates(a);
+ if(!a?.planning_enabled||!first||!next||first>=next)return [];
+ return plans.filter(p=>p.status!=="cancelled"&&p.account_id===a.id&&p.id!==excludePlanId&&p.plan_date>=first&&p.plan_date<next);
+}
+function cyclePlanReserved(a,excludePlanId=null){return futurePlansForAccount(a,excludePlanId).reduce((s,p)=>s+Number(p.amount||0),0)}
+function plansDueOn(a,date){return plans.filter(p=>p.account_id===a.id&&p.status!=="cancelled"&&p.plan_date===date).reduce((s,p)=>s+Number(p.amount||0),0)}
+function availableBalance(id){return balance(id)}
+function totalAvailableNow(){return activeAccounts().reduce((s,a)=>s+availableBalance(a.id),0)}
 function allocationCreditsAdded(a){
  const {start,next}=effectiveCycleDates(a);if(!start||!next)return 0;
  return activeDaily().filter(x=>x.account_id===a.id&&x.credit_date>start&&x.credit_date<next)
   .reduce((s,x)=>s+Number(x.amount||0),0);
 }
 function futureAllocationRemaining(a){return Math.max(0,cycleBudget(a)-allocationCreditsAdded(a))}
-function cycleRemaining(a){return Math.max(0,balance(a.id)+futureAllocationRemaining(a)-cyclePlanReserved(a))}
+function futureFreeRemaining(a,excludePlanId=null){return Math.max(0,futureAllocationRemaining(a)-cyclePlanReserved(a,excludePlanId))}
+function cycleRemaining(a){return balance(a.id)+futureFreeRemaining(a)}
 function cycleDaysRemaining(a){
  const {next}=effectiveCycleDates(a),first=firstUnaddedDate();
  return next&&first&&first<next?Math.max(0,daysBetween(first,next)):0;
 }
-function cyclePace(a){const d=cycleDaysRemaining(a);return d?futureAllocationRemaining(a)/d:0}
+function cyclePace(a,excludePlanId=null){const d=cycleDaysRemaining(a);return d?futureFreeRemaining(a,excludePlanId)/d:0}
 function upcomingPlans(accountId=null){return plannedPlans().filter(p=>p.plan_date>=today()&&(!accountId||p.account_id===accountId)).sort((a,b)=>a.plan_date.localeCompare(b.plan_date)||a.created_at.localeCompare(b.created_at))}
 function upcomingPlanTotal(){return upcomingPlans().reduce((s,p)=>s+Number(p.amount||0),0)}
-function baseDailyFor(a){
- if(!a?.planning_enabled)return Number(a?.daily_amount||0);
- const {start,next}=effectiveCycleDates(a),first=start?addDays(start,1):null,days=first&&next&&first<next?daysBetween(first,next):0;
- return days>0?cycleBudget(a)/days:Number(a?.daily_amount||0);
+function duePlansToday(accountId=null){return plannedPlans().filter(p=>p.plan_date===today()&&(!accountId||p.account_id===accountId)).sort((a,b)=>a.created_at.localeCompare(b.created_at))}
+function reconcilablePlans(accountId=null){return plans.filter(p=>p.status==="completed"&&p.resolution_mode==="auto"&&(!accountId||p.account_id===accountId)).sort((a,b)=>b.plan_date.localeCompare(a.plan_date)||b.created_at.localeCompare(a.created_at))}
+function planForPending(p){
+ const candidates=plannedPlans().filter(x=>x.account_id===p.account_id&&x.plan_date===p.transaction_date);
+ return candidates.sort((a,b)=>Math.abs(Number(a.amount)-Number(p.amount))-Math.abs(Number(b.amount)-Number(p.amount)))[0]||null;
 }
+function existingTransactionForPlan(plan,actual){
+ const used=new Set(plans.filter(p=>p.transaction_id).map(p=>p.transaction_id));
+ const matches=transactions.filter(t=>t.account_id===plan.account_id&&t.kind==="debit"&&t.txn_date===plan.plan_date&&Math.abs(Number(t.amount)-Number(actual))<.005&&!used.has(t.id));
+ return matches.length===1?matches[0]:null;
+}
+function openPlanAction(id){const p=plans.find(x=>x.id===id);if(!p)return;if(p.status==="planned"&&p.plan_date<=today())openPlanSettle(id);else if(p.status==="completed"&&p.resolution_mode==="auto")openPlanSettle(id,true);else openPlan(id)}
+
 function dailyAmountForDate(a,date){
  if(!a?.planning_enabled)return Number(a?.daily_amount||0);
- const {start,next}=effectiveCycleDates(a),first=start?addDays(start,1):null;
+ const first=firstUnaddedDate(),{next}=effectiveCycleDates(a);
  if(first&&next&&date>=first&&date<next){
-   const days=daysBetween(first,next);
-   return days>0?cycleBudget(a)/days:0;
+   return Math.max(0,cyclePace(a)+plansDueOn(a,date));
  }
  if(next&&date>=next)return 0;
  return Number(a?.daily_amount||0);
 }
 function planningSummary(){
- const list=activeAccounts().filter(a=>a.planning_enabled),valid=list.filter(a=>{const d=effectiveCycleDates(a);return d.start&&d.next&&d.next>today()});
+ const list=activeAccounts().filter(a=>a.planning_enabled),valid=list.filter(a=>{const d=effectiveCycleDates(a);return d.next&&d.next>today()});
  return {count:list.length,valid:valid.length,remaining:valid.reduce((s,a)=>s+cycleRemaining(a),0),pace:valid.reduce((s,a)=>s+cyclePace(a),0),reserved:valid.reduce((s,a)=>s+cyclePlanReserved(a),0),next:valid.map(a=>effectiveCycleDates(a).next).sort()[0]||null};
 }
 function planningWarnings(){
@@ -269,6 +313,25 @@ async function loadData(first=false){
  }
  const planRes=await sb.from("finance_plans").select("*").eq("household_id",householdId).order("plan_date");
  if(planRes.error){plans=[];plansReady=false;if(!["42P01","42501","PGRST205"].includes(planRes.error.code))console.error(planRes.error)}else{plans=planRes.data||[];plansReady=true}
+ if(plansReady){
+   const auto=await sb.rpc("finance_auto_settle_due_plans",{p_household_id:householdId,p_today:today()});
+   if(auto.error){
+     planSettlementReady=false;
+     if(!["PGRST202","42883"].includes(auto.error.code))console.error(auto.error);
+   }else{
+     planSettlementReady=true;
+     if(Number(auto.data||0)>0){
+       const [aa,tt,pp]=await Promise.all([
+         sb.from("finance_accounts").select("*").eq("household_id",householdId).order("sort_order"),
+         sb.from("finance_transactions").select("*").eq("household_id",householdId).order("created_at",{ascending:false}),
+         sb.from("finance_plans").select("*").eq("household_id",householdId).order("plan_date")
+       ]);
+       if(!aa.error)accounts=aa.data||accounts;
+       if(!tt.error)transactions=tt.data||transactions;
+       if(!pp.error)plans=pp.data||plans;
+     }
+   }
+ }
  render();
  const param=new URLSearchParams(location.search).get("pending");
  if(param){const item=pending.find(x=>x.id===param);if(item)openPending(item);history.replaceState({},"",location.pathname)}
@@ -303,26 +366,26 @@ async function afterLogin(){
 }
 async function logout(){if(channel)await sb.removeChannel(channel);await sb.auth.signOut();session=null;householdId=null;showLogin()}
 
-function render(){if(selectedAccountId&&account(selectedAccountId)?.active===false)selectedAccountId=null;if(selectedAccountId)return renderAccountDetail(selectedAccountId);currentView==="home"?renderHome():currentView==="accounts"?renderAccounts():currentView==="investments"?renderInvestments():renderSettings();document.querySelectorAll(".nav").forEach(b=>b.classList.toggle("active",b.dataset.view===currentView))}
+function render(){if(selectedAccountId&&!account(selectedAccountId))selectedAccountId=null;if(selectedAccountId)return renderAccountDetail(selectedAccountId);currentView==="home"?renderHome():currentView==="accounts"?renderAccounts():currentView==="investments"?renderInvestments():renderSettings();document.querySelectorAll(".nav").forEach(b=>b.classList.toggle("active",b.dataset.view===currentView))}
 function pendingHtml(){
  if(!pending.length)return "";
  const p=pending[0],a=account(p.account_id);
  return `<div class="pending"><strong>Compra para confirmar</strong><p>${money(p.amount)} · ${esc(p.merchant)}<br>${a?esc(a.name):"Conta"} · ${fmt(p.transaction_date)}</p><button class="primary full" id="reviewPending">Confirmar</button>${pending.length>1?`<div class="next">+${pending.length-1} pendente(s)</div>`:""}</div>`;
 }
 function accountCard(a){
- const d=effectiveCycleDates(a),res=accountReserveNow(a.id),meta=a.planning_enabled&&d.next?`${money(cycleRemaining(a))} livres · renova ${fmt(d.next)} · ${money(cyclePace(a))}/dia`:`Configure saldo restante e renovação`;
- return `<button class="account-card ${a.account_type}" data-account="${a.id}"><div><div class="name">${esc(a.name)}</div><div class="meta">${meta}${res>0?` · ${money(res)} protegido`:""}${a.owner_label?` · ${esc(a.owner_label)}`:""}</div></div><div style="display:flex;align-items:center"><div class="amt">${money(availableBalance(a.id))}</div><span class="arrow">›</span></div></button>`;
+ const d=effectiveCycleDates(a),planned=cyclePlanReserved(a),meta=a.planning_enabled&&d.next?`${money(cycleRemaining(a))} livres · renova ${fmt(d.next)} · ${money(cyclePace(a))}/dia`:`Configure saldo restante e renovação`;
+ return `<button class="account-card ${a.account_type}" data-account="${a.id}"><div><div class="name">${esc(a.name)}</div><div class="meta">${meta}${planned>0?` · ${money(planned)} planejados`:""}${a.owner_label?` · ${esc(a.owner_label)}`:""}</div></div><div style="display:flex;align-items:center"><div class="amt">${money(balance(a.id))}</div><span class="arrow">›</span></div></button>`;
 }
 function recentHtml(limit=7){
  const tx=activeTx().slice(0,limit);
  if(!tx.length)return `<div class="card"><div class="empty">As movimentações vão aparecer aqui.</div></div>`;
- return `<div class="card">${tx.map(x=>{const a=account(x.account_id),sign=x.kind==="debit"?"−":"+",cls=x.kind==="debit"?"neg":"pos";return `<div class="row"><div><div class="title">${esc(x.description)}</div><div class="meta">${fmt(x.txn_date)} · ${esc(a?.name||"Conta")}</div></div><div class="money ${cls}">${sign} ${money(Math.abs(Number(x.amount)))}</div></div>`}).join("")}</div>`;
+ return `<div class="card">${tx.map(x=>{const a=account(x.account_id),signed=x.kind==="debit"?-Math.abs(Number(x.amount)):x.kind==="credit"?Math.abs(Number(x.amount)):Number(x.amount),sign=signed<0?"−":"+",cls=signed<0?"neg":"pos";return `<div class="row"><div><div class="title">${esc(x.description)}</div><div class="meta">${fmt(x.txn_date)} · ${esc(a?.name||"Conta")}</div></div><div class="money ${cls}">${sign} ${money(Math.abs(signed))}</div></div>`}).join("")}</div>`;
 }
 function planListHtml(list,limit=4){
  const shown=list.slice(0,limit);if(!shown.length)return "";
- return `<div class="card">${shown.map(p=>{const a=account(p.account_id),r=planAccrued(p);return `<button class="future-plan" data-plan="${p.id}" style="width:100%;border:0;background:#fff;text-align:left"><div><div class="title">${esc(p.name)}</div><div class="meta">${fmt(p.plan_date)} · ${esc(a?.name||"Saldo")}</div>${r>0?`<span class="reserve-tag">${money(r)} protegido até agora</span>`:""}</div><div class="amount">${money(p.amount)}</div></button>`}).join("")}</div>`;
+ return `<div class="card">${shown.map(p=>{const a=account(p.account_id);return `<button class="future-plan" data-plan="${p.id}" style="width:100%;border:0;background:#fff;text-align:left"><div><div class="title">${esc(p.name)}</div><div class="meta">${fmt(p.plan_date)} · ${esc(a?.name||"Saldo")} · ajusta os próximos dias</div></div><div class="amount">${money(p.amount)}</div></button>`}).join("")}</div>`;
 }
-function bindPlanButtons(){document.querySelectorAll("[data-plan]").forEach(b=>b.onclick=()=>openPlan(b.dataset.plan))}
+function bindPlanButtons(){document.querySelectorAll("[data-plan]").forEach(b=>b.onclick=()=>openPlanAction(b.dataset.plan))}
 function monthName(d){return d.toLocaleDateString("pt-BR",{month:"long",year:"numeric"})}
 function openPlanCalendar(){calendarCursor=new Date();calendarCursor.setDate(1);calendarSelected=today();renderPlanCalendar();openModal("calendarModal")}
 function renderPlanCalendar(){
@@ -330,14 +393,14 @@ function renderPlanCalendar(){
  $("#calendarMonth").textContent=monthName(first);let cells="";
  for(let i=0;i<prefix;i++)cells+=`<div class="calendar-blank"></div>`;
  for(let day=1;day<=last.getDate();day++){
-   const ds=iso(new Date(y,m,day)),has=plannedPlans().some(p=>p.plan_date===ds),cls=["calendar-day",ds===today()?"today":"",ds===calendarSelected?"selected":"",has?"has-plan":""].filter(Boolean).join(" ");
+   const ds=iso(new Date(y,m,day)),has=plans.some(p=>p.status!=="cancelled"&&p.plan_date===ds),cls=["calendar-day",ds===today()?"today":"",ds===calendarSelected?"selected":"",has?"has-plan":""].filter(Boolean).join(" ");
    cells+=`<button class="${cls}" data-calendar-day="${ds}">${day}${has?`<span class="calendar-dot"></span>`:""}</button>`;
  }
  $("#calendarGrid").innerHTML=cells;
  document.querySelectorAll("[data-calendar-day]").forEach(b=>b.onclick=()=>{calendarSelected=b.dataset.calendarDay;renderPlanCalendar()});
- const selected=plannedPlans().filter(p=>p.plan_date===calendarSelected).sort((a,b)=>a.created_at.localeCompare(b.created_at));
- $("#calendarDayList").innerHTML=`<div class="calendar-date-title">${parse(calendarSelected).toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"long"})}</div>${selected.length?selected.map(p=>`<button class="calendar-plan" data-calendar-plan="${p.id}"><div><strong>${esc(p.name)}</strong><span>${esc(account(p.account_id)?.name||"Saldo")}</span></div><b>${money(p.amount)}</b></button>`).join(""):`<div class="empty">Nenhum gasto planejado para este dia.</div>`}`;
- document.querySelectorAll("[data-calendar-plan]").forEach(b=>b.onclick=()=>{closeModal("calendarModal");openPlan(b.dataset.calendarPlan)});
+ const selected=plans.filter(p=>p.status!=="cancelled"&&p.plan_date===calendarSelected).sort((a,b)=>a.created_at.localeCompare(b.created_at));
+ $("#calendarDayList").innerHTML=`<div class="calendar-date-title">${parse(calendarSelected).toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"long"})}</div>${selected.length?selected.map(p=>`<button class="calendar-plan" data-calendar-plan="${p.id}"><div><strong>${esc(p.name)}</strong><span>${esc(account(p.account_id)?.name||"Saldo")}${p.status==="completed"&&p.resolution_mode==="auto"?" · assumido como previsto":p.status==="completed"?" · reconciliado":""}</span></div><b>${money(p.actual_amount||p.amount)}</b></button>`).join(""):`<div class="empty">Nenhum gasto planejado para este dia.</div>`}`;
+ document.querySelectorAll("[data-calendar-plan]").forEach(b=>b.onclick=()=>{closeModal("calendarModal");openPlanAction(b.dataset.calendarPlan)});
 }
 function shiftCalendar(n){calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+n,1);calendarSelected=iso(calendarCursor);renderPlanCalendar()}
 
@@ -347,18 +410,19 @@ function renderHome(){
  app.innerHTML=`<div class="top"><div><div class="eyebrow">Controle pessoal</div><h1>Meu saldo</h1></div><div><span class="pill">${date}</span> <button class="pill" id="logout">Sair</button></div></div>
  <div class="sync"><span class="dot ${navigator.onLine?"":"off"}"></span>${navigator.onLine?"Sincronizado online":"Sem conexão"}</div>
  ${pendingHtml()}
+ ${duePlansToday().length?`<div class="plan-due"><div class="topline"><div><div class="eyebrow">Planejado para hoje</div><div class="name">${esc(duePlansToday()[0].name)}</div><div class="meta">${esc(account(duePlansToday()[0].account_id)?.name||"Saldo")} · confirme quando souber o valor real</div></div><div class="amount">${money(duePlansToday()[0].amount)}</div></div><button class="primary full" id="settleDueHome" style="margin-top:10px">Como foi?</button>${duePlansToday().length>1?`<div class="next">+${duePlansToday().length-1} planejamento(s) para hoje</div>`:""}</div>`:""}
  ${!planningSchemaReady()?`<div class="notice"><strong>Saldo mensal disponível</strong><p>Execute o SQL 08 para ativar saldo mensal e renovação por conta.</p></div>`:""}
  ${planningSchemaReady()&&!plansReady?`<div class="notice"><strong>Planejamento disponível</strong><p>Execute o SQL 09 para ativar gastos planejados.</p></div>`:""}
  ${!cycleStart()?`<div class="notice"><strong>Inicie a base histórica</strong><p>Isso é necessário apenas uma vez para registrar movimentações.</p><button class="secondary" id="defineCycle">Iniciar hoje</button></div>`:""}
- <div class="hero"><div class="label">Disponível agora</div><div class="value">${money(totalAvailableNow())}</div><div class="sub">${totalReserveNow()>0?`${money(totalReserveNow())} protegidos para planos · `:""}${activeAccounts().length} saldo(s) ativo(s)</div></div>
- ${ps.count?`<div class="plan-strip"><div class="plan-mini"><span>Livre até as renovações</span><b>${money(ps.remaining)}</b></div><div class="plan-mini"><span>Ritmo de gasto</span><b>${money(ps.pace)}/dia</b></div></div><div class="plan-note">${ps.reserved>0?`${money(ps.reserved)} reservados em planejamentos. `:""}${ps.next?`Próxima renovação em ${fmt(ps.next)}.`:""}</div>`:""}
+ <div class="hero"><div class="label">Disponível agora</div><div class="value">${money(totalAvailableNow())}</div><div class="sub">${activeAccounts().length} saldo(s) ativo(s) · planejamentos não reduzem o saldo atual</div></div>
+ ${ps.count?`<div class="plan-strip"><div class="plan-mini"><span>Livre até as renovações</span><b>${money(ps.remaining)}</b></div><div class="plan-mini"><span>Ritmo de gasto</span><b>${money(ps.pace)}/dia</b></div></div><div class="plan-note">${ps.reserved>0?`${money(ps.reserved)} planejados nos próximos dias. `:""}${ps.next?`Próxima renovação em ${fmt(ps.next)}.`:""}</div>`:""}
  ${warn.length?`<div class="warning-inline">${warn.map(esc).join("<br>")}</div>`:""}
  <div class="cards">${activeAccounts().map(accountCard).join("")}</div>
  <button class="primary full" id="addDaily" ${canAdd?"":"disabled"} style="margin-top:11px">Atualizar saldo do dia</button><div class="next">${cycleStart()?(canAdd?`Adicionar ${fmt(next)} com os valores diários calculados`:`Próxima atualização: ${fmt(next)}${next>today()?" · ainda não chegou":""}`):"Inicie primeiro a base histórica"}</div>
  <div class="actions"><button class="secondary" id="addDebit">− Débito</button><button class="secondary" id="addCredit">+ Crédito</button></div>
  ${plansReady?`<div class="plan-actions"><button class="secondary" id="newPlanHome">＋ Planejar gasto</button><button class="calendar-open" id="openCalendar" aria-label="Abrir calendário"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3v3M18 3v3M4.5 8.5h15M5.5 5h13a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"/></svg></button></div>${upcomingPlans().length?`<div class="section"><h2>Próximos planos</h2><span>${money(upcomingPlanTotal())}</span></div>${planListHtml(upcomingPlans(),3)}`:""}`:""}
  <div class="section"><h2>Movimentações recentes</h2><span>${activeTx().length}</span></div>${recentHtml()}`;
- $("#logout").onclick=logout;$("#defineCycle")?.addEventListener("click",openCycle);$("#addDaily").onclick=openDaily;$("#addDebit").onclick=()=>openMove("debit");$("#addCredit").onclick=()=>openMove("credit");$("#newPlanHome")?.addEventListener("click",()=>openPlan());$("#openCalendar")?.addEventListener("click",openPlanCalendar);$("#reviewPending")?.addEventListener("click",()=>openPending(pending[0]));bindPlanButtons();
+ $("#logout").onclick=logout;$("#settleDueHome")?.addEventListener("click",()=>openPlanSettle(duePlansToday()[0]?.id));$("#defineCycle")?.addEventListener("click",openCycle);$("#addDaily").onclick=openDaily;$("#addDebit").onclick=()=>openMove("debit");$("#addCredit").onclick=()=>openMove("credit");$("#newPlanHome")?.addEventListener("click",()=>openPlan());$("#openCalendar")?.addEventListener("click",openPlanCalendar);$("#reviewPending")?.addEventListener("click",()=>openPending(pending[0]));bindPlanButtons();
  document.querySelectorAll("[data-account]").forEach(b=>b.onclick=()=>{selectedAccountId=b.dataset.account;render()});
 }
 
@@ -368,16 +432,41 @@ function renderAccounts(){
  $("#newAccount").onclick=()=>openAccount();document.querySelectorAll("[data-account]").forEach(b=>b.onclick=()=>{selectedAccountId=b.dataset.account;render()});
 }
 
+function accountTransactions(id,allCycles=true){
+ const list=(allCycles?transactions:activeTx()).filter(x=>x.account_id===id);
+ return [...list].sort((a,b)=>(b.created_at||"").localeCompare(a.created_at||""));
+}
+function transactionRowsHtml(list,canDelete=false){
+ if(!list.length)return `<div class="card"><div class="empty">Nenhuma movimentação.</div></div>`;
+ return `<div class="card">${list.map(x=>{
+   const signed=x.kind==="debit"?-Math.abs(Number(x.amount)):x.kind==="credit"?Math.abs(Number(x.amount)):Number(x.amount),sign=signed<0?"−":"+",cls=signed<0?"neg":"pos";
+   return `<div class="row"><div><div class="title">${esc(x.description)}</div><div class="meta">${fmt(x.txn_date)}</div></div><div style="text-align:right"><div class="money ${cls}">${sign} ${money(Math.abs(signed))}</div>${canDelete&&x.kind!=="adjustment"?`<button class="mini danger-mini" data-delete-tx="${x.id}" style="margin-top:5px">Apagar</button>`:""}</div></div>`;
+ }).join("")}</div>`;
+}
+function bindDeleteTransactions(){document.querySelectorAll("[data-delete-tx]").forEach(b=>b.onclick=()=>deleteTransaction(b.dataset.deleteTx))}
 function renderAccountDetail(id){
- const a=account(id);if(!a)return selectedAccountId=null,render();const tx=activeTx().filter(x=>x.account_id===id),d=effectiveCycleDates(a),planned=a.planning_enabled&&d.next;
+ const a=account(id);if(!a)return selectedAccountId=null,render();
+ const allTx=accountTransactions(id,true),d=effectiveCycleDates(a),planned=a.planning_enabled&&d.next;
+ if(!a.active){
+   const days=dailyCredits.filter(x=>x.account_id===id).length;
+   app.innerHTML=`<div class="detail-head"><button class="back" id="back">‹ Voltar</button><div class="eyebrow">Conta arquivada</div><h1>${esc(a.name)}</h1></div>
+   <div class="notice"><strong>Histórico preservado</strong><p>Esta conta não aparece mais nos saldos ativos. Você pode consultar o histórico, restaurá-la ou apagá-la definitivamente.</p></div>
+   <div class="plan-strip"><div class="plan-mini"><span>Movimentações</span><b>${allTx.length}</b></div><div class="plan-mini"><span>Dias registrados</span><b>${days}</b></div></div>
+   <div class="section"><h2>Histórico da conta</h2><span>${allTx.length}</span></div>${transactionRowsHtml(allTx,false)}
+   <button class="secondary full" id="restoreA" style="margin-top:12px">Restaurar conta</button>
+   <button class="danger full" id="deleteA" style="margin-top:8px">Apagar conta definitivamente</button>`;
+   $("#back").onclick=()=>{selectedAccountId=null;renderSettings()};$("#restoreA").onclick=()=>restoreAccount(id);$("#deleteA").onclick=()=>deleteAccountPermanent(id);return;
+ }
+ const currentTx=accountTransactions(id,false),bal=balance(id),planTotal=cyclePlanReserved(a);
  app.innerHTML=`<div class="detail-head"><button class="back" id="back">‹ Voltar</button><div class="eyebrow">${a.owner_label?esc(a.owner_label):"Saldo"}</div><h1>${esc(a.name)}</h1></div>
- <div class="detail-box"><div class="eyebrow">Disponível agora</div><div class="amt">${money(availableBalance(id))}</div><div class="meta">${accountReserveNow(id)>0?`${money(accountReserveNow(id))} protegidos para planos · `:""}${planned?`${money(cyclePace(a))}/dia · renova ${fmt(d.next)}`:`configure saldo restante e renovação`}</div></div>
- ${planned?`<div class="plan-strip"><div class="plan-mini"><span>Até renovar</span><b>${money(cycleBudget(a))}</b></div><div class="plan-mini"><span>Livre até renovar</span><b>${money(cycleRemaining(a))}</b></div></div>`:""}
- <div class="actions"><button class="secondary" id="debitA">− Débito</button><button class="secondary" id="creditA">+ Crédito</button></div>${plansReady?`<button class="secondary full" id="planA" style="margin-top:8px">＋ Planejar gasto</button>`:""}<button class="secondary full" id="editA" style="margin-top:8px">Editar saldo mensal</button><button class="danger full" id="zeroA" style="margin-top:8px">Zerar saldo</button>
+ <div class="detail-box"><div class="eyebrow">Disponível agora</div><div class="amt">${money(bal)}</div><div class="meta">${planned?`${money(cyclePace(a))}/dia · renova ${fmt(d.next)}`:`configure saldo restante e renovação`}${planTotal>0?` · ${money(planTotal)} planejados`:""}</div></div>
+ ${bal<-.005&&planned?`<div class="notice"><strong>Saldo negativo</strong><p>Você pode zerar o saldo de hoje e descontar ${money(Math.abs(bal))} dos próximos saldos diários.</p><button class="primary full" id="rebalanceA">Ajustar saldo diário</button></div>`:""}
+ ${planned?`<div class="plan-strip"><div class="plan-mini"><span>Até renovar</span><b>${money(cycleBudget(a))}</b></div><div class="plan-mini"><span>Livre futuro</span><b>${money(futureFreeRemaining(a))}</b></div></div>`:""}
+ <div class="actions"><button class="secondary" id="debitA">− Débito</button><button class="secondary" id="creditA">+ Crédito</button></div>${plansReady?`<button class="secondary full" id="planA" style="margin-top:8px">＋ Planejar gasto</button>`:""}<button class="secondary full" id="editA" style="margin-top:8px">Editar saldo / renovação</button><button class="danger full" id="zeroA" style="margin-top:8px">Zerar saldo</button>
  ${plansReady&&upcomingPlans(id).length?`<div class="section"><h2>Planos deste saldo</h2><span>${upcomingPlans(id).length}</span></div>${planListHtml(upcomingPlans(id),6)}`:""}
- <div class="section"><h2>Histórico da conta</h2><span>${tx.length}</span></div>${tx.length?`<div class="card">${tx.map(x=>`<div class="row"><div><div class="title">${esc(x.description)}</div><div class="meta">${fmt(x.txn_date)}</div></div><div class="money ${x.kind==="debit"?"neg":"pos"}">${x.kind==="debit"?"−":"+"} ${money(Math.abs(Number(x.amount)))}</div></div>`).join("")}</div>`:`<div class="card"><div class="empty">Nenhuma movimentação.</div></div>`}
+ <div class="section"><h2>Histórico da conta</h2><span>${currentTx.length}</span></div>${transactionRowsHtml(currentTx,true)}
  <button class="ghost full" id="archiveA" style="margin-top:12px">Arquivar esta conta</button>`;
- $("#back").onclick=()=>{selectedAccountId=null;render()};$("#debitA").onclick=()=>openMove("debit",id);$("#creditA").onclick=()=>openMove("credit",id);$("#planA")?.addEventListener("click",()=>openPlan(null,id));$("#editA").onclick=()=>openAccount(id);$("#zeroA").onclick=()=>zeroAccount(id);$("#archiveA").onclick=()=>archiveAccount(id);bindPlanButtons();
+ $("#back").onclick=()=>{selectedAccountId=null;render()};$("#debitA").onclick=()=>openMove("debit",id);$("#creditA").onclick=()=>openMove("credit",id);$("#planA")?.addEventListener("click",()=>openPlan(null,id));$("#editA").onclick=()=>openAccount(id);$("#zeroA").onclick=()=>zeroAccount(id);$("#archiveA").onclick=()=>archiveAccount(id);$("#rebalanceA")?.addEventListener("click",()=>rebalanceNegative(id));bindPlanButtons();bindDeleteTransactions();
 }
 
 function renderInvestments(){
@@ -387,21 +476,22 @@ function renderInvestments(){
  <div class="project"><div class="eyebrow">${net>=0?"Se eu guardasse tudo agora":"Após cobrir o saldo negativo"}</div><div class="big">${money(proj)}</div><p>${net>=0?`Seu saldo investível atual acrescentaria ${money(net)} ao que já está guardado.`:`Seu saldo investível está negativo em ${money(Math.abs(net))}, então a projeção desconta esse valor dos investimentos.`}</p></div>
  <div class="section"><h2>Onde está guardado</h2><span>${money(total)}</span></div>
  <div class="card">${investments.filter(x=>x.active).length?investments.filter(x=>x.active).map(x=>`<div class="row"><div><div class="title">${esc(x.name)}</div><div class="meta">valor informado manualmente</div></div><div><div class="money">${money(x.balance)}</div><div style="display:flex;gap:4px;margin-top:5px"><button class="mini" data-invest="${x.id}">Editar</button><button class="mini" data-delete-invest="${x.id}">Excluir</button></div></div></div>`).join(""):`<div class="empty">Cadastre sua reserva, CDB, Tesouro, ações ou qualquer dinheiro já guardado.</div>`}</div>
- <div class="section"><h2>Contas consideradas</h2></div><div class="card">${activeAccounts().filter(a=>a.counts_as_investable).length?activeAccounts().filter(a=>a.counts_as_investable).map(a=>`<div class="row"><div><div class="title">${esc(a.name)}</div><div class="meta">disponível após reservas</div></div><div class="money ${availableBalance(a.id)>=0?"pos":"neg"}">${money(availableBalance(a.id))}</div></div>`).join(""):`<div class="empty">Nenhuma conta está marcada como investível.</div>`}</div>`;
+ <div class="section"><h2>Contas consideradas</h2></div><div class="card">${activeAccounts().filter(a=>a.counts_as_investable).length?activeAccounts().filter(a=>a.counts_as_investable).map(a=>`<div class="row"><div><div class="title">${esc(a.name)}</div><div class="meta">saldo atual</div></div><div class="money ${availableBalance(a.id)>=0?"pos":"neg"}">${money(availableBalance(a.id))}</div></div>`).join(""):`<div class="empty">Nenhuma conta está marcada como investível.</div>`}</div>`;
  $("#newInvestment").onclick=()=>openInvestment();document.querySelectorAll("[data-invest]").forEach(b=>b.onclick=()=>openInvestment(b.dataset.invest));document.querySelectorAll("[data-delete-invest]").forEach(b=>b.onclick=()=>deleteInvestment(b.dataset.deleteInvest));
 }
 
 function renderSettings(){
- const endpoint=`${SUPABASE_URL}/functions/v1/wallet-capture`;
+ const endpoint=`${SUPABASE_URL}/functions/v1/wallet-capture`,archived=archivedAccounts();
  app.innerHTML=`<div class="top"><div><div class="eyebrow">Configuração</div><h1>Ajustes</h1></div></div><div class="settings">
- <div class="settings-block"><h3>Saldos</h3><p>Para cada saldo, informe quanto ainda será distribuído e a próxima renovação.</p>${activeAccounts().map(a=>{const d=effectiveCycleDates(a);return `<div class="settings-row"><div><div class="name">${esc(a.name)}</div><div class="sub">${a.planning_enabled&&d.next?`${money(cycleBudget(a))} por período · ${money(cyclePace(a))}/dia · renova ${fmt(d.next)}`:"configuração pendente"}</div></div><button class="mini" data-edit-account="${a.id}">Editar</button></div>`}).join("")}<button class="secondary full" id="newAccountS" style="margin-top:8px">+ Novo saldo</button></div>
+ <div class="settings-block"><h3>Saldos</h3><p>Para cada saldo, informe quanto ainda será distribuído e a próxima renovação.</p>${activeAccounts().map(a=>{const d=effectiveCycleDates(a);return `<div class="settings-row"><div><div class="name">${esc(a.name)}</div><div class="sub">${a.planning_enabled&&d.next?`${money(futureAllocationRemaining(a))} ainda para distribuir · ${money(cyclePace(a))}/dia · renova ${fmt(d.next)}`:"configuração pendente"}</div></div><button class="mini" data-edit-account="${a.id}">Editar</button></div>`}).join("")}<button class="secondary full" id="newAccountS" style="margin-top:8px">+ Novo saldo</button></div>
+ <div class="settings-block"><h3>Histórico de contas</h3><p>Contas arquivadas continuam com o histórico salvo. Você pode consultar, restaurar ou apagar definitivamente.</p>${archived.length?archived.map(a=>`<div class="settings-row"><div><div class="name">${esc(a.name)}</div><div class="sub">arquivada · ${accountTransactions(a.id,true).length} movimentação(ões)</div></div><div style="display:flex;gap:4px"><button class="mini" data-history-account="${a.id}">Histórico</button><button class="mini danger-mini" data-delete-account="${a.id}">Apagar</button></div></div>`).join(""):`<div class="empty">Nenhuma conta arquivada.</div>`}</div>
  <div class="settings-block"><h3>Cartões e automações</h3><p>O Atalho envia só a origem. Você pode mudar o saldo de destino sem refazer a automação.</p>${sources.filter(s=>s.active).length?sources.filter(s=>s.active).map(s=>`<div class="settings-row"><div><div class="name">${esc(s.name)} → ${esc(account(s.account_id)?.name||"Conta")}</div><div class="sub">token protegido</div></div><div style="display:flex;gap:4px"><button class="mini" data-copy-source="${s.id}">Copiar token</button><button class="mini" data-source="${s.id}">Editar</button></div></div>`).join(""):`<div class="empty">Nenhum cartão configurado.</div>`}<button class="secondary full" id="newSource" style="margin-top:8px">+ Novo cartão / automação</button></div>
- <div class="settings-block"><h3>Planejamento</h3><p>Informe um gasto futuro e o app reserva o valor aos poucos até a data escolhida.</p>${plansReady?`${upcomingPlans().length?upcomingPlans().slice(0,3).map(p=>`<div class="settings-row"><div><div class="name">${esc(p.name)}</div><div class="sub">${money(p.amount)} · ${fmt(p.plan_date)} · ${esc(account(p.account_id)?.name||"Saldo")}</div></div><button class="mini" data-plan="${p.id}">Editar</button></div>`).join(""):`<div class="empty">Nenhum gasto planejado.</div>`}<div class="plan-actions"><button class="secondary" id="newPlanSettings">+ Planejar gasto</button><button class="calendar-open" id="openCalendarSettings" aria-label="Abrir calendário"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3v3M18 3v3M4.5 8.5h15M5.5 5h13a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"/></svg></button></div>`:`<div class="empty">Execute o SQL 09 para ativar.</div>`}</div>
+ <div class="settings-block"><h3>Planejamento</h3><p>O planejamento reduz os próximos saldos diários. Se a data passar sem confirmação, o app assume previsto = real, mas você pode reconciliar depois.</p>${plansReady?`${upcomingPlans().length?upcomingPlans().slice(0,3).map(p=>`<div class="settings-row"><div><div class="name">${esc(p.name)}</div><div class="sub">${money(p.amount)} · ${fmt(p.plan_date)} · ${esc(account(p.account_id)?.name||"Saldo")}</div></div><button class="mini" data-plan="${p.id}">Editar</button></div>`).join(""):`<div class="empty">Nenhum gasto planejado.</div>`}${reconcilablePlans().length?`<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--line)"><div class="eyebrow">Reconciliação opcional</div>${reconcilablePlans().slice(0,5).map(p=>`<div class="settings-row"><div><div class="name">${esc(p.name)}</div><div class="sub">${fmt(p.plan_date)} · assumido ${money(p.amount)} como real</div></div><button class="mini" data-plan="${p.id}">Reconciliar</button></div>`).join("")}${reconcilablePlans().length>5?`<div class="empty">+${reconcilablePlans().length-5} no calendário</div>`:""}</div>`:""}<div class="plan-actions"><button class="secondary" id="newPlanSettings">+ Planejar gasto</button><button class="calendar-open" id="openCalendarSettings" aria-label="Abrir calendário"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3v3M18 3v3M4.5 8.5h15M5.5 5h13a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"/></svg></button></div>`:`<div class="empty">Execute o SQL 09 para ativar.</div>`}</div>
  <div class="settings-block"><h3>Notificações no iPhone</h3><p>Ative Web Push para receber compras detectadas e apenas confirmar.</p><button class="primary full" id="enablePush">Ativar notificações neste iPhone</button></div>
  <div class="settings-block"><h3>Integração do Atalho</h3><p>Endpoint usado pelas automações. Os tokens ficam ocultos até você copiá-los.</p><code class="token">${endpoint}</code><button class="secondary full" id="copyEndpoint" style="margin-top:8px">Copiar endpoint</button></div>
  <details class="advanced settings-block"><summary>Base histórica e manutenção</summary><p>${cycleStart()?`Base atual iniciada em ${fmt(cycleStart())}.`:"Base ainda não iniciada."} Esta data existe apenas para preservar o histórico do app.</p><button class="secondary full" id="changeCycle">Definir / trocar base histórica</button><button class="danger full" id="clearHistory" style="margin-top:8px">Apagar histórico financeiro</button></details>
  </div>`;
- $("#newAccountS").onclick=()=>openAccount();document.querySelectorAll("[data-edit-account]").forEach(b=>b.onclick=()=>openAccount(b.dataset.editAccount));$("#newPlanSettings")?.addEventListener("click",()=>openPlan());$("#openCalendarSettings")?.addEventListener("click",openPlanCalendar);bindPlanButtons();$("#newSource").onclick=()=>openSource();document.querySelectorAll("[data-source]").forEach(b=>b.onclick=()=>openSource(b.dataset.source));document.querySelectorAll("[data-copy-source]").forEach(b=>b.onclick=async()=>{const s=sources.find(x=>x.id===b.dataset.copySource);if(!s)return;await navigator.clipboard.writeText(s.token);toast("Token copiado.")});$("#enablePush").onclick=enablePush;$("#changeCycle").onclick=openCycle;$("#copyEndpoint").onclick=async()=>{await navigator.clipboard.writeText(endpoint);toast("Endpoint copiado.")};$("#clearHistory").onclick=clearHistory;
+ $("#newAccountS").onclick=()=>openAccount();document.querySelectorAll("[data-edit-account]").forEach(b=>b.onclick=()=>openAccount(b.dataset.editAccount));document.querySelectorAll("[data-history-account]").forEach(b=>b.onclick=()=>{selectedAccountId=b.dataset.historyAccount;render()});document.querySelectorAll("[data-delete-account]").forEach(b=>b.onclick=()=>deleteAccountPermanent(b.dataset.deleteAccount));$("#newPlanSettings")?.addEventListener("click",()=>openPlan());$("#openCalendarSettings")?.addEventListener("click",openPlanCalendar);bindPlanButtons();$("#newSource").onclick=()=>openSource();document.querySelectorAll("[data-source]").forEach(b=>b.onclick=()=>openSource(b.dataset.source));document.querySelectorAll("[data-copy-source]").forEach(b=>b.onclick=async()=>{const s=sources.find(x=>x.id===b.dataset.copySource);if(!s)return;await navigator.clipboard.writeText(s.token);toast("Token copiado.")});$("#enablePush").onclick=enablePush;$("#changeCycle").onclick=openCycle;$("#copyEndpoint").onclick=async()=>{await navigator.clipboard.writeText(endpoint);toast("Endpoint copiado.")};$("#clearHistory").onclick=clearHistory;
 }
 
 function openMove(kind,accountId=null){if(!cycleStart()||!cycleId())return toast("Defina primeiro o Dia 0.");moveKind=kind;$("#moveTitle").textContent=kind==="debit"?"Adicionar débito":"Adicionar crédito";$("#moveHelp").textContent=kind==="debit"?"Reduz o saldo da conta escolhida.":"Use para reembolso, Pix ou dinheiro inesperado.";accountOptions($("#moveAccount"),accountId||activeAccounts()[0]?.id);$("#moveAmount").value="";$("#moveDesc").value="";$("#moveDate").min=addDays(cycleStart(),1);$("#moveDate").max=today();$("#moveDate").value=today()>cycleStart()?today():addDays(cycleStart(),1);openModal("moveModal")}
@@ -411,7 +501,7 @@ async function saveMove(){
 }
 
 function openDaily(){
- const date=nextDailyDate();if(!date)return;$("#dailyHelp").textContent=`Adicionar ${fmt(date)}. O valor diário vem do saldo mensal dividido até a próxima renovação.`;$("#dailyPreview").innerHTML=activeAccounts().map(a=>`<div class="row"><div><div class="title">${esc(a.name)}</div><div class="meta">${a.planning_enabled?"calculado automaticamente":"valor diário atual"}</div></div><div class="money pos">+ ${money(dailyAmountForDate(a,date))}</div></div>`).join("");openModal("dailyModal");
+ const date=nextDailyDate();if(!date)return;$("#dailyHelp").textContent=`Adicionar ${fmt(date)}. Planejamentos futuros já estão incorporados neste valor; se houver um plano para esse dia, ele entra junto do saldo diário.`;$("#dailyPreview").innerHTML=activeAccounts().map(a=>`<div class="row"><div><div class="title">${esc(a.name)}</div><div class="meta">${a.planning_enabled?"calculado automaticamente":"valor diário atual"}</div></div><div class="money pos">+ ${money(dailyAmountForDate(a,date))}</div></div>`).join("");openModal("dailyModal");
 }
 async function saveDaily(){
  const date=nextDailyDate();if(!date||date>today())return toast("Esse dia ainda não chegou.");
@@ -446,13 +536,48 @@ async function saveAccount(){
 
 async function zeroAccount(id){const current=Number(balance(id).toFixed(2));if(Math.abs(current)<.005)return toast("Esse saldo já está zerado.");if(!confirm(`Zerar ${account(id).name}? O histórico será mantido.`))return;const r=await sb.from("finance_transactions").insert({household_id:householdId,cycle_id:cycleId(),account_id:id,kind:"adjustment",amount:Number((-current).toFixed(2)),description:"Saldo zerado",txn_date:today(),created_by:session.user.id});if(r.error)return toast("Não consegui zerar.");await loadData();toast("Saldo zerado.")}
 async function archiveAccount(id){const a=account(id),b=balance(id);if(Math.abs(b)>.005)return toast("Zere o saldo antes de arquivar esta conta.");if(!confirm(`Arquivar ${a.name}? Ela sai das telas, mas o histórico é preservado.`))return;const r=await sb.rpc("finance_archive_account",{p_account_id:id});if(r.error){console.error(r.error);return toast("Não consegui arquivar.")}selectedAccountId=null;await loadData();toast("Conta arquivada.")}
+async function restoreAccount(id){
+ const a=account(id);if(!a||a.active)return;if(!confirm(`Restaurar ${a.name}? Ela voltará para a lista de saldos ativos.`))return;
+ const r=await sb.from("finance_accounts").update({active:true,updated_at:new Date().toISOString()}).eq("id",id);
+ if(r.error){console.error(r.error);return toast("Não consegui restaurar.")}selectedAccountId=null;await loadData();toast("Conta restaurada.");
+}
+async function deleteAccountPermanent(id){
+ const a=account(id);if(!a||a.active)return toast("Arquive a conta antes de apagá-la definitivamente.");
+ if(!confirm(`Apagar ${a.name} definitivamente?\n\nTodo o histórico, saldos diários, planejamentos e automações vinculados a ela serão excluídos. Esta ação não pode ser desfeita.`))return;
+ const r=await sb.rpc("finance_delete_archived_account",{p_account_id:id});
+ if(r.error){console.error(r.error);return toast(r.error.code==="PGRST202"?"Execute primeiro o SQL 10.":"Não consegui apagar a conta.")}selectedAccountId=null;await loadData();toast("Conta apagada definitivamente.");
+}
+async function deleteTransaction(id){
+ const tx=transactions.find(x=>x.id===id);if(!tx)return;
+ const linked=plans.find(p=>p.transaction_id===id);
+ if(!confirm(`Apagar o lançamento "${tx.description}" de ${money(Math.abs(Number(tx.amount)))}?${linked?`\n\nO planejamento "${linked.name}" também será cancelado e qualquer redistribuição será desfeita.`:""}`))return;
+ const r=await sb.rpc("finance_delete_transaction_safe",{p_transaction_id:id});
+ if(r.error){console.error(r.error);return toast(r.error.code==="PGRST202"?"Execute primeiro o SQL 11.":"Não consegui apagar o lançamento.")}
+ await loadData();toast("Lançamento apagado.");
+}
+async function rebalanceNegative(id){
+ const a=account(id),current=Number(balance(id).toFixed(2));if(!a||current>=-.005)return toast("Esse saldo não está negativo.");
+ const deficit=Math.abs(current),days=cycleDaysRemaining(a),free=futureFreeRemaining(a);
+ if(!days)return toast("Não há dias futuros antes da renovação para ajustar.");
+ if(deficit>free+.005)return toast(`Os próximos dias têm apenas ${money(free)} livres. Revise algum planejamento ou a próxima renovação.`);
+ const newPace=(free-deficit)/days;
+ if(!confirm(`Zerar ${money(current)} de hoje?\n\nO valor será retirado dos próximos ${days} dias e o saldo diário livre ficará em aproximadamente ${money(newPace)}/dia.`))return;
+ const r=await sb.rpc("finance_rebalance_negative",{p_account_id:id,p_cycle_id:cycleId(),p_txn_date:today()});
+ if(r.error){console.error(r.error);return toast(r.error.code==="PGRST202"?"Execute primeiro o SQL 10.":"Não consegui ajustar o saldo diário.")}await loadData();toast("Saldo de hoje zerado e próximos dias ajustados.");
+}
+
 
 function refreshPlanPreview(){
- const amount=Number($("#planAmount").value||0),date=$("#planDate").value,account_id=$("#planAccount").value;
- if(!amount||amount<=0||!date){$("#planReservePreview").textContent="R$ 0,00";$("#planReserveText").textContent="Informe valor e data para ver quanto será protegido por dia.";return}
- const days=Math.max(1,daysBetween(today(),date)),per=amount/days,a=account(account_id),d=a?effectiveCycleDates(a):{next:null};
- $("#planReservePreview").textContent=`${money(per)}/dia`;
- $("#planReserveText").textContent=date===today()?"É para hoje: o valor não será reservado antes, apenas considerado no dia.":(a?.planning_enabled&&d.next&&date>=d.next?`A data é depois da próxima renovação de ${a.name}; este plano só afetará o próximo período.`:`O app protege esse valor aos poucos até ${fmt(date)}. Na data, a reserva é liberada para o gasto.`);
+ const amount=Number($("#planAmount").value||0),date=$("#planDate").value,account_id=$("#planAccount").value,id=$("#planId").value||null;
+ if(!amount||amount<=0||!date){$("#planReservePreview").textContent="R$ 0,00";$("#planReserveText").textContent="Informe valor e data para ver como os próximos dias serão ajustados.";return}
+ const a=account(account_id),d=a?effectiveCycleDates(a):{next:null},first=firstUnaddedDate();
+ if(!a?.planning_enabled||!d.next){$("#planReservePreview").textContent="—";$("#planReserveText").textContent="Configure primeiro o saldo e a próxima renovação desta conta.";return}
+ if(date<first){$("#planReservePreview").textContent=money(cyclePace(a,id))+"/dia";$("#planReserveText").textContent="O gasto é para hoje. O planejamento não altera o saldo atual nem os dias anteriores.";return}
+ if(date>=d.next){$("#planReservePreview").textContent=money(cyclePace(a,id))+"/dia";$("#planReserveText").textContent=`A data é depois da próxima renovação de ${a.name}; este plano só afetará o próximo período.`;return}
+ const days=cycleDaysRemaining(a),before=cyclePace(a,id),capacity=Math.max(0,futureAllocationRemaining(a)-cyclePlanReserved(a,id));
+ const after=days?Math.max(0,capacity-amount)/days:0;
+ $("#planReservePreview").textContent=`${money(after)}/dia`;
+ $("#planReserveText").textContent=amount>capacity?`Este plano excede em ${money(amount-capacity)} o saldo que ainda falta distribuir.`:`Seu saldo atual não muda. Os próximos ${days} dias passam de ${money(before)} para ${money(after)} livres por dia; em ${fmt(date)}, ${money(amount)} entram junto do saldo daquele dia.`;
 }
 function openPlan(id=null,accountId=null){
  if(!plansReady)return toast("Execute primeiro o SQL 09 de Planejamento.");
@@ -460,10 +585,58 @@ function openPlan(id=null,accountId=null){
 }
 async function savePlan(){
  const id=$("#planId").value,name=$("#planName").value.trim(),amount=Number($("#planAmount").value),plan_date=$("#planDate").value,account_id=$("#planAccount").value;if(!name||!Number.isFinite(amount)||amount<=0||!plan_date||!account_id)return toast("Revise nome, valor, data e saldo.");if(plan_date<today())return toast("Escolha hoje ou uma data futura.");
- const payload={name,amount:Number(amount.toFixed(2)),plan_date,account_id,reserve_from:today(),status:"planned",updated_at:new Date().toISOString()};let r;if(id)r=await sb.from("finance_plans").update(payload).eq("id",id);else r=await sb.from("finance_plans").insert({...payload,household_id:householdId,created_by:session.user.id});if(r.error){console.error(r.error);return toast(r.error.code==="42501"?"Execute o SQL 09 e confirme as permissões.":"Não consegui salvar o plano.")}closeModal("planModal");await loadData();toast("Plano salvo. O orçamento já foi adaptado.");
+ const a=account(account_id),d=a?effectiveCycleDates(a):{next:null},first=firstUnaddedDate();
+ if(a?.planning_enabled&&d.next&&first&&plan_date>=first&&plan_date<d.next){
+   const capacity=Math.max(0,futureAllocationRemaining(a)-cyclePlanReserved(a,id||null));
+   if(amount>capacity+.005)return toast(`Esse planejamento excede o saldo futuro disponível em ${money(amount-capacity)}.`);
+ }
+ const payload={name,amount:Number(amount.toFixed(2)),plan_date,account_id,reserve_from:today(),status:"planned",updated_at:new Date().toISOString()};let r;if(id)r=await sb.from("finance_plans").update(payload).eq("id",id);else r=await sb.from("finance_plans").insert({...payload,household_id:householdId,created_by:session.user.id});if(r.error){console.error(r.error);return toast(r.error.code==="42501"?"Execute o SQL 09 e confirme as permissões.":"Não consegui salvar o plano.")}closeModal("planModal");await loadData();toast("Plano salvo. Os próximos saldos diários foram adaptados.");
 }
 async function cancelPlan(){
- const id=$("#planId").value;if(!id||!confirm("Excluir este plano? O valor protegido volta a ficar disponível."))return;const r=await sb.from("finance_plans").update({status:"cancelled",updated_at:new Date().toISOString()}).eq("id",id);if(r.error){console.error(r.error);return toast("Não consegui excluir o plano.")}closeModal("planModal");await loadData();toast("Plano excluído. Reserva liberada.");
+ const id=$("#planId").value;if(!id||!confirm("Excluir este plano? Os próximos saldos diários serão recalculados."))return;const r=await sb.from("finance_plans").update({status:"cancelled",updated_at:new Date().toISOString()}).eq("id",id);if(r.error){console.error(r.error);return toast("Não consegui excluir o plano.")}closeModal("planModal");await loadData();toast("Plano excluído. Saldos diários recalculados.");
+}
+
+function refreshPlanSettlement(){
+ const id=$("#settlePlanId").value,p=plans.find(x=>x.id===id);if(!p)return;
+ const actual=Number($("#settleActual").value||0),expected=Number(p.amount||0),delta=actual-expected,box=$("#settleDiffBox"),isReconcile=$("#settlePlanId").dataset.mode==="reconcile";
+ $("#settleEqual").textContent=`Foi exatamente ${money(expected)}`;
+ if(!actual||Math.abs(delta)<.005){box.classList.add("hidden");return}
+ box.classList.remove("hidden");
+ const above=delta>0,d=Math.abs(delta),a=account(p.account_id),days=a?cycleDaysRemaining(a):0;
+ $("#settleDiffTitle").textContent=`${money(d)} ${above?"acima":"abaixo"} do previsto`;
+ $("#settleCurrentHint").textContent=above?`Seu saldo de hoje diminui ${money(d)}.`:`Seu saldo de hoje aumenta ${money(d)}.`;
+ $("#settleFutureHint").textContent=days?(above?`${money(d)} são descontados dos próximos ${days} dias a partir de agora.`:`${money(d)} voltam para os próximos ${days} dias a partir de agora.`):"Não há dias futuros antes da renovação.";
+ const futureRadio=$("#settleFutureChoice input");futureRadio.disabled=!days;$("#settleFutureChoice").style.opacity=days?"1":".45";
+ if(!days&&futureRadio.checked)$('input[name="settleEffect"][value="current"]').checked=true;
+}
+function openPlanSettle(id,reconcile=false){
+ const p=plans.find(x=>x.id===id);if(!p)return;
+ const isReconcile=reconcile||(p.status==="completed"&&p.resolution_mode==="auto");
+ if(!isReconcile&&p.status!=="planned")return;
+ if(!planSettlementReady)return toast("Execute primeiro o SQL 11.");
+ $("#settlePlanId").value=p.id;$("#settlePlanId").dataset.mode=isReconcile?"reconcile":"settle";$("#settleActual").value=Number(p.amount).toFixed(2);
+ $("#settlePlanText").innerHTML=isReconcile
+   ?`<b>${esc(p.name)}</b><br>Na época, o Meu Saldo assumiu <b>${money(p.amount)}</b> como real em ${fmt(p.plan_date)}.<br><span style="font-size:9px">Reconciliar é opcional. Se deixar como está, nada muda.</span>`
+   :`<b>${esc(p.name)}</b><br>Previsto: <b>${money(p.amount)}</b> · ${fmt(p.plan_date)} · ${esc(account(p.account_id)?.name||"Saldo")}<br><span style="font-size:9px">Se você não decidir e a data passar, o Meu Saldo assume previsto = real; você ainda poderá reconciliar depois.</span>`;
+ $("#settleEqual").textContent=isReconcile?`Confirmar ${money(p.amount)} como real`:`Foi exatamente ${money(p.amount)}`;
+ $("#settlePlanSave").textContent=isReconcile?"Reconciliar":"Confirmar valor real";
+ $('input[name="settleEffect"][value="current"]').checked=true;refreshPlanSettlement();openModal("settlePlanModal");
+}
+async function settlePlanActual(forceEqual=false,existingTxId=null){
+ const id=$("#settlePlanId").value,p=plans.find(x=>x.id===id);if(!p)return;
+ const actual=forceEqual?Number(p.amount):Number($("#settleActual").value);
+ if(!Number.isFinite(actual)||actual<=0)return toast("Informe o valor gasto.");
+ const delta=actual-Number(p.amount),effect=Math.abs(delta)<.005?"current":($('input[name="settleEffect"]:checked')?.value||"current"),mode=$("#settlePlanId").dataset.mode||"settle";
+ let r;
+ if(mode==="reconcile"){
+   r=await sb.rpc("finance_reconcile_auto_plan",{p_plan_id:id,p_actual_amount:Number(actual.toFixed(2)),p_effect:effect,p_today:today()});
+ }else{
+   const existing=existingTxId||existingTransactionForPlan(p,actual)?.id||null;
+   r=await sb.rpc("finance_settle_plan",{p_plan_id:id,p_actual_amount:Number(actual.toFixed(2)),p_effect:effect,p_existing_tx_id:existing,p_today:today()});
+ }
+ if(r.error){console.error(r.error);return toast(r.error.code==="PGRST202"?"Execute primeiro o SQL 12.":r.error.message||"Não consegui concluir o planejamento.")}
+ closeModal("settlePlanModal");await loadData();
+ toast(mode==="reconcile"?(Math.abs(delta)<.005?"Planejamento conferido sem alterações.":effect==="current"?"Reconciliação aplicada ao saldo de hoje.":"Reconciliação distribuída nos próximos dias."):(Math.abs(delta)<.005?"Planejamento concluído como previsto.":effect==="current"?"Diferença aplicada ao saldo atual.":"Diferença distribuída nos próximos dias."));
 }
 
 function openInvestment(id=null){const x=id?investments.find(v=>v.id===id):null;$("#investmentId").value=id||"";$("#investmentTitle").textContent=x?"Editar investimento":"Novo investimento";$("#investmentName").value=x?.name||"";$("#investmentBalance").value=x?.balance??"";openModal("investmentModal")}
@@ -489,9 +662,31 @@ async function saveCycle(){
  const date=$("#cycleDate").value;if(!date)return toast("Escolha a data.");if(cycleStart()&&!confirm(`Usar ${fmt(date)} como nova base histórica? O histórico anterior continua guardado, mas o saldo ativo é reiniciado.`))return;const r=await sb.from("household_settings").update({cycle_start_date:date,updated_by:session.user.id,updated_at:new Date().toISOString()}).eq("household_id",householdId);if(r.error){console.error(r.error);return toast("Não consegui definir a base.")}closeModal("cycleModal");await loadData();toast("Base histórica atualizada.");
 }
 
-function openPending(p){selectedPending=p;const a=account(p.account_id);$("#pendingText").innerHTML=`<b>${money(p.amount)}</b> · ${esc(p.merchant)}<br>${fmt(p.transaction_date)} → <b>${esc(a?.name||"Conta")}</b>`;openModal("pendingModal")}
+function refreshPendingPlanBox(){
+ const box=$("#pendingPlanBox");if(!selectedPendingPlan){box.classList.add("hidden");return}
+ const p=selectedPendingPlan,actual=Number(selectedPending.amount),delta=actual-Number(p.amount),a=account(p.account_id),days=a?cycleDaysRemaining(a):0;
+ box.classList.remove("hidden");$("#pendingPlanTitle").textContent=`Planejamento encontrado: ${p.name}`;$("#pendingPlanText").textContent=`Previsto ${money(p.amount)} · compra ${money(actual)}.${Math.abs(delta)<.005?" Está exatamente como previsto.":""}`;
+ const choices=$("#pendingPlanChoices");if(Math.abs(delta)<.005){choices.classList.add("hidden")}else{
+   choices.classList.remove("hidden");const d=Math.abs(delta),above=delta>0;
+   $("#pendingCurrentHint").textContent=above?`Seu saldo atual diminui ${money(d)}.`:`Seu saldo atual aumenta ${money(d)}.`;
+   $("#pendingFutureHint").textContent=days?(above?`${money(d)} serão descontados dos próximos ${days} dias.`:`${money(d)} voltarão para os próximos ${days} dias.`):"Não há dias futuros antes da renovação.";
+   const fr=$("#pendingFutureChoice input");fr.disabled=!days;$("#pendingFutureChoice").style.opacity=days?"1":".45";if(!days&&fr.checked)$('input[name="pendingEffect"][value="current"]').checked=true;
+ }
+}
+function openPending(p){
+ selectedPending=p;selectedPendingPlan=planForPending(p);const a=account(p.account_id);$("#pendingText").innerHTML=`<b>${money(p.amount)}</b> · ${esc(p.merchant)}<br>${fmt(p.transaction_date)} → <b>${esc(a?.name||"Conta")}</b>`;
+ $('input[name="pendingEffect"][value="current"]').checked=true;refreshPendingPlanBox();openModal("pendingModal")
+}
 async function confirmPending(){
- if(!selectedPending)return;const r=await sb.rpc("finance_confirm_pending",{p_pending_id:selectedPending.id});if(r.error){console.error(r.error);return toast("Não consegui confirmar.")}selectedPending=null;closeModal("pendingModal");await loadData();toast("Compra confirmada.");
+ if(!selectedPending)return;const pendingCopy=selectedPending,planCopy=selectedPendingPlan,effect=$('input[name="pendingEffect"]:checked')?.value||"current";
+ const r=await sb.rpc("finance_confirm_pending",{p_pending_id:pendingCopy.id});if(r.error){console.error(r.error);return toast("Não consegui confirmar.")}
+ let planUpdated=false,planError=false;
+ if(planCopy&&planSettlementReady){
+   const s=await sb.rpc("finance_settle_plan",{p_plan_id:planCopy.id,p_actual_amount:Number(pendingCopy.amount),p_effect:Math.abs(Number(pendingCopy.amount)-Number(planCopy.amount))<.005?"current":effect,p_existing_tx_id:r.data,p_today:today()});
+   if(s.error){console.error(s.error);planError=true}else planUpdated=true;
+ }
+ selectedPending=null;selectedPendingPlan=null;closeModal("pendingModal");await loadData();
+ toast(planUpdated?"Compra confirmada e planejamento atualizado.":planError?"Compra confirmada. Revise o planejamento separadamente.":"Compra confirmada.");
 }
 
 function b64ToBytes(s){const pad="=".repeat((4-s.length%4)%4),b=(s+pad).replace(/-/g,"+").replace(/_/g,"/"),raw=atob(b);return Uint8Array.from([...raw].map(c=>c.charCodeAt(0)))}
@@ -502,6 +697,10 @@ async function enablePush(){
 async function clearHistory(){const typed=prompt("Digite APAGAR para apagar todos os lançamentos e dias. Contas e investimentos serão mantidos.");if(typed!=="APAGAR")return;const r=await sb.rpc("clear_finance_history",{p_household_id:householdId});if(r.error){console.error(r.error);return toast("Não consegui apagar.")}await loadData();toast("Histórico apagado.")}
 
 document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>closeModal(b.dataset.close));document.querySelectorAll(".modalwrap").forEach(m=>m.onclick=e=>{if(e.target===m)m.classList.remove("open")});["cycleIncome","nextRenewal"].forEach(id=>$("#"+id)?.addEventListener("input",refreshMonthlyForm));["planAmount","planDate","planAccount"].forEach(id=>$("#"+id)?.addEventListener("input",refreshPlanPreview));$("#accountType")?.addEventListener("change",()=>{if(!$("#accountId").value)$("#accountInvestable").checked=$("#accountType").value==="money"});$("#calendarPrev").onclick=()=>shiftCalendar(-1);$("#calendarNext").onclick=()=>shiftCalendar(1);
+$("#settleActual").addEventListener("input",refreshPlanSettlement);
+$("#settleEqual").onclick=()=>settlePlanActual(true);
+$("#settlePlanSave").onclick=()=>settlePlanActual(false);
+$("#pendingNoPlan").onclick=()=>{selectedPendingPlan=null;refreshPendingPlanBox()};
 $("#saveMove").onclick=saveMove;$("#saveDaily").onclick=saveDaily;$("#saveAccount").onclick=saveAccount;$("#savePlan").onclick=savePlan;$("#cancelPlan").onclick=cancelPlan;$("#saveInvestment").onclick=saveInvestment;$("#saveSource").onclick=saveSource;$("#disableSource").onclick=disableSource;$("#saveCycle").onclick=saveCycle;$("#confirmPending").onclick=confirmPending;
 $("#nav").onclick=e=>{const b=e.target.closest(".nav");if(!b)return;selectedAccountId=null;currentView=b.dataset.view;render();window.scrollTo({top:0,behavior:"smooth"})};
 if("serviceWorker" in navigator)navigator.serviceWorker.register("./sw.js").catch(console.error);
