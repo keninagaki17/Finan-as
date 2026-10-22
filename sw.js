@@ -1,5 +1,5 @@
 
-const CACHE="meu-saldo-v6-9-6-sem-aviso";
+const CACHE="meu-saldo-v6-9-7-filtro-casal";
 
 const ASSETS=[
   "./",
@@ -57,15 +57,18 @@ self.addEventListener("notificationclick",e=>{
   e.notification.close();
   const target=e.notification.data?.url || "./";
   e.waitUntil(
-    clients.matchAll({type:"window",includeUncontrolled:true})
-      .then(list=>{
-        for(const c of list){
-          if("focus" in c){
-            c.navigate(target);
-            return c.focus();
-          }
+    clients.matchAll({
+      type:"window",
+      includeUncontrolled:true
+    })
+    .then(list=>{
+      for(const c of list){
+        if("focus" in c){
+          c.navigate(target);
+          return c.focus();
         }
-        return clients.openWindow(target);
-      })
+      }
+      return clients.openWindow(target);
+    })
   );
 });
