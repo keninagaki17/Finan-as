@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Meu Saldo">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icon-192.png">
-<title>Meu Saldo — Mensal + Planejamento</title>
+<title>Meu Saldo — Conselheiro e Objetivos</title>
 <style>
 :root{--bg:#F7F5F0;--card:#FFFFFF;--text:#202622;--muted:#7B807C;--line:#E4E0D8;--accent:#173E35;--accent2:#31584C;--soft:#E7ECE7;--danger:#A94A4A;--dangerSoft:#F6E9E9;--blue:#EEEAE2;--green:#E6ECE5;--rose:#ECE8E5;--sand:#F1E9DC;--shadow:0 8px 24px rgba(28,45,39,.055)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}body{padding-bottom:calc(80px + env(safe-area-inset-bottom))}button,input,select{font:inherit}button{cursor:pointer;color:inherit}.hidden{display:none!important}
@@ -63,6 +63,37 @@
 .repeat-row div strong{display:block;font-size:11px}
 .repeat-row div span{display:block;font-size:8.5px;color:var(--muted);margin-top:2px}
 .repeat-row input{width:20px;height:20px;accent-color:var(--accent)}
+
+
+/* Conselheiro V6.8: simples, integrado, sem poluição visual */
+.advice-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:15px;box-shadow:var(--shadow);margin-top:12px}
+.advice-kicker{display:flex;align-items:center;gap:7px;font-weight:800;color:var(--accent);font-size:11px;margin-bottom:7px}
+.advice-card p{font-size:11px;line-height:1.55;color:var(--muted);margin:0 0 12px}
+.advice-actions{display:flex;gap:8px;flex-wrap:wrap}
+.advice-actions button{font-size:11px;padding:11px 13px;border-radius:12px;flex:1;min-width:120px}
+.advisor-chips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}
+.advisor-chip{border:1px solid var(--line);border-radius:99px;background:var(--soft);font-size:10px;padding:9px 11px;white-space:nowrap}
+.advisor-thread{display:grid;gap:8px;max-height:25vh;overflow:auto;margin:10px 0;padding:2px 0}
+.advisor-msg{font-size:12px;line-height:1.55;white-space:pre-wrap;border:1px solid var(--line);padding:12px;border-radius:16px;max-width:95%}
+.advisor-msg.bot{background:var(--soft);justify-self:start}.advisor-msg.user{background:#f8f7f3;justify-self:end}
+.advisor-composer{display:flex;gap:6px;margin-bottom:10px}
+.advisor-composer input{flex:1;min-width:0;background:#faf9f6;padding:12px;border:1px solid var(--line);border-radius:13px;font-size:12px}
+.advisor-composer button{min-width:55px;background:var(--accent);color:#fff;border:0;border-radius:13px;font-size:11px;font-weight:750}
+.advice-preview{padding:13px;border-radius:16px;background:var(--soft);margin-top:10px;font-size:11px;line-height:1.6}
+.advice-preview strong{font-size:14px;color:var(--accent)}
+.advisor-row{display:flex;gap:7px;align-items:center;justify-content:space-between;margin-top:8px}
+.advisor-row span{font-size:10px;color:var(--muted)}
+.advice-muted{font-size:10px;color:var(--muted);line-height:1.5}
+.goal-list{display:grid;gap:9px;margin-top:10px}
+.goal-card{border:1px solid var(--line);border-radius:17px;background:#fff;padding:14px;text-align:left;width:100%}
+.goal-card strong{font-size:12px}.goal-card .sub{font-size:10px;color:var(--muted);margin-top:4px;line-height:1.45}
+.goal-track{height:5px;background:#e8e9e2;border-radius:99px;overflow:hidden;margin:12px 0 5px}.goal-track div{height:100%;background:var(--accent);border-radius:99px}
+.goal-result{background:var(--soft);border-radius:16px;padding:14px;font-size:11px;line-height:1.6;margin:12px 0}
+.goal-result .big{font-size:20px;font-weight:800;color:var(--accent);letter-spacing:-.03em;margin:3px 0}
+.goal-result ul{margin:8px 0;padding-left:17px}.goal-result li{margin-bottom:5px}
+.goal-modal .help{margin-bottom:12px}.goal-modal details.advanced{margin-top:10px}.goal-modal details.advanced summary{font-size:11px}
+.goal-actions{display:flex;gap:8px;margin-top:9px}.goal-actions button{flex:1}
+@media(max-width:340px){.advisor-composer button{min-width:45px}.advice-actions button{min-width:100px}}
 
 </style>
 </head>
@@ -184,15 +215,57 @@
 <div class="calendar-list" id="calendarDayList"></div>
 </div></div>
 
+
+<div class="modalwrap" id="advisorModal"><div class="modal">
+ <div class="calendar-head"><div><div class="eyebrow">Conselheiro Meu Saldo · primeira versão</div><h3>Como posso ajudar?</h3></div><button class="calendar-close" data-close="advisorModal" aria-label="Fechar">×</button></div>
+ <div class="help">Simule decisões com seus saldos reais. Eu explico as contas, mas não altero nada sem sua confirmação.</div>
+ <div class="advisor-chips">
+  <button class="advisor-chip" data-advisor-prompt="Posso gastar R$ 250 hoje?">Posso gastar?</button>
+  <button class="advisor-chip" data-advisor-prompt="Como estão minhas contas fixas e gastos planejados?">Próximos gastos</button>
+  <button class="advisor-chip" data-advisor-prompt="Como consigo economizar?">Economizar</button>
+  <button class="advisor-chip" data-advisor-prompt="Quero comprar uma casa">Comprar casa</button>
+ </div>
+ <div class="advisor-thread" id="advisorThread" aria-live="polite"></div>
+ <form id="advisorForm" class="advisor-composer"><input id="advisorQuestion" maxlength="240" placeholder="Ex.: Quero gastar R$ 250 hoje" aria-label="Sua pergunta"><button type="submit">Enviar</button></form>
+ <div class="field"><label>De qual saldo?</label><select id="advisorAccount"></select></div>
+ <div id="advisorResult"></div>
+ <div class="advice-muted">Versão inicial com cálculos e respostas guiadas. Ainda não é uma IA generativa nem oferece aconselhamento de investimentos.</div>
+</div></div>
+
+<div class="modalwrap" id="goalModal"><div class="modal goal-modal">
+ <div class="calendar-head"><div><div class="eyebrow">Planejamento de longo prazo</div><h3 id="goalTitle">Novo objetivo</h3></div><button class="calendar-close" data-close="goalModal" aria-label="Fechar">×</button></div>
+ <div class="help">Comece pelo que você quer realizar. Valores e datas são estimativas; nenhum dinheiro será movimentado.</div>
+ <input id="goalId" type="hidden">
+ <div class="field"><label>O que deseja realizar?</label><select id="goalType"><option value="home">Comprar um imóvel</option><option value="travel">Fazer uma viagem</option><option value="car">Comprar um carro</option><option value="other">Outro objetivo</option></select></div>
+ <div class="field"><label>Nome</label><input id="goalName" maxlength="70" placeholder="Ex.: Meu apartamento"></div>
+ <div class="inline2"><div class="field"><label>Valor estimado (R$)</label><input id="goalAmount" type="number" inputmode="decimal" min="1" step="0.01" placeholder="Ex.: 400000"></div><div class="field"><label>Quando gostaria?</label><input id="goalDate" type="month"></div></div>
+ <div class="inline2"><div class="field"><label>Já guardou para este objetivo</label><input id="goalSaved" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0"></div><div class="field"><label>Pode guardar por mês</label><input id="goalMonthly" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Ex.: 1000"></div></div>
+ <div class="advice-muted">O dinheiro informado aqui deve ser exclusivo desta meta: não conte a mesma quantia como reserva de emergência.</div>
+ <details class="advanced" id="goalAssumptions"><summary>Mais opções de simulação</summary>
+ <div class="inline2"><div class="field"><label>Rentabilidade anual estimada (%)</label><input id="goalYield" type="number" min="-20" max="50" step="0.1" value="0"></div><div class="field"><label>Aumento anual do preço (%)</label><input id="goalInflation" type="number" min="0" max="30" step="0.1" value="0"></div></div>
+ <div class="field"><label>Crescimento anual da renda (%) — hipotético</label><input id="goalIncomeGrowth" type="number" min="-20" max="50" step="0.1" value="0"></div>
+ <div id="goalHomeFields">
+ <div class="inline2"><div class="field"><label>Entrada desejada (%)</label><input id="goalEntry" type="number" min="0" max="100" step="1" value="25"></div><div class="field"><label>Custos de compra (%)</label><input id="goalFees" type="number" min="0" max="30" step="1" value="5"></div></div>
+ <div class="inline2"><div class="field"><label>Despesas essenciais/mês</label><input id="goalEssentials" type="number" min="0" step="0.01" placeholder="Ex.: 3500"></div><div class="field"><label>Reserva já protegida</label><input id="goalEmergencyHeld" type="number" min="0" step="0.01" placeholder="Ex.: 20000"></div></div>
+ <div class="field"><label>Reserva de emergência desejada</label><select id="goalEmergencyMonths"><option value="3">3 meses</option><option value="6" selected>6 meses</option><option value="9">9 meses</option><option value="12">12 meses</option></select></div>
+ <div class="inline2"><div class="field"><label>Renda líquida familiar/mês</label><input id="goalIncome" type="number" min="0" step="0.01" placeholder="Ex.: 9000"></div><div class="field"><label>Juros anuais do financiamento (%)</label><input id="goalMortgageRate" type="number" min="0.1" max="40" step="0.1" placeholder="Informe uma hipótese"></div></div>
+ <div class="inline2"><div class="field"><label>Moradia atual/mês</label><input id="goalCurrentHousing" type="number" min="0" step="0.01" placeholder="Aluguel + custos"></div><div class="field"><label>Outros custos da nova moradia/mês</label><input id="goalFutureHousing" type="number" min="0" step="0.01" placeholder="Condomínio, IPTU..."></div></div>
+ <div class="field"><label>Prazo hipotético do financiamento</label><select id="goalMortgageYears"><option value="20">20 anos</option><option value="25">25 anos</option><option value="30" selected>30 anos</option><option value="35">35 anos</option></select></div>
+ </div></details>
+ <div id="goalProjection"></div>
+ <button class="danger full hidden" id="goalDelete" type="button">Excluir objetivo</button>
+ <div class="modal-actions"><button class="cancel" data-close="goalModal">Cancelar</button><button class="primary" id="goalSave" type="button">Salvar objetivo</button></div>
+</div></div>
+
 <div class="toast" id="toast"></div>
 
-<!-- V6.7 Saldo mensal + Planejamento -->
+<!-- V6.8 Conselheiro e Objetivos -->
 <script type="module">
 import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/+esm";
 const SUPABASE_URL="https://owjuihjcypqonvlpsgqu.supabase.co",SUPABASE_KEY="sb_publishable_kbAOka2sxT40KPWgaXEA0g_adwNHUtv",VAPID_PUBLIC_KEY="BG2QzMbmf6NjdY1WOcuep7ohMo-WXc3ci5clXKBgRXwi_GHJb-8T6Oxi4HP1u4WV2tLcKAmu9mkjjFomUa07Boc";
 const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
 const $=s=>document.querySelector(s),app=$("#app");
-let session=null,householdId=null,settings=null,accounts=[],dailyCredits=[],transactions=[],investments=[],sources=[],pending=[],plans=[],plansReady=false,planSettlementReady=true,currentView="home",selectedAccountId=null,moveKind="debit",selectedPending=null,selectedPendingPlan=null,channel=null,calendarCursor=new Date(),calendarSelected=null;
+let session=null,householdId=null,settings=null,accounts=[],dailyCredits=[],transactions=[],investments=[],sources=[],pending=[],plans=[],goals=[],goalsReady=false,advisorMessages=[],advisorLastSimulation=null,plansReady=false,planSettlementReady=true,currentView="home",selectedAccountId=null,moveKind="debit",selectedPending=null,selectedPendingPlan=null,channel=null,calendarCursor=new Date(),calendarSelected=null;
 
 const money=n=>Number(n||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`};
@@ -373,6 +446,8 @@ async function loadData(first=false){
      }
    }
  }
+ const goalRes=await sb.from("finance_goals").select("*").eq("household_id",householdId).order("created_at",{ascending:false});
+ if(goalRes.error){goals=[];goalsReady=false;if(!["42P01","42501","PGRST205"].includes(goalRes.error.code))console.warn("Objetivos requerem SQL 14",goalRes.error)}else{goals=goalRes.data||[];goalsReady=true}
  render();
  const param=new URLSearchParams(location.search).get("pending");
  if(param){const item=pending.find(x=>x.id===param);if(item)openPending(item);history.replaceState({},"",location.pathname)}
@@ -389,12 +464,13 @@ function subscribe(){
  .on("postgres_changes",{event:"*",schema:"public",table:"finance_pending_transactions"},()=>loadData())
  .on("postgres_changes",{event:"*",schema:"public",table:"household_settings"},()=>loadData());
  if(plansReady)channel=channel.on("postgres_changes",{event:"*",schema:"public",table:"finance_plans"},()=>loadData());
+ if(goalsReady)channel=channel.on("postgres_changes",{event:"*",schema:"public",table:"finance_goals"},()=>loadData());
  channel.subscribe();
 }
 
 function showLogin(msg=""){
  $("#nav").classList.add("hidden");
- app.innerHTML=`<div class="login"><div class="loginbox"><div class="mark">R$</div><div class="eyebrow">Controle compartilhado</div><h1>Meu saldo</h1><p>Ken e Maria Clara usam os mesmos saldos, contas e investimentos.</p>
+ app.innerHTML=`<div class="login"><div class="loginbox"><div class="mark">R$</div><div class="eyebrow">Suas finanças, com clareza</div><h1>Meu saldo</h1><p>Entenda quanto pode gastar hoje e planeje suas próximas conquistas.</p>
  <div class="error" style="${msg?"display:block":""}">${esc(msg)}</div>
  <form id="loginForm"><div class="field"><label>E-mail</label><input id="email" type="email" required></div><div class="field"><label>Senha</label><input id="password" type="password" required></div><button class="primary full">Entrar</button></form></div></div>`;
  $("#loginForm").onsubmit=async e=>{e.preventDefault();const r=await sb.auth.signInWithPassword({email:$("#email").value.trim(),password:$("#password").value});if(r.error)return showLogin("E-mail ou senha incorretos.");session=r.data.session;await afterLogin()};
@@ -464,12 +540,13 @@ function renderHome(){
  <div class="hero"><div class="label">Disponível agora</div><div class="value">${money(totalAvailableNow())}</div><div class="sub">${activeAccounts().length} saldo(s) ativo(s) · planejamentos não reduzem o saldo atual</div></div>
  ${ps.count?`<div class="plan-strip"><div class="plan-mini"><span>Livre até as renovações</span><b>${money(ps.remaining)}</b></div><div class="plan-mini"><span>Ritmo de gasto</span><b>${money(ps.pace)}/dia</b></div></div><div class="plan-note">${ps.fixed>0?`${money(ps.fixed)} em contas fixas. `:""}${ps.variable>0?`${money(ps.variable)} em gastos variáveis. `:""}${ps.next?`Próxima renovação em ${fmt(ps.next)}.`:""}</div>`:""}
  ${warn.length?`<div class="warning-inline">${warn.map(esc).join("<br>")}</div>`:""}
+ <div class="advice-card"><div class="advice-kicker">✦ Conselheiro Meu Saldo</div><p>${esc(advisorInsight())}</p><div class="advice-actions"><button class="primary" id="advisorOpen">Posso gastar?</button><button class="secondary" id="advisorAsk">Perguntar</button></div></div>
  <div class="cards">${activeAccounts().map(accountCard).join("")}</div>
  <button class="primary full" id="addDaily" ${canAdd?"":"disabled"} style="margin-top:11px">Atualizar saldo do dia</button><div class="next">${cycleStart()?(canAdd?`Adicionar ${fmt(next)} com os valores diários calculados`:`Próxima atualização: ${fmt(next)}${next>today()?" · ainda não chegou":""}`):"Inicie primeiro a base histórica"}</div>
  <div class="actions"><button class="secondary" id="addDebit">− Débito</button><button class="secondary" id="addCredit">+ Crédito</button></div>
  ${plansReady?`<div class="plan-actions"><button class="secondary" id="newPlanHome">＋ Planejar gasto</button><button class="calendar-open" id="openCalendar" aria-label="Abrir calendário"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3v3M18 3v3M4.5 8.5h15M5.5 5h13a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"/></svg></button></div>${activeFixedPlans().length?`<div class="section"><h2>Contas fixas</h2><span>${money(fixedPlanTotal())}</span></div>${planListHtml(activeFixedPlans(),3)}`:""}${upcomingPlans().length?`<div class="section"><h2>Próximos variáveis</h2><span>${money(upcomingPlanTotal())}</span></div>${planListHtml(upcomingPlans(),3)}`:""}`:""}
  <div class="section"><h2>Movimentações recentes</h2><span>${activeTx().length}</span></div>${recentHtml()}`;
- $("#logout").onclick=logout;$("#settleDueHome")?.addEventListener("click",()=>openPlanSettle(duePlansToday()[0]?.id));$("#defineCycle")?.addEventListener("click",openCycle);$("#addDaily").onclick=openDaily;$("#addDebit").onclick=()=>openMove("debit");$("#addCredit").onclick=()=>openMove("credit");$("#newPlanHome")?.addEventListener("click",()=>openPlan());$("#openCalendar")?.addEventListener("click",openPlanCalendar);$("#reviewPending")?.addEventListener("click",()=>openPending(pending[0]));bindPlanButtons();
+ $("#advisorOpen").onclick=()=>openAdvisor();$("#advisorAsk").onclick=()=>openAdvisor();$("#logout").onclick=logout;$("#settleDueHome")?.addEventListener("click",()=>openPlanSettle(duePlansToday()[0]?.id));$("#defineCycle")?.addEventListener("click",openCycle);$("#addDaily").onclick=openDaily;$("#addDebit").onclick=()=>openMove("debit");$("#addCredit").onclick=()=>openMove("credit");$("#newPlanHome")?.addEventListener("click",()=>openPlan());$("#openCalendar")?.addEventListener("click",openPlanCalendar);$("#reviewPending")?.addEventListener("click",()=>openPending(pending[0]));bindPlanButtons();
  document.querySelectorAll("[data-account]").forEach(b=>b.onclick=()=>{selectedAccountId=b.dataset.account;render()});
 }
 
@@ -521,10 +598,241 @@ function renderInvestments(){
  app.innerHTML=`<div class="top"><div><div class="eyebrow">Patrimônio</div><h1>Investimentos</h1></div><button class="pill" id="newInvestment">+ Novo</button></div>
  <div class="invest-hero"><div class="k">Investido hoje</div><div class="big">${money(total)}</div><div class="invest-grid"><div><span>Saldo líquido investível</span><b>${net>=0?"+ ":"− "}${money(Math.abs(net))}</b></div><div><span>Investimentos cadastrados</span><b>${investments.filter(x=>x.active).length}</b></div></div></div>
  <div class="project"><div class="eyebrow">${net>=0?"Se eu guardasse tudo agora":"Após cobrir o saldo negativo"}</div><div class="big">${money(proj)}</div><p>${net>=0?`Seu saldo investível atual acrescentaria ${money(net)} ao que já está guardado.`:`Seu saldo investível está negativo em ${money(Math.abs(net))}, então a projeção desconta esse valor dos investimentos.`}</p></div>
+ <div class="section"><h2>Seus objetivos</h2><button class="mini" id="newGoal" ${goalsReady?"":"disabled"}>+ Novo objetivo</button></div>
+ ${goalsReady?`<div class="goal-list">${goals.length?goals.map(goalCardHtml).join(""):`<div class="notice"><strong>O que você quer realizar?</strong><p>Casa, viagem ou outro sonho. Descubra o que precisa guardar e o impacto no seu futuro.</p><button class="secondary full" id="goalStart">Planejar meu primeiro objetivo</button></div>`}</div>`:`<div class="notice"><strong>Objetivos de longo prazo</strong><p>Execute o SQL 14 no Supabase para ativar os objetivos compartilhados.</p></div>`}
  <div class="section"><h2>Onde está guardado</h2><span>${money(total)}</span></div>
  <div class="card">${investments.filter(x=>x.active).length?investments.filter(x=>x.active).map(x=>`<div class="row"><div><div class="title">${esc(x.name)}</div><div class="meta">valor informado manualmente</div></div><div><div class="money">${money(x.balance)}</div><div style="display:flex;gap:4px;margin-top:5px"><button class="mini" data-invest="${x.id}">Editar</button><button class="mini" data-delete-invest="${x.id}">Excluir</button></div></div></div>`).join(""):`<div class="empty">Cadastre sua reserva, CDB, Tesouro, ações ou qualquer dinheiro já guardado.</div>`}</div>
  <div class="section"><h2>Contas consideradas</h2></div><div class="card">${activeAccounts().filter(a=>a.counts_as_investable).length?activeAccounts().filter(a=>a.counts_as_investable).map(a=>`<div class="row"><div><div class="title">${esc(a.name)}</div><div class="meta">saldo atual</div></div><div class="money ${availableBalance(a.id)>=0?"pos":"neg"}">${money(availableBalance(a.id))}</div></div>`).join(""):`<div class="empty">Nenhuma conta está marcada como investível.</div>`}</div>`;
+ $("#newGoal")?.addEventListener("click",()=>openGoal());$("#goalStart")?.addEventListener("click",()=>openGoal());document.querySelectorAll("[data-goal]").forEach(b=>b.onclick=()=>openGoal(b.dataset.goal));
  $("#newInvestment").onclick=()=>openInvestment();document.querySelectorAll("[data-invest]").forEach(b=>b.onclick=()=>openInvestment(b.dataset.invest));document.querySelectorAll("[data-delete-invest]").forEach(b=>b.onclick=()=>deleteInvestment(b.dataset.deleteInvest));
+}
+
+// ===== Conselheiro V6.8 =====
+// Sem IA externa: matematica deterministica; mensagens e simulacoes nao sao gravadas.
+function advisorBehaviorInsight(){
+ const cutoff=addDays(today(),-55);
+ const items=transactions.filter(t=>t.kind==="debit"&&t.txn_date>=cutoff&&t.txn_date<=today()&&activeAccounts().some(a=>a.id===t.account_id));
+ if(items.length<20)return null;
+ const daysObserved=items.map(t=>t.txn_date).sort();
+ if(daysBetween(daysObserved[0],daysObserved[daysObserved.length-1])<28)return null;
+ const weekendEntries=items.filter(t=>[0,6].includes(parse(t.txn_date).getDay()));
+ const weekdayEntries=items.filter(t=>![0,6].includes(parse(t.txn_date).getDay()));
+ if(weekendEntries.length<6||weekdayEntries.length<10)return null;
+ let we=0,wd=0;for(let i=0;i<=55;i++){if([0,6].includes(parse(addDays(today(),-i)).getDay()))we++;else wd++}
+ const avgWeekend=weekendEntries.reduce((z,t)=>z+Number(t.amount||0),0)/we;
+ const avgWeekday=weekdayEntries.reduce((z,t)=>z+Number(t.amount||0),0)/wd;
+ if(avgWeekday<=0||avgWeekend<avgWeekday*1.5)return null;
+ return `No seu histórico de oito semanas, o gasto registrado por dia de fim de semana ficou maior que o de dias úteis. Podemos pensar em reservar um pouco mais para esses dias sem aumentar o orçamento total.`;
+}
+function advisorInsight(){
+ const valid=activeAccounts().filter(a=>a.planning_enabled&&effectiveCycleDates(a).next>today());
+ if(!valid.length)return "Configure um saldo e sua renovação para receber sugestões baseadas no seu orçamento.";
+ const negative=valid.find(a=>balance(a.id)<-0.005);
+ if(negative)return `${negative.name} está ${money(Math.abs(balance(negative.id)))} abaixo de zero. Podemos redistribuir esse gasto entre os próximos dias, se houver margem.`;
+ const reserved=valid.reduce((sum,a)=>sum+cyclePlanReserved(a),0);
+ const soon=upcomingPlans().filter(p=>p.plan_date<=addDays(today(),5));
+ if(soon.length)return `Você tem ${soon.length} gasto(s) previsto(s) nos próximos cinco dias. Já reservei ${money(soon.reduce((v,p)=>v+Number(p.amount),0))} nas contas correspondentes.`;
+ const pattern=advisorBehaviorInsight();if(pattern)return pattern;
+ if(reserved>0)return `${money(reserved)} já estão protegidos para planos e contas fixas. O ritmo diário considera essas reservas.`;
+ return `Seu ritmo disponível futuro é de ${money(valid.reduce((sum,a)=>sum+cyclePace(a),0))}/dia, somando apenas saldos ativos com renovação válida.`;
+}
+function advisorSimulate(a,amount,importance="normal"){
+ const now=balance(a.id),days=cycleDaysRemaining(a),future=futureFreeRemaining(a),excess=Math.max(0,amount-now),newNow=now-amount,after=future-excess;
+ let level,text;
+ if(!effectiveCycleDates(a).next||effectiveCycleDates(a).next<=today()){
+   level="Sem dados suficientes";text="Atualize a data de renovação desse saldo antes de simular.";
+ }else if(amount<=now){
+   level="Cabe no saldo atual";text=`Depois da compra, você teria ${money(newNow)} hoje. Seu ritmo futuro permanece em ${money(cyclePace(a))}/dia.`;
+ }else if(days>0&&after>=-0.005){
+   level=after<future*.20?"Possível, mas apertado":"Cabe com reorganização";
+   text=`Faltariam ${money(excess)} hoje. Se você optar por cobrir isso com os ${days} dias restantes, o ritmo livre futuro iria de ${money(cyclePace(a))} para cerca de ${money(Math.max(0,after)/days)}/dia. As reservas fixas e variáveis já foram descontadas.`;
+ }else{
+   level="Não cabe no ciclo";text=`Este gasto excederia o saldo de hoje e a margem futura disponível. Faltariam ${money(Math.max(0,excess-future))} mesmo após usar todo o saldo livre até a renovação. Uma alternativa é reduzir o valor ou adiar.`;
+ }
+ if(importance==="high"&&after>=0&&excess>0)text+=" Se isso for muito importante para você, o ajuste é uma opção — mas preserve margem para imprevistos.";
+ if(importance==="low"&&excess>0)text+=" Como não é uma prioridade alta, adiar pode ser mais confortável.";
+ return {amount,accountId:a.id,level,text,excess,future,after,days,newNow,importance};
+}
+function advisorRenderThread(){
+ const el=$("#advisorThread");if(!el)return;
+ el.innerHTML=advisorMessages.map(m=>`<div class="advisor-msg ${m.role}">${esc(m.text)}</div>`).join("");el.scrollTop=el.scrollHeight;
+}
+function advisorSay(text,role="bot"){
+ advisorMessages.push({text,role});if(advisorMessages.length>12)advisorMessages=advisorMessages.slice(-12);advisorRenderThread();
+}
+function openAdvisor(initial=null){
+ if(!activeAccounts().length)return toast("Crie primeiro um saldo.");
+ accountOptions($("#advisorAccount"),activeAccounts()[0]?.id);
+ advisorMessages=[];advisorLastSimulation=null;$("#advisorResult").innerHTML="";
+ advisorSay("Olá! Posso simular compras, resumir seus planos ou ajudar a iniciar um objetivo. O que você gostaria de fazer?");
+ openModal("advisorModal");
+ if(initial)advisorHandle(initial);else $("#advisorQuestion").focus();
+}
+function advisorExtractAmount(q){
+ const br=q.match(/R\$\s*([\d.]+(?:,\d{1,2})?)/i);
+ if(br)return Number(br[1].replace(/\./g,"").replace(",","."));
+ const reais=q.match(/([\d.]+(?:,\d{1,2})?)\s*(?:reais|real)\b/i);
+ if(reais)return Number(reais[1].replace(/\./g,"").replace(",","."));
+ const m=q.match(/(?:gastar|comprar|compra|pagar|gastei|custar|custa)\D{0,22}([\d.]+(?:,\d{1,2})?)/i);
+ if(m)return Number(m[1].replace(/\./g,"").replace(",","."));
+ return null;
+}
+function advisorHandle(question){
+ question=String(question||"").trim();if(!question)return;
+ advisorSay(question,"user");const q=question.toLocaleLowerCase("pt-BR"),a=account($("#advisorAccount").value)||activeAccounts()[0];
+ const amount=advisorExtractAmount(question);
+ if(/(im[oó]vel|apartamento|casa|financiamento|meta|objetivo|viagem no futuro)/i.test(q)){
+   advisorSay("Para objetivos maiores eu preciso saber o prazo, o valor e quanto você pode guardar por mês. Posso projetar a entrada e verificar a segurança do financiamento, se você informar as hipóteses.");
+   $("#advisorResult").innerHTML=`<button class="primary full" id="advisorStartGoal">Criar objetivo</button>`;
+   $("#advisorStartGoal").onclick=()=>{closeModal("advisorModal");currentView="investments";render();openGoal(null,/casa|apartamento|im[oó]vel|financ/i.test(q)?"home":"travel")};return;
+ }
+ if(/(fixo|previst|planejad|pr[oó]xim[oa]s? gastos|contas)/i.test(q)){
+   advisorSay(`Contas fixas reservadas: ${money(activeAccounts().reduce((sum,x)=>sum+cycleFixedReserved(x),0))}. Gastos variáveis futuros: ${money(upcomingPlanTotal())}. Esses valores já estão considerados nos saldos livres; não devem ser abatidos novamente.`);
+   $("#advisorResult").innerHTML=`<button class="secondary full" id="advisorToCalendar">Abrir calendário</button>`;$("#advisorToCalendar").onclick=()=>{closeModal("advisorModal");openPlanCalendar()};return;
+ }
+ if(/(economiz|guardar|poupar|sobrar|sobra|investir)/i.test(q)&&amount===null){
+   const valid=activeAccounts().filter(x=>x.planning_enabled&&effectiveCycleDates(x).next>today());
+   const future=valid.reduce((sum,x)=>sum+futureFreeRemaining(x),0);
+   advisorSay(`O saldo livre a distribuir até as próximas renovações soma ${money(future)}. Isso ainda é orçamento de gasto, não economia comprovada. Para guardar dinheiro com segurança, informe qual valor deseja proteger e confira despesas essenciais e reserva de emergência.`);
+   $("#advisorResult").innerHTML=`<button class="secondary full" id="advisorToInvest">Ver investimentos e objetivos</button>`;$("#advisorToInvest").onclick=()=>{closeModal("advisorModal");currentView="investments";render()};return;
+ }
+ if(amount!==null&&Number.isFinite(amount)&&amount>0&&a){
+   advisorLastSimulation=advisorSimulate(a,amount);advisorSay(advisorLastSimulation.level+". "+advisorLastSimulation.text);
+   advisorRenderSimulation();return;
+ }
+ advisorSay("Você pode perguntar ‘Posso gastar R$ 250 hoje?’, ‘Quais são meus gastos previstos?’ ou ‘Quero comprar uma casa’. Para uma simulação de compra, informe o valor em reais.");
+ $("#advisorResult").innerHTML="";
+}
+function advisorRenderSimulation(){
+ const r=advisorLastSimulation;if(!r)return;const a=account(r.accountId);
+ $("#advisorResult").innerHTML=`<div class="advice-preview"><div class="eyebrow">Simulação · ${esc(a?.name||"Saldo")}</div><strong>${esc(r.level)}</strong><div class="advisor-row"><span>Compra</span><b>${money(r.amount)}</b></div><div class="advisor-row"><span>Saldo de hoje após compra</span><b>${money(r.newNow)}</b></div>${r.excess>0?`<div class="advisor-row"><span>Ritmo futuro após absorver o déficit</span><b>${r.days&&r.after>=0?money(r.after/r.days)+"/dia":"Não disponível"}</b></div>`:""}<div class="field" style="margin-top:12px"><label>Qual é a importância dessa compra?</label><select id="advisorPriority"><option value="normal">Ainda estou pensando</option><option value="high" ${r.importance==="high"?"selected":""}>Muito importante</option><option value="low" ${r.importance==="low"?"selected":""}>Posso deixar passar</option></select></div><div class="advice-muted">Simular não lança gastos nem altera os saldos. Se registrar um débito acima do saldo atual, use “Ajustar saldo diário” na conta para redistribuí-lo quando houver margem.</div><div class="advice-actions" style="margin-top:10px"><button class="primary" id="advisorRegister">Registrar gasto</button><button class="secondary" id="advisorPlan">Planejar para outro dia</button></div></div>`;
+ $("#advisorPriority").onchange=()=>{const n=advisorSimulate(a,r.amount,$("#advisorPriority").value);advisorLastSimulation=n;advisorSay(n.text);advisorRenderSimulation()};
+ $("#advisorRegister").onclick=()=>{closeModal("advisorModal");openMove("debit",r.accountId);$("#moveAmount").value=String(r.amount);$("#moveDesc").value="Compra simulada"};
+ $("#advisorPlan").onclick=()=>{closeModal("advisorModal");openPlan(null,r.accountId);$("#planAmount").value=String(r.amount);refreshPlanPreview()};
+}
+
+// ===== Objetivos =====
+function goalNameFor(type){return ({home:"Meu imóvel",travel:"Minha viagem",car:"Meu carro",other:"Meu objetivo"})[type]||"Meu objetivo"}
+function goalCardHtml(g){
+ const type=g.goal_type;const label=type==="home"?"Imóvel":type==="travel"?"Viagem":type==="car"?"Carro":"Objetivo";
+ const target=type==="home"?Number(g.target_amount)*(Number(g.entry_pct)+Number(g.fees_pct))/100:Number(g.target_amount);
+ const pct=target>0?Math.min(100,Math.max(0,Number(g.saved_amount)/target*100)):0;
+ return `<button class="goal-card" data-goal="${g.id}"><strong>${esc(g.name)}</strong><div class="sub">${label} · Desejado para ${parse(g.target_date).toLocaleDateString("pt-BR",{month:"short",year:"numeric"})} · ${money(g.monthly_contribution)}/mês</div><div class="goal-track"><div style="width:${pct}%"></div></div><div class="advisor-row"><span>${money(g.saved_amount)} reservados para este objetivo</span><span>${Math.round(pct)}%</span></div></button>`;
+}
+function goalInputs(){
+ const num=(id,fallback=0)=>{const e=$("#"+id);return e?.value===""||e?.value==null?fallback:Number(e.value)};
+ return {id:$("#goalId").value||null,type:$("#goalType").value,name:$("#goalName").value.trim()||goalNameFor($("#goalType").value),amount:num("goalAmount"),date:$("#goalDate").value,saved:num("goalSaved"),monthly:num("goalMonthly"),annualYield:num("goalYield"),inflation:num("goalInflation"),incomeGrowth:num("goalIncomeGrowth"),entry:num("goalEntry",25),fees:num("goalFees",5),essentials:num("goalEssentials",null),emergencyHeld:num("goalEmergencyHeld",null),emergencyMonths:num("goalEmergencyMonths",6),income:num("goalIncome",null),mortgageRate:num("goalMortgageRate",null),currentHousing:num("goalCurrentHousing",null),futureHousing:num("goalFutureHousing",null),termYears:num("goalMortgageYears",30)};
+}
+function goalMonthsTo(date){
+ if(!date)return null;const d=parse(date+"-01"),now=new Date();return (d.getFullYear()-now.getFullYear())*12+d.getMonth()-now.getMonth();
+}
+function goalSimulate(g,monthlyOverride=null){
+ const valid=[g.amount,g.saved,g.monthly,g.annualYield,g.inflation,g.incomeGrowth,g.entry,g.fees,g.emergencyMonths].every(x=>Number.isFinite(x));
+ if(!valid||g.amount<=0||g.saved<0||g.monthly<0||g.entry<0||g.fees<0||g.entry+g.fees>130||g.annualYield<=-100||g.inflation<0)return null;
+ const monthly=monthlyOverride??g.monthly,rate=Math.pow(1+g.annualYield/100,1/12)-1,priceRate=Math.pow(1+g.inflation/100,1/12)-1;
+ const knownEmergency=g.type==="home"&&g.essentials!==null&&g.emergencyHeld!==null;
+ const reserveGap=knownEmergency?Math.max(0,g.essentials*g.emergencyMonths-g.emergencyHeld):0;
+ const targetMonths=goalMonthsTo(g.date);
+ let fund=g.saved,reserveRemaining=reserveGap,hit=null,atTarget=null;
+ for(let m=0;m<=480;m++){
+   if(m>0){fund=Math.max(0,fund*(1+rate));let contribution=monthly;
+     if(reserveRemaining>0){const fill=Math.min(reserveRemaining,contribution);reserveRemaining-=fill;contribution-=fill}
+     fund+=contribution;
+   }
+   const futurePrice=g.amount*Math.pow(1+priceRate,m);
+   const need=futurePrice*(g.type==="home"?(g.entry+g.fees)/100:1);
+   const achieved=reserveRemaining<.01&&fund+.01>=need;
+   if(achieved&&hit===null)hit={m,fund,need,price:futurePrice};
+   if(targetMonths!==null&&m===targetMonths)atTarget={fund,need,price:futurePrice,reserveRemaining};
+ }
+ return {hit,atTarget,months:targetMonths,reserveGap,knownEmergency,rate,priceRate};
+}
+function goalDateAfter(months){const now=new Date(),d=new Date(now.getFullYear(),now.getMonth()+months,1);return d.toLocaleDateString("pt-BR",{month:"long",year:"numeric"})}
+function goalMonthlyRequired(g){
+ const desired=goalMonthsTo(g.date);if(desired===null||desired<=0)return null;
+ let low=0,high=Math.max(500,g.amount/Math.max(1,desired)*4);
+ for(let i=0;i<28;i++){
+   const t=goalSimulate(g,high);if(t?.hit&&t.hit.m<=desired)break;high*=2;if(high>1e9)return null;
+ }
+ for(let i=0;i<35;i++){const mid=(low+high)/2,v=goalSimulate(g,mid);if(v?.hit&&v.hit.m<=desired)high=mid;else low=mid}
+ return Math.ceil(high);
+}
+function goalHousingAt(g,result){
+ if(g.type!=="home"||!result?.hit||g.income===null||g.mortgageRate===null||g.currentHousing===null||g.futureHousing===null)return null;
+ if(g.income<=0||g.mortgageRate<=0||g.termYears<1)return null;
+ const price=result.hit.price,principal=Math.max(0,price*(1-g.entry/100));
+ const i=Math.pow(1+g.mortgageRate/100,1/12)-1,n=g.termYears*12;
+ const monthlyPayment=i>0?principal*i/(1-Math.pow(1+i,-n)):principal/n;
+ const incomeFuture=g.income*Math.pow(1+g.incomeGrowth/100,result.hit.m/12);
+ const extra=monthlyPayment+g.futureHousing-g.currentHousing;
+ const savingLeft=g.monthly-extra;
+ const cushion=Math.max(incomeFuture*.10,Math.max(0,g.essentials||0)*.10);
+ const comfortable=savingLeft>=cushion&&monthlyPayment+g.futureHousing<=incomeFuture*.35;
+ return {monthlyPayment,incomeFuture,extra,savingLeft,comfortable,cushion};
+}
+function goalComfortDate(g){
+ if(g.type!=="home"||[g.income,g.mortgageRate,g.currentHousing,g.futureHousing,g.essentials,g.emergencyHeld].some(v=>v===null))return null;
+ const r=goalSimulate(g);if(!r||!r.hit)return null;
+ const periodic=Math.pow(1+g.annualYield/100,1/12)-1;
+ const growth=Math.pow(1+g.inflation/100,1/12)-1;
+ let fund=g.saved,remaining=r.reserveGap;
+ for(let m=0;m<=480;m++){
+  if(m>0){fund=Math.max(0,fund*(1+periodic));let put=g.monthly;if(remaining>0){const fill=Math.min(put,remaining);remaining-=fill;put-=fill}fund+=put}
+  const price=g.amount*Math.pow(1+growth,m),need=price*(g.entry+g.fees)/100;
+  if(remaining>.01||fund+.01<need)continue;
+  const h=goalHousingAt(g,{hit:{m,price}});
+  if(h?.comfortable)return {month:m,housing:h};
+ }
+ return null;
+}
+function goalProjectionHtml(g){
+ if(!g.amount||g.amount<=0||!g.date||g.saved<0||g.monthly<0)return `<div class="advice-muted">Informe valor, prazo e quanto pode guardar para ver a projeção.</div>`;
+ const r=goalSimulate(g);if(!r)return `<div class="advice-muted">Confira os valores da simulação.</div>`;
+ const req=goalMonthlyRequired(g),housing=goalHousingAt(g,r),comfort=goalComfortDate(g);
+ let msg=r.hit?`No ritmo informado, o montante previsto seria atingido em <b>${goalDateAfter(r.hit.m)}</b>.`:`No ritmo informado, o montante não seria atingido dentro da projeção de 40 anos.`;
+ let rows=`<li>${g.type==="home"?"Entrada e custos estimados":"Meta futura estimada"}: <b>${money(r.atTarget?.need??g.amount*(g.type==="home"?(g.entry+g.fees)/100:1))}</b> na data desejada.</li>`;
+ if(r.months>0&&r.atTarget)rows+=`<li>Projeção acumulada na data: <b>${money(r.atTarget.fund)}</b>.</li>`;
+ if(req!==null)rows+=`<li>Para tentar atingir sua data: <b>${money(req)}/mês</b> no cenário informado.</li>`;
+ if(g.type==="home"){
+   rows+=r.knownEmergency?`<li>Reserva de emergência a completar antes da entrada: <b>${money(r.reserveGap)}</b>. O aporte mensal prioriza essa reserva.</li>`:`<li><b>Reserva não avaliada:</b> informe despesas essenciais e reserva atual em “Mais opções”.</li>`;
+   if(housing)rows+=`<li>Parcela estimada pelo modelo Price: <b>${money(housing.monthlyPayment)}/mês</b>, sem CET, seguros e tarifas.</li><li>Variação mensal total da moradia: <b>${money(housing.extra)}</b>. Margem de poupança restante: <b>${money(housing.savingLeft)}</b>.</li><li><b>${housing.comfortable&&r.knownEmergency?"Conforto preliminarmente compatível com as hipóteses":"Atenção: orçamento pode ficar apertado ou reserva não foi validada"}.</b> Não é aprovação de crédito.</li>${comfort?`<li>Primeira data que também passa nos critérios de conforto simulados: <b>${goalDateAfter(comfort.month)}</b>.</li>`:`<li>Não foi identificada uma data que cumpra todos os critérios simulados dentro do horizonte de 40 anos.</li>`}`;
+   else rows+=`<li><b>Financiamento ainda não avaliado:</b> renda, juros e custos de moradia são necessários para estimar parcelas e conforto.</li>`;
+ }
+ return `<div class="goal-result"><div class="eyebrow">Projeção ilustrativa</div><div class="big">${r.hit?goalDateAfter(r.hit.m):"Prazo não atingido"}</div>${msg}<ul>${rows}</ul><span class="advice-muted">Seu aporte mensal foi informado manualmente e ainda não foi validado contra toda a sua renda e despesas. Hipóteses não são garantias; a simulação não movimenta investimentos nem indica aprovação de crédito.</span></div>`;
+}
+function renderGoalProjection(){
+ const g=goalInputs(),home=g.type==="home";
+ $("#goalHomeFields").classList.toggle("hidden",!home);
+ $("#goalProjection").innerHTML=goalProjectionHtml(g);
+}
+function openGoal(id=null,type="home"){
+ if(!goalsReady)return toast("Execute primeiro o SQL 14 para ativar os objetivos.");
+ const g=id?goals.find(v=>v.id===id):null;
+ const str=v=>v===null||v===undefined?"":String(v);
+ $("#goalId").value=id||"";$("#goalTitle").textContent=g?"Editar objetivo":"Novo objetivo";
+ $("#goalType").value=g?.goal_type||type;$("#goalName").value=g?.name||goalNameFor($("#goalType").value);
+ $("#goalAmount").value=str(g?.target_amount);$("#goalDate").value=g?.target_date?.slice(0,7)||`${new Date().getFullYear()+3}-${String(new Date().getMonth()+1).padStart(2,"0")}`;
+ $("#goalSaved").value=str(g?.saved_amount??0);$("#goalMonthly").value=str(g?.monthly_contribution??0);
+ const fields={goalYield:g?.annual_yield_pct??0,goalInflation:g?.annual_price_growth_pct??0,goalIncomeGrowth:g?.annual_income_growth_pct??0,goalEntry:g?.entry_pct??25,goalFees:g?.fees_pct??5,goalEssentials:g?.essential_expenses,goalEmergencyHeld:g?.emergency_saved,goalEmergencyMonths:g?.emergency_months??6,goalIncome:g?.net_monthly_income,goalMortgageRate:g?.mortgage_rate_pct,goalCurrentHousing:g?.current_housing_cost,goalFutureHousing:g?.future_housing_cost,goalMortgageYears:g?.mortgage_years??30};
+ for(const [key,val] of Object.entries(fields))$("#"+key).value=str(val);
+ $("#goalAssumptions").open=false;$("#goalDelete").classList.toggle("hidden",!id);
+ renderGoalProjection();openModal("goalModal");
+}
+async function saveGoal(){
+ if(!goalsReady)return toast("Execute o SQL 14.");const g=goalInputs();
+ if(!g.name||!g.date||!Number.isFinite(g.amount)||g.amount<=0||!Number.isFinite(g.monthly)||g.monthly<0||!Number.isFinite(g.saved)||g.saved<0||goalMonthsTo(g.date)<0)return toast("Confira o objetivo, o valor e uma data futura.");
+ if(!goalSimulate(g))return toast("Confira taxas e valores. A entrada e os custos não podem exceder 130%.");
+ const val=x=>x===null||Number.isFinite(x)?x:null;
+ const payload={name:g.name,goal_type:g.type,target_amount:g.amount,target_date:g.date+"-01",saved_amount:g.saved,monthly_contribution:g.monthly,annual_yield_pct:g.annualYield,annual_price_growth_pct:g.inflation,annual_income_growth_pct:g.incomeGrowth,entry_pct:g.entry,fees_pct:g.fees,essential_expenses:val(g.essentials),emergency_saved:val(g.emergencyHeld),emergency_months:g.emergencyMonths,net_monthly_income:val(g.income),mortgage_rate_pct:val(g.mortgageRate),current_housing_cost:val(g.currentHousing),future_housing_cost:val(g.futureHousing),mortgage_years:g.termYears,updated_at:new Date().toISOString()};
+ const r=g.id?await sb.from("finance_goals").update(payload).eq("id",g.id).eq("household_id",householdId):await sb.from("finance_goals").insert({...payload,household_id:householdId,created_by:session.user.id});
+ if(r.error){console.error(r.error);return toast("Não consegui salvar. Confira SQL 14 e permissões.")}
+ closeModal("goalModal");await loadData();toast("Objetivo salvo.");
+}
+async function deleteGoal(){
+ const id=$("#goalId").value;if(!id||!confirm("Excluir este objetivo? Isso não apaga investimentos nem movimentações."))return;
+ const r=await sb.from("finance_goals").delete().eq("household_id",householdId).eq("id",id);
+ if(r.error){console.error(r.error);return toast("Não consegui excluir.")}
+ closeModal("goalModal");await loadData();toast("Objetivo excluído.");
 }
 
 function renderSettings(){
@@ -787,7 +1095,13 @@ $("#settleActual").addEventListener("input",refreshPlanSettlement);
 $("#settleEqual").onclick=()=>settlePlanActual(true);
 $("#settlePlanSave").onclick=()=>settlePlanActual(false);
 $("#pendingNoPlan").onclick=()=>{selectedPendingPlan=null;refreshPendingPlanBox()};
-$("#saveMove").onclick=saveMove;$("#saveDaily").onclick=saveDaily;$("#saveAccount").onclick=saveAccount;$("#savePlan").onclick=savePlan;$("#cancelPlan").onclick=cancelPlan;$("#saveInvestment").onclick=saveInvestment;$("#saveSource").onclick=saveSource;$("#disableSource").onclick=disableSource;$("#saveCycle").onclick=saveCycle;$("#confirmPending").onclick=confirmPending;
+$("#advisorForm").onsubmit=e=>{e.preventDefault();advisorHandle($("#advisorQuestion").value);$("#advisorQuestion").value=""};
+ document.querySelectorAll("[data-advisor-prompt]").forEach(b=>b.onclick=()=>advisorHandle(b.dataset.advisorPrompt));
+ $("#advisorAccount").onchange=()=>{$("#advisorResult").innerHTML="";advisorLastSimulation=null};
+ $("#goalType").addEventListener("change",()=>{$("#goalName").value=goalNameFor($("#goalType").value);renderGoalProjection()});
+ document.querySelectorAll("#goalModal input, #goalModal select").forEach(el=>{if(el.id!=="goalId"&&el.id!=="goalType")el.addEventListener("input",renderGoalProjection)});
+ $("#goalSave").onclick=saveGoal;$("#goalDelete").onclick=deleteGoal;
+ $("#saveMove").onclick=saveMove;$("#saveDaily").onclick=saveDaily;$("#saveAccount").onclick=saveAccount;$("#savePlan").onclick=savePlan;$("#cancelPlan").onclick=cancelPlan;$("#saveInvestment").onclick=saveInvestment;$("#saveSource").onclick=saveSource;$("#disableSource").onclick=disableSource;$("#saveCycle").onclick=saveCycle;$("#confirmPending").onclick=confirmPending;
 $("#nav").onclick=e=>{const b=e.target.closest(".nav");if(!b)return;selectedAccountId=null;currentView=b.dataset.view;render();window.scrollTo({top:0,behavior:"smooth"})};
 if("serviceWorker" in navigator)navigator.serviceWorker.register("./sw.js").catch(console.error);
 window.addEventListener("online",render);window.addEventListener("offline",render);
