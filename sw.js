@@ -1,5 +1,5 @@
 
-const CACHE="meu-saldo-v6-9-4-ciclos-claros";
+const CACHE="meu-saldo-v6-9-6-sem-aviso";
 
 const ASSETS=[
   "./",
@@ -37,10 +37,7 @@ self.addEventListener("fetch",e=>{
 
 self.addEventListener("push",e=>{
   let data={};
-  try{
-    data=e.data ? e.data.json() : {};
-  }catch{}
-
+  try{ data=e.data ? e.data.json() : {}; }catch{}
   e.waitUntil(
     self.registration.showNotification(
       data.title || "Meu Saldo",
@@ -58,23 +55,17 @@ self.addEventListener("push",e=>{
 
 self.addEventListener("notificationclick",e=>{
   e.notification.close();
-
   const target=e.notification.data?.url || "./";
-
   e.waitUntil(
-    clients.matchAll({
-      type:"window",
-      includeUncontrolled:true
-    })
-    .then(list=>{
-      for(const c of list){
-        if("focus" in c){
-          c.navigate(target);
-          return c.focus();
+    clients.matchAll({type:"window",includeUncontrolled:true})
+      .then(list=>{
+        for(const c of list){
+          if("focus" in c){
+            c.navigate(target);
+            return c.focus();
+          }
         }
-      }
-
-      return clients.openWindow(target);
-    })
+        return clients.openWindow(target);
+      })
   );
 });
