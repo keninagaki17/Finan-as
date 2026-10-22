@@ -95,6 +95,14 @@
 .goal-actions{display:flex;gap:8px;margin-top:9px}.goal-actions button{flex:1}
 @media(max-width:340px){.advisor-composer button{min-width:45px}.advice-actions button{min-width:100px}}
 
+
+/* V6.8.1: Conselheiro discreto, apos os planos, sem competir com os saldos */
+.advice-compact{width:100%;display:flex;align-items:center;gap:11px;text-align:left;background:#fff;border:1px solid var(--line);border-radius:17px;padding:12px 13px;margin-top:18px;box-shadow:var(--shadow)}
+.advice-compact-icon{display:grid;place-items:center;width:32px;height:32px;flex:0 0 32px;border-radius:11px;background:var(--soft);color:var(--accent);font-size:17px}
+.advice-compact-main{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1}
+.advice-compact-main strong{font-size:11px;color:var(--accent);font-weight:800}
+.advice-compact-main>span{font-size:10px;line-height:1.38;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.advice-compact-arrow{font-size:22px;color:var(--muted);flex-shrink:0;margin-left:3px}
 </style>
 </head>
 <body>
@@ -540,13 +548,15 @@ function renderHome(){
  <div class="hero"><div class="label">Disponível agora</div><div class="value">${money(totalAvailableNow())}</div><div class="sub">${activeAccounts().length} saldo(s) ativo(s) · planejamentos não reduzem o saldo atual</div></div>
  ${ps.count?`<div class="plan-strip"><div class="plan-mini"><span>Livre até as renovações</span><b>${money(ps.remaining)}</b></div><div class="plan-mini"><span>Ritmo de gasto</span><b>${money(ps.pace)}/dia</b></div></div><div class="plan-note">${ps.fixed>0?`${money(ps.fixed)} em contas fixas. `:""}${ps.variable>0?`${money(ps.variable)} em gastos variáveis. `:""}${ps.next?`Próxima renovação em ${fmt(ps.next)}.`:""}</div>`:""}
  ${warn.length?`<div class="warning-inline">${warn.map(esc).join("<br>")}</div>`:""}
- <div class="advice-card"><div class="advice-kicker">✦ Conselheiro Meu Saldo</div><p>${esc(advisorInsight())}</p><div class="advice-actions"><button class="primary" id="advisorOpen">Posso gastar?</button><button class="secondary" id="advisorAsk">Perguntar</button></div></div>
+
  <div class="cards">${activeAccounts().map(accountCard).join("")}</div>
  <button class="primary full" id="addDaily" ${canAdd?"":"disabled"} style="margin-top:11px">Atualizar saldo do dia</button><div class="next">${cycleStart()?(canAdd?`Adicionar ${fmt(next)} com os valores diários calculados`:`Próxima atualização: ${fmt(next)}${next>today()?" · ainda não chegou":""}`):"Inicie primeiro a base histórica"}</div>
  <div class="actions"><button class="secondary" id="addDebit">− Débito</button><button class="secondary" id="addCredit">+ Crédito</button></div>
  ${plansReady?`<div class="plan-actions"><button class="secondary" id="newPlanHome">＋ Planejar gasto</button><button class="calendar-open" id="openCalendar" aria-label="Abrir calendário"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3v3M18 3v3M4.5 8.5h15M5.5 5h13a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"/></svg></button></div>${activeFixedPlans().length?`<div class="section"><h2>Contas fixas</h2><span>${money(fixedPlanTotal())}</span></div>${planListHtml(activeFixedPlans(),3)}`:""}${upcomingPlans().length?`<div class="section"><h2>Próximos variáveis</h2><span>${money(upcomingPlanTotal())}</span></div>${planListHtml(upcomingPlans(),3)}`:""}`:""}
+ ${activeAccounts().some(a=>adaptiveSuggestion(a))?`<button class="secondary full" id="adaptiveHome" style="margin-top:8px">✦ Ver sugestão de saldo adaptativo</button>`:""}
+ <button type="button" class="advice-compact" id="advisorOpen" aria-label="Abrir Conselheiro Meu Saldo"><span class="advice-compact-icon">✦</span><span class="advice-compact-main"><strong>Conselheiro Meu Saldo</strong><span>${esc(advisorInsight())}</span></span><span class="advice-compact-arrow">›</span></button>
  <div class="section"><h2>Movimentações recentes</h2><span>${activeTx().length}</span></div>${recentHtml()}`;
- $("#advisorOpen").onclick=()=>openAdvisor();$("#advisorAsk").onclick=()=>openAdvisor();$("#logout").onclick=logout;$("#settleDueHome")?.addEventListener("click",()=>openPlanSettle(duePlansToday()[0]?.id));$("#defineCycle")?.addEventListener("click",openCycle);$("#addDaily").onclick=openDaily;$("#addDebit").onclick=()=>openMove("debit");$("#addCredit").onclick=()=>openMove("credit");$("#newPlanHome")?.addEventListener("click",()=>openPlan());$("#openCalendar")?.addEventListener("click",openPlanCalendar);$("#reviewPending")?.addEventListener("click",()=>openPending(pending[0]));bindPlanButtons();
+ $("#advisorOpen").onclick=()=>openAdvisor();$("#adaptiveHome")?.addEventListener("click",()=>openAdvisor("Como ficaria meu saldo adaptativo?"));$("#logout").onclick=logout;$("#settleDueHome")?.addEventListener("click",()=>openPlanSettle(duePlansToday()[0]?.id));$("#defineCycle")?.addEventListener("click",openCycle);$("#addDaily").onclick=openDaily;$("#addDebit").onclick=()=>openMove("debit");$("#addCredit").onclick=()=>openMove("credit");$("#newPlanHome")?.addEventListener("click",()=>openPlan());$("#openCalendar")?.addEventListener("click",openPlanCalendar);$("#reviewPending")?.addEventListener("click",()=>openPending(pending[0]));bindPlanButtons();
  document.querySelectorAll("[data-account]").forEach(b=>b.onclick=()=>{selectedAccountId=b.dataset.account;render()});
 }
 
@@ -624,6 +634,33 @@ function advisorBehaviorInsight(){
  if(avgWeekday<=0||avgWeekend<avgWeekday*1.5)return null;
  return `No seu histórico de oito semanas, o gasto registrado por dia de fim de semana ficou maior que o de dias úteis. Podemos pensar em reservar um pouco mais para esses dias sem aumentar o orçamento total.`;
 }
+// Sugestão comportamental: somente visualização, sem alterar lançamentos ou orçamento.
+function adaptiveSuggestion(a){
+ const days=cycleDaysRemaining(a),total=futureFreeRemaining(a),first=firstUnaddedDate();
+ if(!a?.planning_enabled||!first||days<4||total<=0)return null;
+ const start=addDays(today(),-55);
+ const tx=transactions.filter(t=>t.account_id===a.id&&t.kind==="debit"&&t.txn_date>=start&&t.txn_date<=today());
+ if(tx.length<16)return null;
+ const dates=tx.map(t=>t.txn_date).sort();
+ if(daysBetween(dates[0],dates[dates.length-1])<28)return null;
+ const weekend=tx.filter(t=>[0,6].includes(parse(t.txn_date).getDay()));
+ const weekday=tx.filter(t=>![0,6].includes(parse(t.txn_date).getDay()));
+ if(weekend.length<4||weekday.length<8)return null;
+ let wd=0,we=0;for(let i=0;i<56;i++){if([0,6].includes(parse(addDays(today(),-i)).getDay()))we++;else wd++}
+ const weAvg=weekend.reduce((n,t)=>n+Number(t.amount||0),0)/we;
+ const wdAvg=weekday.reduce((n,t)=>n+Number(t.amount||0),0)/wd;
+ if(!(weAvg>wdAvg*1.25))return null;
+ // O acréscimo é limitado a 20%, preservando o total e os compromissos.
+ const datesFuture=Array.from({length:days},(_,i)=>addDays(first,i));
+ const weights=datesFuture.map(d=>[0,6].includes(parse(d).getDay())?1.2:1);
+ const sum=weights.reduce((n,v)=>n+v,0);
+ return {regular:total/days,weekend:total*1.2/sum,weekday:total/sum,days,total};
+}
+function advisorAdaptivePreview(a){
+ const r=adaptiveSuggestion(a);
+ if(!r){advisorSay("Ainda não tenho histórico suficiente para sugerir uma distribuição adaptativa segura neste saldo. Continue registrando gastos; a sugestão só aparecerá quando houver um padrão consistente.");return;}
+ advisorSay(`Seu histórico sugere gastos maiores nos fins de semana. Sem mudar o orçamento total de ${money(r.total)}, uma distribuição experimental seria ${money(r.weekday)}/dia útil e ${money(r.weekend)}/dia de fim de semana, em vez de ${money(r.regular)} todos os dias. Isso é apenas uma simulação: nenhuma alteração foi aplicada.`);
+}
 function advisorInsight(){
  const valid=activeAccounts().filter(a=>a.planning_enabled&&effectiveCycleDates(a).next>today());
  if(!valid.length)return "Configure um saldo e sua renovação para receber sugestões baseadas no seu orçamento.";
@@ -681,6 +718,8 @@ function advisorHandle(question){
  question=String(question||"").trim();if(!question)return;
  advisorSay(question,"user");const q=question.toLocaleLowerCase("pt-BR"),a=account($("#advisorAccount").value)||activeAccounts()[0];
  const amount=advisorExtractAmount(question);
+ if(/(adaptativ|fim de semana|distribui.{0,15}saldo)/i.test(q)){advisorAdaptivePreview(a);$("#advisorResult").innerHTML="";return;}
+
  if(/(im[oó]vel|apartamento|casa|financiamento|meta|objetivo|viagem no futuro)/i.test(q)){
    advisorSay("Para objetivos maiores eu preciso saber o prazo, o valor e quanto você pode guardar por mês. Posso projetar a entrada e verificar a segurança do financiamento, se você informar as hipóteses.");
    $("#advisorResult").innerHTML=`<button class="primary full" id="advisorStartGoal">Criar objetivo</button>`;
