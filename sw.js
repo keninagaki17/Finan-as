@@ -1,5 +1,5 @@
 
-const CACHE="meu-saldo-v6-8-2-adaptativo";
+const CACHE="meu-saldo-v6-9-aportes";
 
 const ASSETS=[
   "./",
@@ -85,4 +85,3 @@ self.addEventListener("notificationclick",e=>{
     })
   );
 });
-
