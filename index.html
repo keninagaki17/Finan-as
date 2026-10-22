@@ -65,6 +65,7 @@
 .repeat-row input{width:20px;height:20px;accent-color:var(--accent)}
 
 
+.cycle-next-card{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px 15px;margin:12px 0}.cycle-next-card span{display:block;color:var(--muted);font-size:10px;margin-bottom:4px}.cycle-next-card strong{font-size:17px;color:var(--accent)}
 /* Conselheiro V6.8: simples, integrado, sem poluição visual */
 .advice-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:15px;box-shadow:var(--shadow);margin-top:12px}
 .advice-kicker{display:flex;align-items:center;gap:7px;font-weight:800;color:var(--accent);font-size:11px;margin-bottom:7px}
@@ -159,11 +160,13 @@
 </div></div>
 
 <div class="modalwrap" id="accountModal"><div class="modal">
-<h3 id="accountModalTitle">Novo saldo</h3><div class="help">Informe apenas quanto ainda falta distribuir e quando esse saldo renova.</div>
+<h3 id="accountModalTitle">Novo saldo</h3><div class="help">Separe o dinheiro de agora do próximo recebimento.</div>
 <input id="accountId" type="hidden">
 <div class="field"><label>Nome</label><input id="accountName" maxlength="40" placeholder="Ex.: Débito Ken"></div>
-<div class="field"><label>Qual o seu saldo mensal?</label><input id="cycleIncome" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Ex.: 1500"></div>
-<div class="field"><label>Qual a data que renova?</label><input id="nextRenewal" type="date"></div>
+<div class="field"><label>Quanto ainda falta distribuir até receber?</label><input id="cycleIncome" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Ex.: 1500"></div>
+<div class="field"><label>Quando vou receber novamente?</label><input id="nextRenewal" type="date"></div>
+<div class="field"><label>Quanto vou receber nessa data?</label><input id="nextCycleAmount" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Ex.: 3000"></div>
+<div class="soft-label">O próximo recebimento não entra no saldo disponível de hoje.</div>
 <div class="plan-preview"><div class="eyebrow">Seu ritmo</div><div class="big" id="planFreePreview">R$ 0,00 por dia</div><div class="small" id="planPacePreview">Informe o saldo restante e a próxima renovação.</div></div>
 <details class="advanced"><summary>Mais opções</summary>
 <div class="inline2"><div class="field"><label>Proprietário</label><input id="accountOwner" maxlength="40" placeholder="Ex.: Ken"></div><div class="field"><label>Tipo</label><select id="accountType"><option value="money">Dinheiro / cartão</option><option value="va">VA</option><option value="vr">VR</option><option value="other">Outro</option></select></div></div>
@@ -409,6 +412,7 @@ function activeAccounts(){return accounts.filter(a=>a.active).sort((a,b)=>a.sort
 function archivedAccounts(){return accounts.filter(a=>!a.active).sort((a,b)=>a.sort_order-b.sort_order||a.created_at.localeCompare(b.created_at))}
 function account(id){return accounts.find(a=>a.id===id)}
 function planningSchemaReady(){return !accounts.length||Object.prototype.hasOwnProperty.call(accounts[0],"planning_enabled")}
+function nextCycleAmount(a){return a?.next_cycle_amount==null?null:Math.max(0,Number(a.next_cycle_amount))}
 function cycleBudget(a){return Math.max(0,Number(a?.cycle_income||0))}
 function fixedBounds(day,ref=today()){
  const d=parse(ref),y=d.getFullYear(),m=d.getMonth(),mk=(yy,mm)=>{const first=new Date(yy,mm,1),ry=first.getFullYear(),rm=first.getMonth(),last=new Date(ry,rm+1,0).getDate();return iso(new Date(ry,rm,Math.min(Math.max(1,Number(day||1)),last)))};
@@ -801,14 +805,17 @@ function renderAccountDetail(id){
  }
  const currentTx=accountTransactions(id,false),bal=balance(id),planTotal=cyclePlanReserved(a);
  app.innerHTML=`<div class="detail-head"><button class="back" id="back">‹ Voltar</button><div class="eyebrow">${a.owner_label?esc(a.owner_label):"Saldo"}</div><h1>${esc(a.name)}</h1></div>
- <div class="detail-box"><div class="eyebrow">Disponível agora</div><div class="amt">${money(bal)}</div><div class="meta">${planned?`${money(cyclePace(a))}/dia · renova ${fmt(d.next)}`:`configure saldo restante e renovação`}${planTotal>0?` · ${money(planTotal)} planejados`:""}</div></div>
+ <div class="hero clean-hero"><div class="label">Saldo total disponível</div><div class="value">${money(cycleRemaining(a))}</div><div class="clear-hero-caption">Hoje + próximos dias, após reservas</div></div>
+ <div class="clear-money-row"><div><span>Saldo de hoje</span><b>${money(bal)}</b></div><div><span>Para guardar</span><b>${money(savingReserved(a))}</b></div></div>
+ ${planned?`<div class="clear-daily">Próximos dias: <strong>${money(cyclePace(a))}/dia</strong></div>`:""}
+ <div class="cycle-next-card"><div><span>Próximo recebimento · ${d.next?fmt(d.next):"Definir data"}</span><strong>${nextCycleAmount(a)===null?"Valor não informado":money(nextCycleAmount(a))}</strong></div><button class="mini" id="editNextA">Editar</button></div>
  ${bal<-.005&&planned?`<div class="notice"><strong>Saldo negativo</strong><p>Você pode zerar o saldo de hoje e descontar ${money(Math.abs(bal))} dos próximos saldos diários.</p><button class="primary full" id="rebalanceA">Ajustar saldo diário</button></div>`:""}
- ${planned?`<div class="plan-strip"><div class="plan-mini"><span>Até renovar</span><b>${money(cycleBudget(a))}</b></div><div class="plan-mini"><span>Livre futuro</span><b>${money(futureFreeRemaining(a))}</b></div></div>`:""}
- <div class="actions"><button class="secondary" id="debitA">− Débito</button><button class="secondary" id="creditA">+ Crédito</button></div>${plansReady?`<button class="secondary full" id="planA" style="margin-top:8px">＋ Planejar gasto</button>`:""}<button class="secondary full" id="editA" style="margin-top:8px">Editar saldo / renovação</button><button class="danger full" id="zeroA" style="margin-top:8px">Zerar saldo</button>
+ 
+ <div class="actions"><button class="secondary" id="debitA">− Débito</button><button class="secondary" id="creditA">+ Crédito</button></div>${plansReady?`<button class="secondary full" id="planA" style="margin-top:8px">＋ Planejar gasto</button>`:""}<button class="secondary full" id="editA" style="margin-top:8px">Editar este ciclo</button><button class="danger full" id="zeroA" style="margin-top:8px">Zerar saldo</button>
  ${plansReady&&activeFixedPlans(id).length?`<div class="section"><h2>Contas fixas</h2><span>${money(fixedPlanTotal(id))}</span></div>${planListHtml(activeFixedPlans(id),6)}`:""}${plansReady&&upcomingPlans(id).length?`<div class="section"><h2>Gastos variáveis</h2><span>${upcomingPlans(id).length}</span></div>${planListHtml(upcomingPlans(id),6)}`:""}
  <div class="section"><h2>Histórico da conta</h2><span>${currentTx.length}</span></div>${transactionRowsHtml(currentTx,true)}
  <button class="ghost full" id="archiveA" style="margin-top:12px">Arquivar esta conta</button>`;
- $("#back").onclick=()=>{selectedAccountId=null;render()};$("#debitA").onclick=()=>openMove("debit",id);$("#creditA").onclick=()=>openMove("credit",id);$("#planA")?.addEventListener("click",()=>openPlan(null,id));$("#editA").onclick=()=>openAccount(id);$("#zeroA").onclick=()=>zeroAccount(id);$("#archiveA").onclick=()=>archiveAccount(id);$("#rebalanceA")?.addEventListener("click",()=>rebalanceNegative(id));bindPlanButtons();bindDeleteTransactions();
+ $("#back").onclick=()=>{selectedAccountId=null;render()};$("#debitA").onclick=()=>openMove("debit",id);$("#creditA").onclick=()=>openMove("credit",id);$("#planA")?.addEventListener("click",()=>openPlan(null,id));$("#editA").onclick=()=>openAccount(id);$("#editNextA")?.addEventListener("click",()=>openAccount(id));$("#zeroA").onclick=()=>zeroAccount(id);$("#archiveA").onclick=()=>archiveAccount(id);$("#rebalanceA")?.addEventListener("click",()=>rebalanceNegative(id));bindPlanButtons();bindDeleteTransactions();
 }
 
 function renderInvestments(){
@@ -1176,7 +1183,7 @@ function refreshMonthlyForm(){
  $("#planPacePreview").textContent=`${money(monthly)} ÷ ${days} ${days===1?"dia":"dias"} (${fmt(first)} até ${fmt(addDays(next,-1))}).`;
 }
 function openAccount(id=null){
- const a=id?account(id):null;$("#accountId").value=id||"";$("#accountModalTitle").textContent=a?"Editar saldo":"Novo saldo";$("#accountName").value=a?.name||"";$("#cycleIncome").value=a?.cycle_income??"";$("#nextRenewal").value=a?.next_renewal_date||"";$("#accountOwner").value=a?.owner_label||"";$("#accountType").value=a?.account_type||"money";$("#accountInvestable").checked=a?a.counts_as_investable:$("#accountType").value==="money";refreshMonthlyForm();openModal("accountModal")
+ const a=id?account(id):null;$("#nextCycleAmount").value=nextCycleAmount(a)??"";$("#accountId").value=id||"";$("#accountModalTitle").textContent=a?"Editar saldo":"Novo saldo";$("#accountName").value=a?.name||"";$("#cycleIncome").value=a?.cycle_income??"";$("#nextRenewal").value=a?.next_renewal_date||"";$("#accountOwner").value=a?.owner_label||"";$("#accountType").value=a?.account_type||"money";$("#accountInvestable").checked=a?a.counts_as_investable:$("#accountType").value==="money";refreshMonthlyForm();openModal("accountModal")
 }
 async function saveAccount(){
  const id=$("#accountId").value,name=$("#accountName").value.trim(),owner_label=$("#accountOwner").value.trim()||null,account_type=$("#accountType").value,counts_as_investable=$("#accountInvestable").checked,cycle_income=Number($("#cycleIncome").value),next_renewal_date=$("#nextRenewal").value||null;
@@ -1184,9 +1191,11 @@ async function saveAccount(){
  if(next_renewal_date<today())return toast("A próxima renovação não pode estar no passado.");
  const old=id?account(id):null,first=firstUnaddedDate();
  if(!first||first>=next_renewal_date)return toast("A renovação precisa ser depois do próximo dia ainda não adicionado.");
+ const next_cycle_amount=$("#nextCycleAmount").value.trim()===""?null:Number($("#nextCycleAmount").value);
+ if(next_cycle_amount!==null&&(!Number.isFinite(next_cycle_amount)||next_cycle_amount<0||next_cycle_amount>1e9))return toast("Confira o próximo recebimento.");
  const account_cycle_start_date=addDays(first,-1);
  const days=Math.max(1,daysBetween(first,next_renewal_date)),daily_amount=cycle_income/days;
- const payload={name,owner_label,daily_amount:Number(daily_amount.toFixed(2)),account_type,counts_as_investable,planning_enabled:true,cycle_income:Number(cycle_income.toFixed(2)),cycle_committed:0,cycle_save:0,account_cycle_start_date,next_renewal_date,renewal_mode:"manual",renewal_day:null,relative_account_id:null,relative_offset_days:0,updated_at:new Date().toISOString()};
+ const payload={name,owner_label,next_cycle_amount:next_cycle_amount===null?null:Number(next_cycle_amount.toFixed(2)),daily_amount:Number(daily_amount.toFixed(2)),account_type,counts_as_investable,planning_enabled:true,cycle_income:Number(cycle_income.toFixed(2)),cycle_committed:0,cycle_save:0,account_cycle_start_date,next_renewal_date,renewal_mode:"manual",renewal_day:null,relative_account_id:null,relative_offset_days:0,updated_at:new Date().toISOString()};
  let r;if(id)r=await sb.from("finance_accounts").update(payload).eq("id",id);else r=await sb.from("finance_accounts").insert({...payload,household_id:householdId,active:true,sort_order:(Math.max(0,...accounts.map(a=>a.sort_order))+1),created_by:session.user.id});
  if(r.error){console.error(r.error);return toast(r.error.message?.includes("column")?"Execute primeiro o SQL 08.":"Não consegui salvar o saldo.")}
  if(id&&plansReady){
