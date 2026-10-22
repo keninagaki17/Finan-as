@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Meu Saldo">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icon-192.png">
-<title>Meu Saldo — Conselheiro e Objetivos</title>
+<title>Meu Saldo — Privacidade de Valores</title>
 <style>
 :root{--bg:#F7F5F0;--card:#FFFFFF;--text:#202622;--muted:#7B807C;--line:#E4E0D8;--accent:#173E35;--accent2:#31584C;--soft:#E7ECE7;--danger:#A94A4A;--dangerSoft:#F6E9E9;--blue:#EEEAE2;--green:#E6ECE5;--rose:#ECE8E5;--sand:#F1E9DC;--shadow:0 8px 24px rgba(28,45,39,.055)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}body{padding-bottom:calc(80px + env(safe-area-inset-bottom))}button,input,select{font:inherit}button{cursor:pointer;color:inherit}.hidden{display:none!important}
@@ -103,6 +103,14 @@
 .advice-compact-main strong{font-size:11px;color:var(--accent);font-weight:800}
 .advice-compact-main>span{font-size:10px;line-height:1.38;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .advice-compact-arrow{font-size:22px;color:var(--muted);flex-shrink:0;margin-left:3px}
+/* Botão discreto de privacidade */
+.privacy-eye{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;padding:7px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--accent);box-shadow:var(--shadow)}
+.privacy-eye svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.privacy-eye:focus-visible{outline:3px solid #9fbeb1;outline-offset:2px}
+.privacy-eye[aria-pressed="true"]{background:var(--soft)}
+.privacy-actions{display:flex;align-items:center;gap:7px;flex-shrink:0}
+.detail-head{position:relative}.detail-head .privacy-eye{position:absolute;right:0;top:0}
+.goal-funding{border:1px solid var(--line);background:var(--soft);padding:12px;border-radius:15px;margin:10px 0}.goal-funding .check{font-size:11px;font-weight:750}.goal-funding .field{margin-top:9px;margin-bottom:8px}.goal-funding .advice-muted{margin-top:6px}
 </style>
 </head>
 <body>
@@ -249,6 +257,9 @@
  <div class="inline2"><div class="field"><label>Valor estimado (R$)</label><input id="goalAmount" type="number" inputmode="decimal" min="1" step="0.01" placeholder="Ex.: 400000"></div><div class="field"><label>Quando gostaria?</label><input id="goalDate" type="month"></div></div>
  <div class="inline2"><div class="field"><label>Já guardou para este objetivo</label><input id="goalSaved" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0"></div><div class="field"><label>Pode guardar por mês</label><input id="goalMonthly" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Ex.: 1000"></div></div>
  <div class="advice-muted">O dinheiro informado aqui deve ser exclusivo desta meta: não conte a mesma quantia como reserva de emergência.</div>
+ <div class="goal-funding"><label class="check"><input id="goalAutoReserve" type="checkbox"> Reservar meu aporte no orçamento mensal</label>
+ <div id="goalFundingFields" class="hidden"><div class="inline2"><div class="field"><label>De qual saldo?</label><select id="goalFundingAccount"></select></div><div class="field"><label>Dia do aporte</label><select id="goalFundingDay"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option></select></div></div>
+ <div class="advice-muted" id="goalFundingPreview">O valor será separado dos próximos dias livres. Você confirma quando realmente guardar.</div></div></div>
  <details class="advanced" id="goalAssumptions"><summary>Mais opções de simulação</summary>
  <div class="inline2"><div class="field"><label>Rentabilidade anual estimada (%)</label><input id="goalYield" type="number" min="-20" max="50" step="0.1" value="0"></div><div class="field"><label>Aumento anual do preço (%)</label><input id="goalInflation" type="number" min="0" max="30" step="0.1" value="0"></div></div>
  <div class="field"><label>Crescimento anual da renda (%) — hipotético</label><input id="goalIncomeGrowth" type="number" min="-20" max="50" step="0.1" value="0"></div>
@@ -261,10 +272,13 @@
  <div class="field"><label>Prazo hipotético do financiamento</label><select id="goalMortgageYears"><option value="20">20 anos</option><option value="25">25 anos</option><option value="30" selected>30 anos</option><option value="35">35 anos</option></select></div>
  </div></details>
  <div id="goalProjection"></div>
+ <button class="secondary full hidden" id="goalContribute" type="button" style="margin-top:10px">Confirmar aporte deste mês</button>
+ <div class="advice-muted" id="goalContributeHint"></div>
  <button class="danger full hidden" id="goalDelete" type="button">Excluir objetivo</button>
  <div class="modal-actions"><button class="cancel" data-close="goalModal">Cancelar</button><button class="primary" id="goalSave" type="button">Salvar objetivo</button></div>
 </div></div>
 
+<div class="modalwrap" id="contributeModal"><div class="modal"><h3>Confirmar aporte</h3><div class="help" id="contributeHelp"></div><input type="hidden" id="contributeGoalId"><input type="hidden" id="contributeDueDate"><div class="field"><label>Quanto você realmente guardou?</label><input id="contributeAmount" type="number" min="0.01" step="0.01" inputmode="decimal"></div><div class="advice-muted">Confirme somente após guardar o dinheiro fora do app. Esta ação atualiza o objetivo, não movimenta banco nem duplica um investimento cadastrado.</div><div class="modal-actions"><button class="cancel" data-close="contributeModal">Cancelar</button><button class="primary" id="confirmContribution">Confirmar aporte</button></div></div></div>
 <div class="toast" id="toast"></div>
 
 <!-- V6.8 Conselheiro e Objetivos -->
@@ -273,9 +287,81 @@ import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2
 const SUPABASE_URL="https://owjuihjcypqonvlpsgqu.supabase.co",SUPABASE_KEY="sb_publishable_kbAOka2sxT40KPWgaXEA0g_adwNHUtv",VAPID_PUBLIC_KEY="BG2QzMbmf6NjdY1WOcuep7ohMo-WXc3ci5clXKBgRXwi_GHJb-8T6Oxi4HP1u4WV2tLcKAmu9mkjjFomUa07Boc";
 const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
 const $=s=>document.querySelector(s),app=$("#app");
-let session=null,householdId=null,settings=null,accounts=[],dailyCredits=[],transactions=[],investments=[],sources=[],pending=[],plans=[],goals=[],goalsReady=false,advisorMessages=[],advisorLastSimulation=null,plansReady=false,planSettlementReady=true,currentView="home",selectedAccountId=null,moveKind="debit",selectedPending=null,selectedPendingPlan=null,channel=null,calendarCursor=new Date(),calendarSelected=null;
+let session=null,householdId=null,settings=null,accounts=[],dailyCredits=[],transactions=[],investments=[],sources=[],pending=[],plans=[],goals=[],goalContributions=[],fundingReady=false,goalsReady=false,advisorMessages=[],advisorLastSimulation=null,plansReady=false,planSettlementReady=true,currentView="home",selectedAccountId=null,moveKind="debit",selectedPending=null,selectedPendingPlan=null,channel=null,calendarCursor=new Date(),calendarSelected=null;
 
 const money=n=>Number(n||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+// Privacidade visual V6.8.3: oculta apenas a apresentação, nunca os dados.
+// Não altera inputs, cálculos, banco, valores digitados ou registros.
+const PRIVACY_KEY="meu-saldo-ocultar-valores";
+let hideValues=false;
+try{hideValues=localStorage.getItem(PRIVACY_KEY)==="1"}catch{}
+const originalAmounts=new WeakMap();
+const moneyPattern=/R\$\s*-?\s*(?:\d{1,3}(?:\.\d{3})+|\d+)(?:,\d{1,2})?/g;
+const EYE_OPEN='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.7-7 10-7 10 7 10 7-3.7 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
+const EYE_CLOSED='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 18M10.6 5.1A10.6 10.6 0 0 1 12 5c6.3 0 10 7 10 7a15.7 15.7 0 0 1-3.2 3.9M6.2 6.2C3.5 8.1 2 12 2 12s3.7 7 10 7c1.7 0 3.2-.5 4.5-1.2M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
+function privacyNode(node){
+ const parent=node.parentElement;
+ if(!parent||parent.closest('script,style,textarea,input,select,[contenteditable="true"],.privacy-eye'))return;
+ const current=node.nodeValue||"";
+ const previous=originalAmounts.get(node);
+ if(hideValues){
+  if(previous&&current===previous.masked)return;
+  const masked=current.replace(moneyPattern,"•••••••");
+  if(masked!==current){originalAmounts.set(node,{original:current,masked});node.nodeValue=masked;}
+ }else if(previous){
+  if(current===previous.masked)node.nodeValue=previous.original;
+  originalAmounts.delete(node);
+ }
+}
+function privacyScan(root){
+ if(!root)return;
+ const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+ const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
+ nodes.forEach(privacyNode);
+}
+function privacyRefresh(){
+ privacyScan(document.getElementById("app"));
+ document.querySelectorAll(".modalwrap,.toast").forEach(privacyScan);
+ document.querySelectorAll(".privacy-eye").forEach(btn=>{
+  btn.setAttribute("aria-pressed",String(hideValues));
+  btn.setAttribute("aria-label",hideValues?"Mostrar valores":"Ocultar valores");
+  btn.title=hideValues?"Mostrar valores":"Ocultar valores";
+  btn.innerHTML=hideValues?EYE_CLOSED:EYE_OPEN;
+ });
+}
+function privacyToggle(){
+ hideValues=!hideValues;
+ try{localStorage.setItem(PRIVACY_KEY,hideValues?"1":"0")}catch{}
+ privacyRefresh();
+}
+function privacyInstallEye(){
+ const top=document.querySelector("#app .top");
+ const detail=document.querySelector("#app .detail-head");
+ const parent=top||detail;if(!parent)return;
+ const eye=document.createElement("button");eye.type="button";eye.className="privacy-eye";
+ eye.onclick=privacyToggle;
+ if(top){
+  const last=top.lastElementChild;
+  let actions;
+  if(last?.classList.contains("privacy-actions"))actions=last;
+  else{
+   actions=document.createElement("div");actions.className="privacy-actions";
+   if(last){top.replaceChild(actions,last);actions.appendChild(last)}else top.appendChild(actions);
+  }
+  actions.insertBefore(eye,actions.firstChild);
+ }else parent.appendChild(eye);
+ privacyRefresh();
+}
+const privacyObserver=new MutationObserver(records=>{
+ const nodes=new Set();
+ for(const rec of records){
+  if(rec.type==="characterData")nodes.add(rec.target);
+  else for(const n of rec.addedNodes){if(n.nodeType===3)nodes.add(n);else if(n.nodeType===1)privacyScan(n)}
+ }
+ nodes.forEach(privacyNode);
+});
+privacyObserver.observe(document.body,{subtree:true,childList:true,characterData:true});
+
 const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`};
 const parse=s=>{const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)};
 const fmt=s=>parse(s).toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"});
@@ -333,7 +419,27 @@ function fixedPlansForAccount(a,excludePlanId=null){
 }
 function cycleVariableReserved(a,excludePlanId=null){return futureVariablePlansForAccount(a,excludePlanId).reduce((s,p)=>s+Number(p.amount||0),0)}
 function cycleFixedReserved(a,excludePlanId=null){return fixedPlansForAccount(a,excludePlanId).reduce((s,p)=>s+Number(p.amount||0),0)}
-function cyclePlanReserved(a,excludePlanId=null){return cycleVariableReserved(a,excludePlanId)+cycleFixedReserved(a,excludePlanId)}
+function cyclePlanReserved(a,excludePlanId=null){return cycleVariableReserved(a,excludePlanId)+cycleFixedReserved(a,excludePlanId)+goalCycleReserved(a)}
+// Reservas virtuais: entram uma vez no ciclo, sem criar débito duplicado.
+function goalDueDatesInCycle(g,a){
+ const {start,next}=effectiveCycleDates(a);if(!start||!next||next<=start)return [];
+ const result=[],day=Math.max(1,Math.min(28,Number(g.contribution_day||5)));
+ let cursor=new Date(parse(start).getFullYear(),parse(start).getMonth(),day);
+ if(iso(cursor)<start)cursor=new Date(cursor.getFullYear(),cursor.getMonth()+1,day);
+ for(let n=0;n<3&&iso(cursor)<next;n++,cursor=new Date(cursor.getFullYear(),cursor.getMonth()+1,day))result.push(iso(cursor));
+ return result;
+}
+function goalCycleReserved(a,excludedGoalId=null){
+ if(!fundingReady||!a?.planning_enabled)return 0;
+ return goals.filter(g=>g.id!==excludedGoalId&&g.auto_reserve&&g.funding_account_id===a.id&&Number(g.monthly_contribution)>0)
+ .reduce((sum,g)=>sum+goalDueDatesInCycle(g,a).reduce((t,d)=>{
+   const confirmed=goalContributions.find(c=>c.goal_id===g.id&&c.due_date===d);
+   return t+(confirmed?Number(confirmed.amount):Number(g.monthly_contribution));
+ },0),0);
+}
+function goalDueThisCycle(g){const a=account(g.funding_account_id);if(!a)return null;return goalDueDatesInCycle(g,a).find(d=>!goalContributions.some(c=>c.goal_id===g.id&&c.due_date===d))||null}
+function goalConfirmedThisCycle(g){const a=account(g.funding_account_id);return a?goalDueDatesInCycle(g,a).filter(d=>goalContributions.some(c=>c.goal_id===g.id&&c.due_date===d)):[]}
+
 function plansDueOn(a,date){return plans.filter(p=>planType(p)==="variable"&&p.account_id===a.id&&p.status!=="cancelled"&&p.plan_date===date).reduce((s,p)=>s+Number(p.amount||0),0)}
 function availableBalance(id){return balance(id)}
 function totalAvailableNow(){return activeAccounts().reduce((s,a)=>s+availableBalance(a.id),0)}
@@ -456,6 +562,10 @@ async function loadData(first=false){
  }
  const goalRes=await sb.from("finance_goals").select("*").eq("household_id",householdId).order("created_at",{ascending:false});
  if(goalRes.error){goals=[];goalsReady=false;if(!["42P01","42501","PGRST205"].includes(goalRes.error.code))console.warn("Objetivos requerem SQL 14",goalRes.error)}else{goals=goalRes.data||[];goalsReady=true}
+ fundingReady=goalsReady&&(!goals.length||Object.prototype.hasOwnProperty.call(goals[0],"auto_reserve"));
+ if(fundingReady){const cr=await sb.from("finance_goal_contributions").select("*").eq("household_id",householdId).order("due_date",{ascending:false});
+   if(cr.error){fundingReady=false;goalContributions=[];if(!["42P01","42501","PGRST205"].includes(cr.error.code))console.warn(cr.error)}else goalContributions=cr.data||[];
+ }else goalContributions=[];
  render();
  const param=new URLSearchParams(location.search).get("pending");
  if(param){const item=pending.find(x=>x.id===param);if(item)openPending(item);history.replaceState({},"",location.pathname)}
@@ -473,6 +583,7 @@ function subscribe(){
  .on("postgres_changes",{event:"*",schema:"public",table:"household_settings"},()=>loadData());
  if(plansReady)channel=channel.on("postgres_changes",{event:"*",schema:"public",table:"finance_plans"},()=>loadData());
  if(goalsReady)channel=channel.on("postgres_changes",{event:"*",schema:"public",table:"finance_goals"},()=>loadData());
+ if(fundingReady)channel=channel.on("postgres_changes",{event:"*",schema:"public",table:"finance_goal_contributions"},()=>loadData());
  channel.subscribe();
 }
 
@@ -491,7 +602,7 @@ async function afterLogin(){
 }
 async function logout(){if(channel)await sb.removeChannel(channel);await sb.auth.signOut();session=null;householdId=null;showLogin()}
 
-function render(){if(selectedAccountId&&!account(selectedAccountId))selectedAccountId=null;if(selectedAccountId)return renderAccountDetail(selectedAccountId);currentView==="home"?renderHome():currentView==="accounts"?renderAccounts():currentView==="investments"?renderInvestments():renderSettings();document.querySelectorAll(".nav").forEach(b=>b.classList.toggle("active",b.dataset.view===currentView))}
+function render(){if(selectedAccountId&&!account(selectedAccountId))selectedAccountId=null;if(selectedAccountId){renderAccountDetail(selectedAccountId);privacyInstallEye();return}currentView==="home"?renderHome():currentView==="accounts"?renderAccounts():currentView==="investments"?renderInvestments():renderSettings();document.querySelectorAll(".nav").forEach(b=>b.classList.toggle("active",b.dataset.view===currentView));privacyInstallEye()}
 function pendingHtml(){
  if(!pending.length)return "";
  const p=pending[0],a=account(p.account_id);
@@ -499,7 +610,7 @@ function pendingHtml(){
 }
 function accountCard(a){
  const d=effectiveCycleDates(a),fixed=cycleFixedReserved(a),variable=cycleVariableReserved(a),meta=a.planning_enabled&&d.next?`${money(cycleRemaining(a))} livres · renova ${fmt(d.next)} · ${money(cyclePace(a))}/dia`:`Configure saldo restante e renovação`;
- const parts=[fixed>0?`${money(fixed)} fixos`:"",variable>0?`${money(variable)} variáveis`:""].filter(Boolean).join(" · ");
+ const aportes=goalCycleReserved(a);const parts=[fixed>0?`${money(fixed)} fixos`:"",variable>0?`${money(variable)} variáveis`:"",aportes>0?`${money(aportes)} para objetivos`:""].filter(Boolean).join(" · ");
  return `<button class="account-card ${a.account_type}" data-account="${a.id}"><div><div class="name">${esc(a.name)}</div><div class="meta">${meta}${parts?` · ${parts}`:""}${a.owner_label?` · ${esc(a.owner_label)}`:""}</div></div><div style="display:flex;align-items:center"><div class="amt">${money(balance(a.id))}</div><span class="arrow">›</span></div></button>`;
 }
 function recentHtml(limit=7){
@@ -536,6 +647,10 @@ function renderPlanCalendar(){
 function shiftCalendar(n){calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+n,1);calendarSelected=iso(calendarCursor);renderPlanCalendar()}
 
 
+function dueGoalReminders(){
+ if(!fundingReady)return [];
+ return goals.filter(g=>g.auto_reserve&&g.funding_account_id&&goalDueThisCycle(g)&&goalDueThisCycle(g)<=today());
+}
 function renderHome(){
  const date=new Date().toLocaleDateString("pt-BR",{weekday:"short",day:"2-digit",month:"short"}).replaceAll(".",""),next=nextDailyDate(),canAdd=!!next&&next<=today(),ps=planningSummary(),warn=planningWarnings();
  app.innerHTML=`<div class="top"><div><div class="eyebrow">Controle pessoal</div><h1>Meu saldo</h1></div><div><span class="pill">${date}</span> <button class="pill" id="logout">Sair</button></div></div>
@@ -546,17 +661,18 @@ function renderHome(){
  ${planningSchemaReady()&&!plansReady?`<div class="notice"><strong>Planejamento disponível</strong><p>Execute o SQL 09 para ativar gastos planejados.</p></div>`:""}
  ${!cycleStart()?`<div class="notice"><strong>Inicie a base histórica</strong><p>Isso é necessário apenas uma vez para registrar movimentações.</p><button class="secondary" id="defineCycle">Iniciar hoje</button></div>`:""}
  <div class="hero"><div class="label">Disponível agora</div><div class="value">${money(totalAvailableNow())}</div><div class="sub">${activeAccounts().length} saldo(s) ativo(s) · planejamentos não reduzem o saldo atual</div></div>
- ${ps.count?`<div class="plan-strip"><div class="plan-mini"><span>Livre até as renovações</span><b>${money(ps.remaining)}</b></div><div class="plan-mini"><span>Ritmo de gasto</span><b>${money(ps.pace)}/dia</b></div></div><div class="plan-note">${ps.fixed>0?`${money(ps.fixed)} em contas fixas. `:""}${ps.variable>0?`${money(ps.variable)} em gastos variáveis. `:""}${ps.next?`Próxima renovação em ${fmt(ps.next)}.`:""}</div>`:""}
+ ${ps.count?`<div class="plan-strip"><div class="plan-mini"><span>Livre até as renovações</span><b>${money(ps.remaining)}</b></div><div class="plan-mini"><span>Ritmo de gasto</span><b>${money(ps.pace)}/dia</b></div></div><div class="plan-note">${ps.fixed>0?`${money(ps.fixed)} em contas fixas. `:""}${ps.variable>0?`${money(ps.variable)} em gastos variáveis. `:""}${fundingReady&&goals.some(g=>g.auto_reserve)?"Aportes para objetivos já incluídos no ritmo diário. ":""}${ps.next?`Próxima renovação em ${fmt(ps.next)}.`:""}</div>`:""}
  ${warn.length?`<div class="warning-inline">${warn.map(esc).join("<br>")}</div>`:""}
 
  <div class="cards">${activeAccounts().map(accountCard).join("")}</div>
  <button class="primary full" id="addDaily" ${canAdd?"":"disabled"} style="margin-top:11px">Atualizar saldo do dia</button><div class="next">${cycleStart()?(canAdd?`Adicionar ${fmt(next)} com os valores diários calculados`:`Próxima atualização: ${fmt(next)}${next>today()?" · ainda não chegou":""}`):"Inicie primeiro a base histórica"}</div>
  <div class="actions"><button class="secondary" id="addDebit">− Débito</button><button class="secondary" id="addCredit">+ Crédito</button></div>
  ${plansReady?`<div class="plan-actions"><button class="secondary" id="newPlanHome">＋ Planejar gasto</button><button class="calendar-open" id="openCalendar" aria-label="Abrir calendário"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3v3M18 3v3M4.5 8.5h15M5.5 5h13a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"/></svg></button></div>${activeFixedPlans().length?`<div class="section"><h2>Contas fixas</h2><span>${money(fixedPlanTotal())}</span></div>${planListHtml(activeFixedPlans(),3)}`:""}${upcomingPlans().length?`<div class="section"><h2>Próximos variáveis</h2><span>${money(upcomingPlanTotal())}</span></div>${planListHtml(upcomingPlans(),3)}`:""}`:""}
+ ${dueGoalReminders().length?`<button class="secondary full" id="goalDueHome" style="margin-top:8px">◇ ${dueGoalReminders().length===1?`Aporte pendente: ${esc(dueGoalReminders()[0].name)}`:`${dueGoalReminders().length} aportes pendentes`} · revisar</button>`:""}
  ${activeAccounts().some(a=>adaptiveSuggestion(a))?`<button class="secondary full" id="adaptiveHome" style="margin-top:8px">✦ Ver sugestão de saldo adaptativo</button>`:""}
  <button type="button" class="advice-compact" id="advisorOpen" aria-label="Abrir Conselheiro Meu Saldo"><span class="advice-compact-icon">✦</span><span class="advice-compact-main"><strong>Conselheiro Meu Saldo</strong><span>${esc(advisorInsight())}</span></span><span class="advice-compact-arrow">›</span></button>
  <div class="section"><h2>Movimentações recentes</h2><span>${activeTx().length}</span></div>${recentHtml()}`;
- $("#advisorOpen").onclick=()=>openAdvisor();$("#adaptiveHome")?.addEventListener("click",()=>openAdvisor("Como ficaria meu saldo adaptativo?"));$("#logout").onclick=logout;$("#settleDueHome")?.addEventListener("click",()=>openPlanSettle(duePlansToday()[0]?.id));$("#defineCycle")?.addEventListener("click",openCycle);$("#addDaily").onclick=openDaily;$("#addDebit").onclick=()=>openMove("debit");$("#addCredit").onclick=()=>openMove("credit");$("#newPlanHome")?.addEventListener("click",()=>openPlan());$("#openCalendar")?.addEventListener("click",openPlanCalendar);$("#reviewPending")?.addEventListener("click",()=>openPending(pending[0]));bindPlanButtons();
+ $("#goalDueHome")?.addEventListener("click",()=>{currentView="investments";render();openContribution(dueGoalReminders()[0].id)});$("#advisorOpen").onclick=()=>openAdvisor();$("#adaptiveHome")?.addEventListener("click",()=>openAdvisor("Como ficaria meu saldo adaptativo?"));$("#logout").onclick=logout;$("#settleDueHome")?.addEventListener("click",()=>openPlanSettle(duePlansToday()[0]?.id));$("#defineCycle")?.addEventListener("click",openCycle);$("#addDaily").onclick=openDaily;$("#addDebit").onclick=()=>openMove("debit");$("#addCredit").onclick=()=>openMove("credit");$("#newPlanHome")?.addEventListener("click",()=>openPlan());$("#openCalendar")?.addEventListener("click",openPlanCalendar);$("#reviewPending")?.addEventListener("click",()=>openPending(pending[0]));bindPlanButtons();
  document.querySelectorAll("[data-account]").forEach(b=>b.onclick=()=>{selectedAccountId=b.dataset.account;render()});
 }
 
@@ -610,6 +726,7 @@ function renderInvestments(){
  <div class="project"><div class="eyebrow">${net>=0?"Se eu guardasse tudo agora":"Após cobrir o saldo negativo"}</div><div class="big">${money(proj)}</div><p>${net>=0?`Seu saldo investível atual acrescentaria ${money(net)} ao que já está guardado.`:`Seu saldo investível está negativo em ${money(Math.abs(net))}, então a projeção desconta esse valor dos investimentos.`}</p></div>
  <div class="section"><h2>Seus objetivos</h2><button class="mini" id="newGoal" ${goalsReady?"":"disabled"}>+ Novo objetivo</button></div>
  ${goalsReady?`<div class="goal-list">${goals.length?goals.map(goalCardHtml).join(""):`<div class="notice"><strong>O que você quer realizar?</strong><p>Casa, viagem ou outro sonho. Descubra o que precisa guardar e o impacto no seu futuro.</p><button class="secondary full" id="goalStart">Planejar meu primeiro objetivo</button></div>`}</div>`:`<div class="notice"><strong>Objetivos de longo prazo</strong><p>Execute o SQL 14 no Supabase para ativar os objetivos compartilhados.</p></div>`}
+ ${fundingReady&&goals.some(g=>g.auto_reserve)?`<div class="notice"><strong>Aportes e patrimônio</strong><p>Os aportes confirmados atualizam o valor guardado de cada objetivo. Não alteram automaticamente investimentos cadastrados nem executam transferências bancárias. Atualize o saldo real do investimento separadamente.</p></div>`:""}
  <div class="section"><h2>Onde está guardado</h2><span>${money(total)}</span></div>
  <div class="card">${investments.filter(x=>x.active).length?investments.filter(x=>x.active).map(x=>`<div class="row"><div><div class="title">${esc(x.name)}</div><div class="meta">valor informado manualmente</div></div><div><div class="money">${money(x.balance)}</div><div style="display:flex;gap:4px;margin-top:5px"><button class="mini" data-invest="${x.id}">Editar</button><button class="mini" data-delete-invest="${x.id}">Excluir</button></div></div></div>`).join(""):`<div class="empty">Cadastre sua reserva, CDB, Tesouro, ações ou qualquer dinheiro já guardado.</div>`}</div>
  <div class="section"><h2>Contas consideradas</h2></div><div class="card">${activeAccounts().filter(a=>a.counts_as_investable).length?activeAccounts().filter(a=>a.counts_as_investable).map(a=>`<div class="row"><div><div class="title">${esc(a.name)}</div><div class="meta">saldo atual</div></div><div class="money ${availableBalance(a.id)>=0?"pos":"neg"}">${money(availableBalance(a.id))}</div></div>`).join(""):`<div class="empty">Nenhuma conta está marcada como investível.</div>`}</div>`;
@@ -756,11 +873,14 @@ function goalCardHtml(g){
  const type=g.goal_type;const label=type==="home"?"Imóvel":type==="travel"?"Viagem":type==="car"?"Carro":"Objetivo";
  const target=type==="home"?Number(g.target_amount)*(Number(g.entry_pct)+Number(g.fees_pct))/100:Number(g.target_amount);
  const pct=target>0?Math.min(100,Math.max(0,Number(g.saved_amount)/target*100)):0;
- return `<button class="goal-card" data-goal="${g.id}"><strong>${esc(g.name)}</strong><div class="sub">${label} · Desejado para ${parse(g.target_date).toLocaleDateString("pt-BR",{month:"short",year:"numeric"})} · ${money(g.monthly_contribution)}/mês</div><div class="goal-track"><div style="width:${pct}%"></div></div><div class="advisor-row"><span>${money(g.saved_amount)} reservados para este objetivo</span><span>${Math.round(pct)}%</span></div></button>`;
+ const linked=fundingReady&&g.auto_reserve&&g.funding_account_id;
+ const due=linked?goalDueThisCycle(g):null;
+ const status=linked?(due?` · próximo aporte ${fmt(due)}`:" · aporte confirmado no ciclo"):"";
+ return `<button class="goal-card" data-goal="${g.id}"><strong>${esc(g.name)}</strong><div class="sub">${label} · Desejado para ${parse(g.target_date).toLocaleDateString("pt-BR",{month:"short",year:"numeric"})} · ${money(g.monthly_contribution)}/mês${status}</div><div class="goal-track"><div style="width:${pct}%"></div></div><div class="advisor-row"><span>${money(g.saved_amount)} reservados para este objetivo</span><span>${Math.round(pct)}%</span></div></button>`;
 }
 function goalInputs(){
  const num=(id,fallback=0)=>{const e=$("#"+id);return e?.value===""||e?.value==null?fallback:Number(e.value)};
- return {id:$("#goalId").value||null,type:$("#goalType").value,name:$("#goalName").value.trim()||goalNameFor($("#goalType").value),amount:num("goalAmount"),date:$("#goalDate").value,saved:num("goalSaved"),monthly:num("goalMonthly"),annualYield:num("goalYield"),inflation:num("goalInflation"),incomeGrowth:num("goalIncomeGrowth"),entry:num("goalEntry",25),fees:num("goalFees",5),essentials:num("goalEssentials",null),emergencyHeld:num("goalEmergencyHeld",null),emergencyMonths:num("goalEmergencyMonths",6),income:num("goalIncome",null),mortgageRate:num("goalMortgageRate",null),currentHousing:num("goalCurrentHousing",null),futureHousing:num("goalFutureHousing",null),termYears:num("goalMortgageYears",30)};
+ return {autoReserve:$("#goalAutoReserve").checked,fundingAccount:$("#goalFundingAccount").value,contributionDay:Number($("#goalFundingDay").value||5),id:$("#goalId").value||null,type:$("#goalType").value,name:$("#goalName").value.trim()||goalNameFor($("#goalType").value),amount:num("goalAmount"),date:$("#goalDate").value,saved:num("goalSaved"),monthly:num("goalMonthly"),annualYield:num("goalYield"),inflation:num("goalInflation"),incomeGrowth:num("goalIncomeGrowth"),entry:num("goalEntry",25),fees:num("goalFees",5),essentials:num("goalEssentials",null),emergencyHeld:num("goalEmergencyHeld",null),emergencyMonths:num("goalEmergencyMonths",6),income:num("goalIncome",null),mortgageRate:num("goalMortgageRate",null),currentHousing:num("goalCurrentHousing",null),futureHousing:num("goalFutureHousing",null),termYears:num("goalMortgageYears",30)};
 }
 function goalMonthsTo(date){
  if(!date)return null;const d=parse(date+"-01"),now=new Date();return (d.getFullYear()-now.getFullYear())*12+d.getMonth()-now.getMonth();
@@ -844,6 +964,36 @@ function renderGoalProjection(){
  $("#goalHomeFields").classList.toggle("hidden",!home);
  $("#goalProjection").innerHTML=goalProjectionHtml(g);
 }
+function refreshGoalFunding(){
+ const enabled=$("#goalAutoReserve").checked;
+ $("#goalFundingFields").classList.toggle("hidden",!enabled);
+ if(!enabled)return;
+ const a=account($("#goalFundingAccount").value),amount=Number($("#goalMonthly").value||0),day=Number($("#goalFundingDay").value||5);
+ if(!a){$("#goalFundingPreview").textContent="Cadastre um saldo em dinheiro com renovação antes de reservar.";return}
+ const due=goalDueDatesInCycle({contribution_day:day},a),days=cycleDaysRemaining(a),reserved=goalCycleReserved(a,$("#goalId").value||null),free=Math.max(0,futureAllocationRemaining(a)-cycleVariableReserved(a)-cycleFixedReserved(a)-reserved);
+ $("#goalFundingPreview").textContent=`${due.length} aporte(s) neste ciclo · ${money(amount*due.length)} reservados. Orçamento livre antes da reserva: ${money(free)}${days?` (${money(Math.max(0,free-amount*due.length)/days)}/dia após reservar)`:""}. Nenhum dinheiro é transferido automaticamente.`;
+}
+function openContribution(id){
+ const g=goals.find(x=>x.id===id);if(!g||!fundingReady||!g.auto_reserve)return toast("Ative a reserva mensal primeiro.");
+ const due=goalDueThisCycle(g);if(!due)return toast("Este ciclo não tem aportes pendentes.");
+ const a=account(g.funding_account_id);if(!a||cycleDaysRemaining(a)<=0)return toast("Não há orçamento futuro neste ciclo para confirmar. Atualize o saldo primeiro.");
+ $("#contributeGoalId").value=id;$("#contributeDueDate").value=due;
+ $("#contributeAmount").value=Number(g.monthly_contribution);
+ $("#contributeAmount").max=Number(g.monthly_contribution);
+ $("#contributeHelp").textContent=`${g.name} · ${a.name} · aporte de ${fmt(due)}. Informe o que você realmente guardou (até ${money(g.monthly_contribution)}).`;
+ openModal("contributeModal");
+}
+async function confirmGoalContribution(){
+ const id=$("#contributeGoalId").value,due=$("#contributeDueDate").value,amount=Number($("#contributeAmount").value),g=goals.find(x=>x.id===id);
+ if(!g||!Number.isFinite(amount)||amount<=0||amount>Number(g.monthly_contribution)+.005)return toast("Informe um valor válido até o planejado.");
+ if(!confirm(`Você realmente guardou ${money(amount)} para ${g.name}?\n\nO Meu Saldo registrará o aporte no objetivo, sem movimentar seu banco.`))return;
+ $("#confirmContribution").disabled=true;
+ try{
+ const r=await sb.rpc("finance_confirm_goal_contribution",{p_goal_id:id,p_due_date:due,p_amount:Number(amount.toFixed(2))});
+ if(r.error){console.error(r.error);return toast(r.error.message||"Não consegui confirmar o aporte.")}
+ closeModal("contributeModal");await loadData();toast("Aporte confirmado e objetivo atualizado.");
+ }finally{$("#confirmContribution").disabled=false}
+}
 function openGoal(id=null,type="home"){
  if(!goalsReady)return toast("Execute primeiro o SQL 14 para ativar os objetivos.");
  const g=id?goals.find(v=>v.id===id):null;
@@ -852,6 +1002,16 @@ function openGoal(id=null,type="home"){
  $("#goalType").value=g?.goal_type||type;$("#goalName").value=g?.name||goalNameFor($("#goalType").value);
  $("#goalAmount").value=str(g?.target_amount);$("#goalDate").value=g?.target_date?.slice(0,7)||`${new Date().getFullYear()+3}-${String(new Date().getMonth()+1).padStart(2,"0")}`;
  $("#goalSaved").value=str(g?.saved_amount??0);$("#goalMonthly").value=str(g?.monthly_contribution??0);
+ $("#goalAutoReserve").checked=!!g?.auto_reserve&&fundingReady;
+ $("#goalAutoReserve").disabled=!fundingReady;
+ $("#goalFundingDay").value=String(g?.contribution_day||5);
+ const eligible=activeAccounts().filter(a=>a.planning_enabled&&a.account_type!=="va"&&a.account_type!=="vr");
+ $("#goalFundingAccount").innerHTML=eligible.map(a=>`<option value="${a.id}">${esc(a.name)}</option>`).join("");
+ $("#goalFundingAccount").value=g?.funding_account_id&&eligible.some(a=>a.id===g.funding_account_id)?g.funding_account_id:(eligible[0]?.id||"");
+ refreshGoalFunding();
+ $("#goalContribute").classList.toggle("hidden",!g?.id||!fundingReady||!g?.auto_reserve||!goalDueThisCycle(g));
+ $("#goalContributeHint").textContent=!fundingReady?"Execute o SQL 15 para ativar aportes integrados.":g?.auto_reserve?"O orçamento futuro já considera este compromisso. Confirme somente após guardar o dinheiro.":"Ative a reserva mensal para conectar o objetivo ao saldo diário.";
+ $("#goalContribute").onclick=()=>{closeModal("goalModal");openContribution(g.id)};
  const fields={goalYield:g?.annual_yield_pct??0,goalInflation:g?.annual_price_growth_pct??0,goalIncomeGrowth:g?.annual_income_growth_pct??0,goalEntry:g?.entry_pct??25,goalFees:g?.fees_pct??5,goalEssentials:g?.essential_expenses,goalEmergencyHeld:g?.emergency_saved,goalEmergencyMonths:g?.emergency_months??6,goalIncome:g?.net_monthly_income,goalMortgageRate:g?.mortgage_rate_pct,goalCurrentHousing:g?.current_housing_cost,goalFutureHousing:g?.future_housing_cost,goalMortgageYears:g?.mortgage_years??30};
  for(const [key,val] of Object.entries(fields))$("#"+key).value=str(val);
  $("#goalAssumptions").open=false;$("#goalDelete").classList.toggle("hidden",!id);
@@ -861,8 +1021,20 @@ async function saveGoal(){
  if(!goalsReady)return toast("Execute o SQL 14.");const g=goalInputs();
  if(!g.name||!g.date||!Number.isFinite(g.amount)||g.amount<=0||!Number.isFinite(g.monthly)||g.monthly<0||!Number.isFinite(g.saved)||g.saved<0||goalMonthsTo(g.date)<0)return toast("Confira o objetivo, o valor e uma data futura.");
  if(!goalSimulate(g))return toast("Confira taxas e valores. A entrada e os custos não podem exceder 130%.");
+ if(g.autoReserve){
+   if(!fundingReady)return toast("Execute primeiro o SQL 15.");
+   const a=account(g.fundingAccount);if(!a||!a.planning_enabled||["va","vr"].includes(a.account_type))return toast("Escolha um saldo em dinheiro com renovação configurada.");
+   const due=goalDueDatesInCycle({contribution_day:g.contributionDay},a);
+   if(!due.length)return toast("A data do aporte não cabe neste ciclo. Ajuste o dia ou a renovação.");
+   const existing=goals.find(x=>x.id===g.id),already=existing?goalConfirmedThisCycle(existing).length:0;
+   if(already&&(g.fundingAccount!==existing.funding_account_id||g.contributionDay!==Number(existing.contribution_day)))return toast("Não altere conta ou dia de um aporte já confirmado neste ciclo.");
+   const other=goalCycleReserved(a,g.id),confirmed=existing?goalConfirmedThisCycle(existing).reduce((t,d)=>t+Number(goalContributions.find(c=>c.goal_id===g.id&&c.due_date===d)?.amount||0),0):0;
+   const needed=due.length*g.monthly;
+   const capacity=Math.max(0,futureAllocationRemaining(a)-cycleVariableReserved(a)-cycleFixedReserved(a)-other);
+   if(needed>capacity+.005&&needed>confirmed+.005)return toast(`O aporte supera o orçamento futuro livre (${money(capacity)}). Ajuste o valor ou o ciclo.`);
+ }
  const val=x=>x===null||Number.isFinite(x)?x:null;
- const payload={name:g.name,goal_type:g.type,target_amount:g.amount,target_date:g.date+"-01",saved_amount:g.saved,monthly_contribution:g.monthly,annual_yield_pct:g.annualYield,annual_price_growth_pct:g.inflation,annual_income_growth_pct:g.incomeGrowth,entry_pct:g.entry,fees_pct:g.fees,essential_expenses:val(g.essentials),emergency_saved:val(g.emergencyHeld),emergency_months:g.emergencyMonths,net_monthly_income:val(g.income),mortgage_rate_pct:val(g.mortgageRate),current_housing_cost:val(g.currentHousing),future_housing_cost:val(g.futureHousing),mortgage_years:g.termYears,updated_at:new Date().toISOString()};
+ const payload={auto_reserve:g.autoReserve,funding_account_id:g.autoReserve?g.fundingAccount:null,contribution_day:g.contributionDay,name:g.name,goal_type:g.type,target_amount:g.amount,target_date:g.date+"-01",saved_amount:g.saved,monthly_contribution:g.monthly,annual_yield_pct:g.annualYield,annual_price_growth_pct:g.inflation,annual_income_growth_pct:g.incomeGrowth,entry_pct:g.entry,fees_pct:g.fees,essential_expenses:val(g.essentials),emergency_saved:val(g.emergencyHeld),emergency_months:g.emergencyMonths,net_monthly_income:val(g.income),mortgage_rate_pct:val(g.mortgageRate),current_housing_cost:val(g.currentHousing),future_housing_cost:val(g.futureHousing),mortgage_years:g.termYears,updated_at:new Date().toISOString()};
  const r=g.id?await sb.from("finance_goals").update(payload).eq("id",g.id).eq("household_id",householdId):await sb.from("finance_goals").insert({...payload,household_id:householdId,created_by:session.user.id});
  if(r.error){console.error(r.error);return toast("Não consegui salvar. Confira SQL 14 e permissões.")}
  closeModal("goalModal");await loadData();toast("Objetivo salvo.");
@@ -1140,6 +1312,11 @@ $("#advisorForm").onsubmit=e=>{e.preventDefault();advisorHandle($("#advisorQuest
  $("#goalType").addEventListener("change",()=>{$("#goalName").value=goalNameFor($("#goalType").value);renderGoalProjection()});
  document.querySelectorAll("#goalModal input, #goalModal select").forEach(el=>{if(el.id!=="goalId"&&el.id!=="goalType")el.addEventListener("input",renderGoalProjection)});
  $("#goalSave").onclick=saveGoal;$("#goalDelete").onclick=deleteGoal;
+ $("#goalAutoReserve").onchange=refreshGoalFunding;
+ $("#goalFundingAccount").onchange=refreshGoalFunding;
+ $("#goalFundingDay").onchange=refreshGoalFunding;
+ $("#goalMonthly").addEventListener("input",refreshGoalFunding);
+ $("#confirmContribution").onclick=confirmGoalContribution;
  $("#saveMove").onclick=saveMove;$("#saveDaily").onclick=saveDaily;$("#saveAccount").onclick=saveAccount;$("#savePlan").onclick=savePlan;$("#cancelPlan").onclick=cancelPlan;$("#saveInvestment").onclick=saveInvestment;$("#saveSource").onclick=saveSource;$("#disableSource").onclick=disableSource;$("#saveCycle").onclick=saveCycle;$("#confirmPending").onclick=confirmPending;
 $("#nav").onclick=e=>{const b=e.target.closest(".nav");if(!b)return;selectedAccountId=null;currentView=b.dataset.view;render();window.scrollTo({top:0,behavior:"smooth"})};
 if("serviceWorker" in navigator)navigator.serviceWorker.register("./sw.js").catch(console.error);
