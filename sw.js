@@ -1,4 +1,5 @@
-const CACHE="meu-saldo-v6-7-fixo-variavel";
+
+const CACHE="meu-saldo-v6-8-conselheiro";
 
 const ASSETS=[
   "./",
@@ -10,8 +11,7 @@ const ASSETS=[
 
 self.addEventListener("install",e=>{
   e.waitUntil(
-    caches
-      .open(CACHE)
+    caches.open(CACHE)
       .then(c=>c.addAll(ASSETS))
       .then(()=>self.skipWaiting())
   );
@@ -19,15 +19,10 @@ self.addEventListener("install",e=>{
 
 self.addEventListener("activate",e=>{
   e.waitUntil(
-    caches
-      .keys()
-      .then(keys=>
-        Promise.all(
-          keys
-            .filter(k=>k!==CACHE)
-            .map(k=>caches.delete(k))
-        )
-      )
+    caches.keys()
+      .then(keys=>Promise.all(
+        keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))
+      ))
       .then(()=>self.clients.claim())
   );
 });
@@ -38,9 +33,8 @@ self.addEventListener("fetch",e=>{
   e.respondWith(
     fetch(e.request)
       .catch(()=>
-        caches
-          .match(e.request)
-          .then(r=>r || caches.match("./index.html"))
+        caches.match(e.request)
+          .then(r=>r||caches.match("./index.html"))
       )
   );
 });
@@ -75,20 +69,19 @@ self.addEventListener("notificationclick",e=>{
   const target=e.notification.data?.url || "./";
 
   e.waitUntil(
-    clients
-      .matchAll({
-        type:"window",
-        includeUncontrolled:true
-      })
-      .then(list=>{
-        for(const c of list){
-          if("focus" in c){
-            c.navigate(target);
-            return c.focus();
-          }
+    clients.matchAll({
+      type:"window",
+      includeUncontrolled:true
+    })
+    .then(list=>{
+      for(const c of list){
+        if("focus" in c){
+          c.navigate(target);
+          return c.focus();
         }
+      }
 
-        return clients.openWindow(target);
-      })
+      return clients.openWindow(target);
+    })
   );
 });
