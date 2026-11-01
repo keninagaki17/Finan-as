@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Meu Saldo">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icon-192.png">
-<title>Meu Saldo — Privacidade de Valores</title>
+<title>Meu Saldo — Ciclos automáticos</title>
 <style>
 :root{--bg:#F7F5F0;--card:#FFFFFF;--text:#202622;--muted:#7B807C;--line:#E4E0D8;--accent:#173E35;--accent2:#31584C;--soft:#E7ECE7;--danger:#A94A4A;--dangerSoft:#F6E9E9;--blue:#EEEAE2;--green:#E6ECE5;--rose:#ECE8E5;--sand:#F1E9DC;--shadow:0 8px 24px rgba(28,45,39,.055)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}body{padding-bottom:calc(80px + env(safe-area-inset-bottom))}button,input,select{font:inherit}button{cursor:pointer;color:inherit}.hidden{display:none!important}
@@ -136,6 +136,19 @@
 @media(max-width:350px){.clear-money-row b{font-size:13px}}
 .view-filter{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:9px 0 15px;color:#6b7770;font-size:13px}.view-toggle{display:flex;gap:3px;padding:3px;background:#e9e9e4;border-radius:999px}.view-toggle button{border:0;background:transparent;border-radius:999px;padding:8px 13px;color:#52665e;font:inherit;cursor:pointer}.view-toggle button.selected{background:#fff;color:#193f35;font-weight:700;box-shadow:0 1px 4px #0000000d}.view-person{border:1px solid #dddcd4;background:#fff;border-radius:999px;padding:7px 10px;color:#193f35;font:inherit;cursor:pointer}
 .hero .value{overflow-wrap:anywhere}
+/* V6.10 — microinterações leves, respeitando acessibilidade */
+@keyframes ms-enter{from{opacity:.35;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes ms-sheet{from{opacity:.6;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes ms-fade{from{opacity:0}to{opacity:1}}
+#app>.top,#app>.hero,#app>.clean-hero,#app>.cards,#app>.card,#app>.notice,#app>.clear-money-row,#app>.section,#app>.detail-box{animation:ms-enter .26s cubic-bezier(.2,.7,.2,1) both}
+.modalwrap.open{animation:ms-fade .18s ease-out both}
+.modalwrap.open .modal{animation:ms-sheet .25s cubic-bezier(.2,.7,.2,1) both}
+button,.account-card,.nav,.mini,.pill{transition:transform .16s ease,background-color .18s ease,box-shadow .18s ease,border-color .18s ease}
+button:active,.account-card:active{transform:scale(.985)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #7ba393;outline-offset:2px}
+.account-card:hover{box-shadow:0 10px 26px rgba(28,45,39,.09)}
+.cycle-confirm-note{margin:9px 0;padding:11px 12px;background:#fff8eb;border:1px solid #eadbbf;border-radius:13px;font-size:11px;line-height:1.45;color:#775c34}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
@@ -162,9 +175,19 @@
 <input id="accountId" type="hidden">
 <div class="field"><label>Nome</label><input id="accountName" maxlength="40" placeholder="Ex.: Débito Ken"></div>
 <div class="field"><label>Quanto tenho para gastar até receber?</label><input id="cycleIncome" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Ex.: 1500"></div>
+<div class="field"><label>Como costuma ser seu recebimento?</label>
+<select id="renewalSchedule">
+<option value="manual">Data informada por mim</option>
+<option value="penultimate_business">Penúltimo dia útil do mês</option>
+<option value="fifth_business">Quinto dia útil do mês</option>
+<option value="day_30">Todo dia 30 (ou último dia do mês)</option>
+<option value="fixed_day">Todo mês em um dia específico</option>
+</select></div>
+<div class="field hidden" id="renewalDayField"><label>Dia do mês</label><input id="renewalDayInput" type="number" min="1" max="31" value="5"></div>
 <div class="field"><label>Quando vou receber novamente?</label><input id="nextRenewal" type="date"></div>
+<div class="soft-label" id="renewalScheduleHint">No modo manual, você informa a data de cada novo ciclo. Nas opções automáticas, o aplicativo calcula a próxima data.</div>
 <div class="field"><label>Quanto vou receber nessa data?</label><input id="nextCycleAmount" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Ex.: 3000"></div>
-<div class="soft-label">Pode informar R$ 0 agora e um valor para o próximo ciclo. O recebimento futuro não é creditado antecipadamente.</div>
+<div class="soft-label">O próximo valor só entra no novo ciclo, na data prevista. No modo manual, você poderá confirmar o recebimento seguinte após a virada.</div>
 <div class="plan-preview"><div class="eyebrow">Seu ritmo</div><div class="big" id="planFreePreview">R$ 0,00 por dia</div><div class="small" id="planPacePreview">Informe o saldo restante e a próxima renovação.</div></div>
 <details class="advanced"><summary>Mais opções</summary>
 <div class="inline2"><div class="field"><label>Proprietário</label><input id="accountOwner" maxlength="40" placeholder="Ex.: Ken"></div><div class="field"><label>Tipo</label><select id="accountType"><option value="money">Dinheiro / cartão</option><option value="va">VA</option><option value="vr">VR</option><option value="other">Outro</option></select></div></div>
@@ -405,6 +428,107 @@ const dateMax=(a,b)=>!a?b:!b?a:(a>b?a:b);
 const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
 function toast(m){const e=$("#toast");e.textContent=m;e.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>e.classList.remove("show"),2200)}
 function openModal(id){$("#"+id).classList.add("open")}function closeModal(id){$("#"+id).classList.remove("open")}
+// V6.10: datas de recebimento recorrentes. Feriados bancários nacionais conhecidos;
+ // feriados estaduais/municipais e exceções da empresa devem ser conferidos pelo usuário.
+function easterDate(year){
+ const a=year%19,b=Math.floor(year/100),c=year%100,d=Math.floor(b/4),e=b%4,
+ f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,
+ i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k+7)%7,m=Math.floor((a+11*h+22*l)/451),
+ month=Math.floor((h+l-7*m+114)/31),day=((h+l-7*m+114)%31)+1;
+ return iso(new Date(year,month-1,day));
+}
+function nationalBankHolidays(year){
+ const fixed=["01-01","04-21","05-01","09-07","10-12","11-02","11-15","11-20","12-25","12-31"].map(d=>`${year}-${d}`);
+ const easter=easterDate(year);
+ return new Set([...fixed,addDays(easter,-48),addDays(easter,-47),addDays(easter,-2),addDays(easter,60)]);
+}
+function businessDates(year,month){
+ const holidays=nationalBankHolidays(year),out=[],last=new Date(year,month,0).getDate();
+ for(let day=1;day<=last;day++){
+  const dt=new Date(year,month-1,day),date=iso(dt);
+  if(dt.getDay()!==0&&dt.getDay()!==6&&!holidays.has(date))out.push(date);
+ }
+ return out;
+}
+function scheduledDate(year,month,schedule,day=30){
+ if(schedule==="manual")return null;
+ const last=new Date(year,month,0).getDate();
+ if(schedule==="day_30")return iso(new Date(year,month-1,Math.min(30,last)));
+ if(schedule==="fixed_day")return iso(new Date(year,month-1,Math.min(Math.max(1,day),last)));
+ const business=businessDates(year,month);
+ if(schedule==="penultimate_business")return business[Math.max(0,business.length-2)]||null;
+ if(schedule==="fifth_business")return business[4]||null;
+ return null;
+}
+function nextScheduledDate(after,schedule,day=30){
+ const ref=parse(after);
+ for(let n=0;n<48;n++){
+  const m=new Date(ref.getFullYear(),ref.getMonth()+n,1);
+  const candidate=scheduledDate(m.getFullYear(),m.getMonth()+1,schedule,day);
+  if(candidate&&candidate>after)return candidate;
+ }
+ return null;
+}
+function renewalScheduleName(a){
+ return ({manual:"Data manual",penultimate_business:"Penúltimo dia útil",fifth_business:"Quinto dia útil",day_30:"Todo dia 30",fixed_day:"Dia fixo"})[a?.renewal_schedule||"manual"]||"Data manual";
+}
+function syncRenewalSchedule(autoFill=false){
+ const schedule=$("#renewalSchedule").value;
+ $("#renewalDayField").classList.toggle("hidden",schedule!=="fixed_day");
+ const isAuto=schedule!=="manual";
+ $("#renewalScheduleHint").textContent=isAuto
+  ?"Datas calculadas automaticamente. Feriados locais e alterações do empregador podem exigir ajuste."
+  :"Após cada recebimento, você poderá confirmar a próxima data e valor.";
+ if(autoFill&&isAuto){
+  const next=nextScheduledDate(today(),schedule,Number($("#renewalDayInput").value||5));
+  if(next)$("#nextRenewal").value=next;
+ }
+ refreshMonthlyForm();
+}
+async function rolloverDueAccounts(){
+ const due=activeAccounts().filter(a=>a.planning_enabled&&a.next_renewal_date&&a.next_renewal_date<=today());
+ if(!due.length)return true;
+ let changed=false;
+ for(const a of due){
+  const incoming=nextCycleAmount(a);
+  if(incoming===null)continue; // Nunca inventar um valor de recebimento.
+  const schedule=a.renewal_schedule||"manual",day=Number(a.renewal_day||5);
+  let start=a.next_renewal_date,next=null,needsConfirmation=false;
+  if(schedule==="manual"){
+   next=nextMonth(start); // previsão provisória; precisa de confirmação.
+   needsConfirmation=true;
+  }else{
+   // Se o app ficou fechado por meses, ir direto ao ciclo vigente, sem acumular salários fictícios.
+   for(let steps=0;steps<240;steps++){
+    next=nextScheduledDate(start,schedule,day);
+    if(!next){console.warn("Próxima data não calculada",a.name);return false;}
+    if(next>today())break;
+    start=next;
+   }
+   if(next<=today())return false;
+  }
+  // A data antiga é uma trava de concorrência: duas sessões não devem virar o mesmo ciclo.
+  const payload={
+   cycle_income:incoming,cycle_committed:0,cycle_save:0,
+   account_cycle_start_date:addDays(start,-1),next_renewal_date:next,
+   next_cycle_amount:schedule==="manual"?null:incoming,
+   renewal_needs_confirmation:needsConfirmation,
+   daily_amount:Number((incoming/Math.max(1,daysBetween(start,next))).toFixed(2)),
+   updated_at:new Date().toISOString()
+  };
+  const res=await sb.from("finance_accounts").update(payload)
+   .eq("id",a.id).eq("household_id",householdId)
+   .eq("next_renewal_date",start).select("id");
+  if(res.error){console.error("Virada automática:",res.error);toast("Não foi possível atualizar o ciclo. Confira o SQL 19.");return false;}
+  if(res.data?.length)changed=true;
+ }
+ if(changed){
+  const refreshed=await sb.from("finance_accounts").select("*").eq("household_id",householdId).order("sort_order");
+  if(refreshed.error)return false;
+  accounts=refreshed.data||accounts;
+ }
+ return true;
+}
 function cycleId(){return settings?.cycle_id||null}function cycleStart(){return settings?.cycle_start_date||null}
 // Filtro de visualização local (não é permissão de acesso).
 const VIEW_KEY='meu-saldo-owner-view-v1';
@@ -455,7 +579,7 @@ function activeFixedPlans(accountId=null){
 }
 function firstUnaddedDate(){return nextDailyDate()||addDays(today(),1)}
 function futureVariablePlansForAccount(a,excludePlanId=null){
- const first=firstUnaddedDate(),{next}=effectiveCycleDates(a);
+ const first=dateMax(firstUnaddedDate(),a?.account_cycle_start_date?addDays(a.account_cycle_start_date,1):null),{next}=effectiveCycleDates(a);
  if(!a?.planning_enabled||!first||!next||first>=next)return [];
  return plans.filter(p=>planType(p)==="variable"&&p.status!=="cancelled"&&p.account_id===a.id&&p.id!==excludePlanId&&p.plan_date&&p.plan_date>=first&&p.plan_date<next);
 }
@@ -553,7 +677,7 @@ function futureAllocationRemaining(a){return Math.max(0,cycleBudget(a)-allocatio
 function futureFreeRemaining(a,excludePlanId=null){return Math.max(0,futureAllocationRemaining(a)-cyclePlanReserved(a,excludePlanId))}
 function cycleRemaining(a){return balance(a.id)+futureFreeRemaining(a)}
 function cycleDaysRemaining(a){
- const {next}=effectiveCycleDates(a),first=firstUnaddedDate();
+ const {next}=effectiveCycleDates(a),first=dateMax(firstUnaddedDate(),a?.account_cycle_start_date?addDays(a.account_cycle_start_date,1):null);
  return next&&first&&first<next?Math.max(0,daysBetween(first,next)):0;
 }
 function cyclePace(a,excludePlanId=null){const d=cycleDaysRemaining(a);return d?futureFreeRemaining(a,excludePlanId)/d:0}
@@ -579,7 +703,7 @@ function dailyAmountForDate(a,date){
  if(first&&next&&date>=first&&date<next){
    return Math.max(0,cyclePace(a)+plansDueOn(a,date));
  }
- if(next&&date>=next)return 0;
+ if(!next||date>=next)return 0;
  return Number(a?.daily_amount||0);
 }
 function planningSummary(){
@@ -587,13 +711,14 @@ function planningSummary(){
  return {count:list.length,valid:valid.length,remaining:valid.reduce((s,a)=>s+cycleRemaining(a),0),pace:valid.reduce((s,a)=>s+cyclePace(a),0),reserved:valid.reduce((s,a)=>s+cyclePlanReserved(a),0),fixed:valid.reduce((s,a)=>s+cycleFixedReserved(a),0),variable:valid.reduce((s,a)=>s+cycleVariableReserved(a),0),next:valid.map(a=>effectiveCycleDates(a).next).sort()[0]||null};
 }
 function planningWarnings(){
- return activeAccounts().filter(a=>a.planning_enabled).flatMap(a=>{const d=effectiveCycleDates(a);if(!d.next)return [`${a.name}: informe a próxima renovação.`];if(d.next<=today())return [`${a.name}: atualize a próxima renovação.`];return []});
+ return activeAccounts().filter(a=>a.planning_enabled).flatMap(a=>{const d=effectiveCycleDates(a);if(!d.next)return [`${a.name}: informe a próxima renovação.`];if(d.next<=today())return [`${a.name}: informe o valor do próximo recebimento para iniciar o novo ciclo.`];if(a.renewal_needs_confirmation)return [`${a.name}: novo ciclo iniciado. Confirme a próxima data e o valor do recebimento.`];return []});
 }
 function activeDaily(){return cycleId()?dailyCredits.filter(x=>x.cycle_id===cycleId()):[]}
 function activeTx(){return cycleId()?transactions.filter(x=>x.cycle_id===cycleId()):[]}
 function balance(id){
- const daily=activeDaily().filter(x=>x.account_id===id).reduce((s,x)=>s+Number(x.amount),0);
- const tx=activeTx().filter(x=>x.account_id===id).reduce((s,x)=>s+(x.kind==="debit"?-Number(x.amount):Number(x.amount)),0);
+ const a=account(id),start=a?.planning_enabled?a.account_cycle_start_date:null;
+ const daily=activeDaily().filter(x=>x.account_id===id&&(!start||x.credit_date>start)).reduce((s,x)=>s+Number(x.amount),0);
+ const tx=activeTx().filter(x=>x.account_id===id&&(!start||x.txn_date>start)).reduce((s,x)=>s+(x.kind==="debit"?-Number(x.amount):Number(x.amount)),0);
  return daily+tx;
 }
 function totalBalance(){return activeAccounts().reduce((s,a)=>s+balance(a.id),0)}
@@ -651,20 +776,6 @@ async function loadData(first=false){
  const err=s.error||a.error||d.error||t.error||i.error||src.error||p.error;
  if(err){console.error(err);if(first)toast("Rode primeiro o SQL 07_contas_dinamicas_investimentos.sql.");return}
  settings=s.data;accounts=a.data||[];dailyCredits=d.data||[];transactions=t.data||[];investments=i.data||[];sources=src.data||[];pending=p.data||[];
- const firstOpen=nextDailyDate();
- if(firstOpen){
-   const legacy=accounts.filter(x=>x.planning_enabled&&x.next_renewal_date&&firstOpen<x.next_renewal_date&&x.account_cycle_start_date===previousMonth(x.next_renewal_date));
-   if(legacy.length){
-     const newStart=addDays(firstOpen,-1);
-     await Promise.all(legacy.map(x=>{
-       const days=Math.max(1,daysBetween(firstOpen,x.next_renewal_date));
-       const daily=cycleBudget(x)/days;
-       x.account_cycle_start_date=newStart;
-       x.daily_amount=Number(daily.toFixed(2));
-       return sb.from("finance_accounts").update({account_cycle_start_date:newStart,daily_amount:Number(daily.toFixed(2)),updated_at:new Date().toISOString()}).eq("id",x.id);
-     }));
-   }
- }
  const planRes=await sb.from("finance_plans").select("*").eq("household_id",householdId).order("plan_date");
  if(planRes.error){plans=[];plansReady=false;if(!["42P01","42501","PGRST205"].includes(planRes.error.code))console.error(planRes.error)}else{plans=planRes.data||[];plansReady=true}
  if(plansReady){
@@ -701,7 +812,8 @@ async function loadData(first=false){
  const sv=await sb.from('finance_saving_targets').select('*').eq('household_id',householdId);
  if(sv.error){savingsReady=false;savingTargets=[];if(!['42P01','42501','PGRST205'].includes(sv.error.code))console.warn('SQL 16 pendente',sv.error)}
  else{savingsReady=true;savingTargets=sv.data||[]}
- await autoAdvanceDaily();
+ const rolloverOK=await rolloverDueAccounts();
+ if(rolloverOK)await autoAdvanceDaily();
  render();
  const param=new URLSearchParams(location.search).get("pending");
  if(param){const item=pending.find(x=>x.id===param);if(item)openPending(item);history.replaceState({},"",location.pathname)}
@@ -867,7 +979,8 @@ function renderAccountDetail(id){
  <div class="hero clean-hero"><div class="label">Disponível hoje</div><div class="value">${money(bal)}</div><div class="clear-hero-caption">Para gastar hoje nesta conta</div></div>
  <div class="clear-money-row"><div><span>Até receber novamente</span><b>${money(cycleRemaining(a))}</b></div><div><span>Para guardar</span><b>${money(savingReserved(a))}</b></div></div>
  ${planned?`<div class="clear-daily">Próximos dias: <strong>${money(cyclePace(a))}/dia</strong></div>`:""}
- <div class="cycle-next-card"><div><span>Próximo recebimento · ${d.next?fmt(d.next):"Definir data"}</span><strong>${nextCycleAmount(a)===null?"Valor não informado":money(nextCycleAmount(a))}</strong></div><button class="mini" id="editNextA">Editar</button></div>
+ ${a.renewal_needs_confirmation?`<div class="cycle-confirm-note">Novo ciclo iniciado automaticamente. A próxima data (${fmt(d.next)}) é provisória: confirme quando e quanto receberá novamente.</div>`:""}
+ <div class="cycle-next-card"><div><span>Próximo recebimento · ${d.next?fmt(d.next):"Definir data"} · ${renewalScheduleName(a)}</span><strong>${nextCycleAmount(a)===null?"Valor ainda não informado":money(nextCycleAmount(a))}</strong></div><button class="mini" id="editNextA">Editar</button></div>
  ${bal<-.005&&planned?`<div class="notice"><strong>Saldo negativo</strong><p>Você pode zerar o saldo de hoje e descontar ${money(Math.abs(bal))} dos próximos saldos diários.</p><button class="primary full" id="rebalanceA">Ajustar saldo diário</button></div>`:""}
  
  <div class="actions"><button class="secondary" id="debitA">− Débito</button><button class="secondary" id="creditA">+ Crédito</button></div>${plansReady?`<button class="secondary full" id="planA" style="margin-top:8px">＋ Planejar gasto</button>`:""}<button class="secondary full" id="editA" style="margin-top:8px">Editar este ciclo</button><button class="danger full" id="zeroA" style="margin-top:8px">Zerar saldo</button>
@@ -1234,7 +1347,7 @@ function refreshMonthlyForm(){
  $("#planPacePreview").textContent=`${money(monthly)} ÷ ${days} ${days===1?"dia":"dias"} (${fmt(first)} até ${fmt(addDays(next,-1))}).`;
 }
 function openAccount(id=null){
- const a=id?account(id):null;$("#nextCycleAmount").value=nextCycleAmount(a)??"";$("#accountId").value=id||"";$("#accountModalTitle").textContent=a?"Editar saldo":"Novo saldo";$("#accountName").value=a?.name||"";$("#cycleIncome").value=a?.cycle_income??"";$("#nextRenewal").value=a?.next_renewal_date||"";$("#accountOwner").value=a?.owner_label||"";$("#accountType").value=a?.account_type||"money";$("#accountInvestable").checked=a?a.counts_as_investable:$("#accountType").value==="money";refreshMonthlyForm();openModal("accountModal")
+ const a=id?account(id):null;$("#nextCycleAmount").value=nextCycleAmount(a)??"";$("#renewalSchedule").value=a?.renewal_schedule||"manual";$("#renewalDayInput").value=a?.renewal_schedule==="fixed_day"?(a.renewal_day||5):5;$("#accountId").value=id||"";$("#accountModalTitle").textContent=a?"Editar saldo":"Novo saldo";$("#accountName").value=a?.name||"";$("#cycleIncome").value=a?(a.planning_enabled?Number(futureAllocationRemaining(a).toFixed(2)):a.cycle_income):"";$("#nextRenewal").value=a?.next_renewal_date||"";$("#accountOwner").value=a?.owner_label||"";$("#accountType").value=a?.account_type||"money";$("#accountInvestable").checked=a?a.counts_as_investable:$("#accountType").value==="money";syncRenewalSchedule(false);openModal("accountModal")
 }
 async function saveAccount(){
  const id=$("#accountId").value,name=$("#accountName").value.trim(),owner_label=$("#accountOwner").value.trim()||null,account_type=$("#accountType").value,counts_as_investable=$("#accountInvestable").checked,cycle_income=Number($("#cycleIncome").value),next_renewal_date=$("#nextRenewal").value||null;
@@ -1244,9 +1357,13 @@ async function saveAccount(){
  if(!first||first>=next_renewal_date)return toast("A renovação precisa ser depois do próximo dia ainda não adicionado.");
  const next_cycle_amount=$("#nextCycleAmount").value.trim()===""?null:Number($("#nextCycleAmount").value);
  if(next_cycle_amount!==null&&(!Number.isFinite(next_cycle_amount)||next_cycle_amount<0||next_cycle_amount>1e9))return toast("Confira o próximo recebimento.");
- const account_cycle_start_date=addDays(first,-1);
+ const renewal_schedule=$("#renewalSchedule").value;
+ const renewal_day=renewal_schedule==="fixed_day"?Number($("#renewalDayInput").value):null;
+ if(renewal_schedule==="fixed_day"&&(!Number.isInteger(renewal_day)||renewal_day<1||renewal_day>31))return toast("Informe um dia de 1 a 31.");
+ const account_cycle_start_date=old?.account_cycle_start_date||addDays(first,-1);
+ const credited=old?allocationCreditsAdded(old):0;
  const days=Math.max(1,daysBetween(first,next_renewal_date)),daily_amount=cycle_income/days;
- const payload={name,owner_label,next_cycle_amount:next_cycle_amount===null?null:Number(next_cycle_amount.toFixed(2)),daily_amount:Number(daily_amount.toFixed(2)),account_type,counts_as_investable,planning_enabled:true,cycle_income:Number(cycle_income.toFixed(2)),cycle_committed:0,cycle_save:0,account_cycle_start_date,next_renewal_date,renewal_mode:"manual",renewal_day:null,relative_account_id:null,relative_offset_days:0,updated_at:new Date().toISOString()};
+ const payload={name,owner_label,next_cycle_amount:next_cycle_amount===null?null:Number(next_cycle_amount.toFixed(2)),daily_amount:Number(daily_amount.toFixed(2)),account_type,counts_as_investable,planning_enabled:true,cycle_income:Number((credited+cycle_income).toFixed(2)),cycle_committed:0,cycle_save:0,account_cycle_start_date,next_renewal_date,renewal_mode:"manual",renewal_day,renewal_schedule,renewal_needs_confirmation:false,relative_account_id:null,relative_offset_days:0,updated_at:new Date().toISOString()};
  let r;if(id)r=await sb.from("finance_accounts").update(payload).eq("id",id);else r=await sb.from("finance_accounts").insert({...payload,household_id:householdId,active:true,sort_order:(Math.max(0,...accounts.map(a=>a.sort_order))+1),created_by:session.user.id});
  if(r.error){console.error(r.error);return toast(r.error.message?.includes("column")?"Execute primeiro o SQL 08.":"Não consegui salvar o saldo.")}
  if(id&&plansReady){
@@ -1445,7 +1562,9 @@ async function enablePush(){
 
 async function clearHistory(){const typed=prompt("Digite APAGAR para apagar todos os lançamentos e dias. Contas e investimentos serão mantidos.");if(typed!=="APAGAR")return;const r=await sb.rpc("clear_finance_history",{p_household_id:householdId});if(r.error){console.error(r.error);return toast("Não consegui apagar.")}await loadData();toast("Histórico apagado.")}
 
-document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>closeModal(b.dataset.close));document.querySelectorAll(".modalwrap").forEach(m=>m.onclick=e=>{if(e.target===m)m.classList.remove("open")});["cycleIncome","nextRenewal"].forEach(id=>$("#"+id)?.addEventListener("input",refreshMonthlyForm));["planAmount","planDate","planAccount"].forEach(id=>$("#"+id)?.addEventListener("input",refreshPlanPreview));$("#accountType")?.addEventListener("change",()=>{if(!$("#accountId").value)$("#accountInvestable").checked=$("#accountType").value==="money"});$("#calendarPrev").onclick=()=>shiftCalendar(-1);$("#calendarNext").onclick=()=>shiftCalendar(1);
+document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>closeModal(b.dataset.close));document.querySelectorAll(".modalwrap").forEach(m=>m.onclick=e=>{if(e.target===m)m.classList.remove("open")});["cycleIncome","nextRenewal"].forEach(id=>$("#"+id)?.addEventListener("input",refreshMonthlyForm));
+$("#renewalSchedule").addEventListener("change",()=>syncRenewalSchedule(true));
+$("#renewalDayInput").addEventListener("input",()=>syncRenewalSchedule(true));["planAmount","planDate","planAccount"].forEach(id=>$("#"+id)?.addEventListener("input",refreshPlanPreview));$("#accountType")?.addEventListener("change",()=>{if(!$("#accountId").value)$("#accountInvestable").checked=$("#accountType").value==="money"});$("#calendarPrev").onclick=()=>shiftCalendar(-1);$("#calendarNext").onclick=()=>shiftCalendar(1);
 $("#planTypeVariable").onclick=()=>setPlanType("variable");
 $("#planTypeFixed").onclick=()=>setPlanType("fixed");
 $("#planAmount").addEventListener("input",refreshPlanPreview);
